@@ -1,0 +1,2 @@
+<a class="btn  <?php if($this->router->method == 'index') echo 'btn-primary';?>" href="<?php echo base_url() ?>administration/Admin_User/ajouter" role="button">Ajouter</a>
+<a class="btn <?php if($this->router->method == 'listing') echo 'btn-primary';?>" href="<?php echo base_url() ?>administration/Admin_User" role="button">Liste</a>
