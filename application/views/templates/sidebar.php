@@ -208,7 +208,7 @@
               </li>
             
                 <li class="nav-item">
-                  <a href="<?= base_url('PSR/Droit/index') ?>" class="nav-link <?php if ($this->router->class == 'Droit') echo 'active'; ?>">
+                  <a href="<?= base_url('administration/Droit/index') ?>" class="nav-link <?php if ($this->router->class == 'Droit') echo 'active'; ?>">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Droits</p>
                   </a>
@@ -620,9 +620,9 @@
 
 
 <!-- IHM -->
-<?php if ($this->session->userdata('IHM') == 1) { ?>
+
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Assureur' || $this->router->class == 'Verif_Permis' || $this->router->class == 'Notification' || $this->router->class == 'Citoyen'|| $this->router->class == 'Money') echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
               <p>
                 IHM
@@ -631,40 +631,15 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="<?= base_url('ihm/Citoyen/index') ?>" class="nav-link <?php if ($this->router->class == 'Citoyen') echo 'active'; ?>">
+                <a href="<?= base_url('ihm/Postes/index') ?>" class="nav-link <?php if ($this->router->class == 'Postes') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Citoyens </p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="<?= base_url('PSR/Assureur/index') ?>" class="nav-link <?php if ($this->router->class == 'Assureur') echo 'active'; ?>">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Assureur</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="<?= base_url('ihm/Money/index') ?>" class="nav-link <?php if ($this->router->class == 'Money') echo 'active'; ?>">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Monnaie</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="<?= base_url('ihm/Notification/index') ?>" class="nav-link <?php if ($this->router->class == 'Notification') echo 'active'; ?>">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Notification</p>
-                </a>
-              </li>
-
-              <li class="nav-item">
-                <a href="<?= base_url('ihm/Verif_Permis/index') ?>" class="nav-link <?php if ($this->router->class == 'Verif_Permis') echo 'active'; ?>">
-                  <i class="nav-icon far fa-circle"></i>
-                  <p>Chauffeur</p>
+                  <p>Postes </p>
                 </a>
               </li>
 
             </ul>
           </li>
- <?php } ?>
+
 
 
  <!-- RH -->

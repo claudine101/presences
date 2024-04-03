@@ -53,9 +53,9 @@
 
               <span style="margin-right: 15px">
                 <div class="col-sm-3" style="float:right;">
-                  <a href="<?= base_url('administration/Partie_politique/ajouter') ?>" style="width: 100px;" class='btn btn-primary btn-sm float-right'>
+                  <a href="<?= base_url('ihm/Postes/ajouter') ?>" style="width: 100px;" class='btn btn-primary btn-sm float-right'>
                     <i class="nav-icon fas fa-plus"></i>
-                    Nouveau 
+                    Nouveau
                   </a>
                 </div>
 
@@ -87,9 +87,11 @@
                   <table id='reponse1' class="table table-bordered table-striped table-hover table-condensed" style="width: 100%;">
                     <thead>
                       <tr>
-                        <th data-orderable="false">No</th>
+                      <th data-orderable="false">No</th>
                         <th>Description</th>
                         <th data-orderable="false">Options</th>
+
+
                       </tr>
                     </thead>
                   </table>
@@ -155,7 +157,7 @@
   /* "oreder":[], */
   "order":[[0,'DESC']],
   "ajax":{
-  url: "<?php echo base_url('administration/Partie_politique/listing/'); ?>",
+  url: "<?php echo base_url('ihm/Postes/listing/'); ?>",
   type:"POST",
   data : { },
   beforeSend : function() {

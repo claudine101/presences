@@ -44,7 +44,7 @@ class Utilisateurs extends CI_Controller
 			$limit = 'LIMIT ' . $_POST["start"] . ',' . $_POST["length"];
 		}
 		$order_by = '';
-		$order_column = array('USERNAME', 'ID_PROFIL', 'IS_ACTIVE');
+		$order_column = array('ID_UTILISATEUR','USERNAME', 'ID_PROFIL', 'IS_ACTIVE');
 		$order_by = isset($_POST['order']) ? ' ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY USERNAME,PRENOM ,NUMERO_CNI ASC';
 		$search = !empty($_POST['search']['value']) ? ("AND USERNAME LIKE'%$var_search%' OR PRENOM LIKE '%$var_search%' OR NOM LIKE '%$var_search' OR NUMERO_CNI LIKE '%$var_search' ") : '';
 		$critaire = '';

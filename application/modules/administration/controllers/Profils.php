@@ -42,7 +42,7 @@ class  Profils extends CI_Controller
 
 		$order_by = '';
 
-		$order_column = array('STATUT');
+		$order_column = array('ID_PROFIL','STATUT');
 
 		$order_by = isset($_POST['order']) ? ' ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY STATUT DESC';
 
@@ -55,6 +55,7 @@ class  Profils extends CI_Controller
 
 		$fetch_infraction = $this->Modele->datatable($query_secondaire);
 		$data = array();
+		$u=0;
 		foreach ($fetch_infraction as $row) {
 			$option = '<div class="dropdown ">
 			<a class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -86,6 +87,8 @@ class  Profils extends CI_Controller
 			</div>
 			</div>";
 			$sub_array = array();
+			$u=++$u;
+			$sub_array[]=$u;
 			$sub_array[] = $row->STATUT;
 			$sub_array[] = $option;
 			$data[] = $sub_array;
