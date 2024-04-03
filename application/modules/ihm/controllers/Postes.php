@@ -157,7 +157,7 @@ class  Postes extends CI_Controller
 				'DESCRIPTION' => $this->input->post('DESCRIPTION'),
 			);
 			$this->Modele->update('Postes', array('ID_POSTE ' => $id), $data);
-			$datas['message'] = '<div class="alert alert-success text-center" id="message">La modification du menu est faite avec succès</div>';
+			$datas['message'] = '<div class="alert alert-success text-center" id="message">La modification du poste est faite avec succès</div>';
 			$this->session->set_flashdata($datas);
 			redirect(base_url('ihm/Postes/'));
 		}
@@ -169,7 +169,7 @@ class  Postes extends CI_Controller
 		$criteres['ID_POSTE '] = $this->uri->segment(4);
 		$data['rows'] = $this->Modele->getOne($table, $criteres);
 		$this->Modele->delete($table, $criteres);
-		$data['message'] = '<div class="alert alert-success text-center" id="message">L"Element est supprimé avec succès</div>';
+		$data['message'] = '<div class="alert alert-success text-center" id="message">L\'element est supprimé avec succès</div>';
 		$this->session->set_flashdata($data);
 		redirect(base_url('ihm/Postes/'));
 	}

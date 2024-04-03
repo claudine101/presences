@@ -221,7 +221,7 @@ class Utilisateurs extends CI_Controller
 		$data['rows'] = $this->Modele->getOne($table, $criteres);
 		$this->Modele->delete($table, $criteres);
 
-		$data['message'] = '<div class="alert alert-success text-center" id="message">Le Citoyen  est supprimé avec succès</div>';
+		$data['message'] = '<div class="alert alert-success text-center" id="message">L\'utilisateur  est supprimé avec succès</div>';
 		$this->session->set_flashdata($data);
 		redirect(base_url('administration/Utilisateurs/'));
 	}

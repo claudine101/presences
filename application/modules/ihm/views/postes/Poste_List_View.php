@@ -74,22 +74,16 @@
           <div class="col-md-12 col-xl-12 grid-margin stretch-card">
 
             <div class="card">
-
-
-
-
-
               <div class="card-body">
-
                 <div class="col-md-12">
                   <?= $this->session->flashdata('message'); ?>
 
                   <table id='reponse1' class="table table-bordered table-striped table-hover table-condensed" style="width: 100%;">
                     <thead>
                       <tr>
-                      <th data-orderable="false">No</th>
-                        <th>Description</th>
-                        <th data-orderable="false">Options</th>
+                      <th data-orderable="false">NO</th>
+                        <th>DESCRIPTION</th>
+                        <th data-orderable="false">OPTIONS</th>
 
 
                       </tr>

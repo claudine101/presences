@@ -17,7 +17,7 @@
               <h4 class="m-0"><?=$title?></h4>
             </div><!-- /.col -->
             <div class="col-sm-3">
-              <a href="<?=base_url('administration/Partie_politique/index')?>" class='btn btn-primary float-right'>
+              <a href="<?=base_url('ihm/Partie_politique/index')?>" class='btn btn-primary float-right'>
                 <i class="nav-icon fas fa-list ul"></i>
                 Liste
               </a>
@@ -35,7 +35,7 @@
 
               <div class="col-md-12">
 
-                <form  name="myform" method="post" class="form-horizontal" action="<?= base_url('administration/Partie_politique/add'); ?>" >
+                <form  name="myform" method="post" class="form-horizontal" action="<?= base_url('ihm/Partie_politique/add'); ?>" >
 
                  <div class="row">
                   <div class="col-md-6">

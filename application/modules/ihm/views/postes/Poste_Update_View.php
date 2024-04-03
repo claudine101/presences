@@ -18,7 +18,7 @@
               <h4 class="m-0"><?=$title?></h4>
             </div><!-- /.col -->
             <div class="col-sm-3">
-              <a href="<?=base_url('PSR/Profil/index')?>" class='btn btn-primary float-right'>
+              <a href="<?=base_url('ihm/Postes/index')?>" class='btn btn-primary float-right'>
                 <i class="nav-icon fas fa-list ul"></i>
                 Liste
               </a>
@@ -42,7 +42,7 @@
                   <div class="col-md-6">
 
                     <input type="hidden" class="form-control" name="ID_POSTE" value="<?=$data['ID_POSTE']?>" >
-                    <label for="FName">Statut</label>
+                    <label for="FName">Description</label>
                     <input type="text" name="DESCRIPTION" value="<?=$data['DESCRIPTION'] ?>"  id="DESCRIPTION" class="form-control">
 
                     <?php echo form_error('DESCRIPTION', '<div class="text-danger">', '</div>'); ?> 

@@ -67,7 +67,7 @@ class  Partie_politique extends CI_Controller
 
 			$option .= "<li><a hre='#' data-toggle='modal'
 			data-target='#mydelete" . $row->ID_PARTIE_POLITIQUE  . "'><font color='red'>&nbsp;&nbsp;Supprimer</font></a></li>";
-			$option .= "<li><a class='btn-md' href='" . base_url('administration/Partie_politique/getOne/' . $row->ID_PARTIE_POLITIQUE ) . "'><label class='text-info'>&nbsp;&nbsp;Modifier</label></a></li>";
+			$option .= "<li><a class='btn-md' href='" . base_url('ihm/Partie_politique/getOne/' . $row->ID_PARTIE_POLITIQUE ) . "'><label class='text-info'>&nbsp;&nbsp;Modifier</label></a></li>";
 			$option .= " </ul>
 			</div>
 			<div class='modal fade' id='mydelete" .  $row->ID_PARTIE_POLITIQUE  . "'>
@@ -79,7 +79,7 @@ class  Partie_politique extends CI_Controller
 			</div>
 
 			<div class='modal-footer'>
-			<a class='btn btn-danger btn-md' href='" . base_url('administration/Partie_politique/delete/' . $row->ID_PARTIE_POLITIQUE ) . "'>Supprimer</a>
+			<a class='btn btn-danger btn-md' href='" . base_url('ihm/Partie_politique/delete/' . $row->ID_PARTIE_POLITIQUE ) . "'>Supprimer</a>
 			<button class='btn btn-primary btn-md' data-dismiss='modal'>Quitter</button>
 			</div>
 
@@ -132,7 +132,7 @@ class  Partie_politique extends CI_Controller
 			$this->Modele->create($table, $data_insert);
 			$data['message'] = '<div class="alert alert-success text-center" id="message">' . "L'ajout se faite avec succès" . '</div>';
 			$this->session->set_flashdata($data);
-			redirect(base_url('administration/Partie_politique/'));
+			redirect(base_url('ihm/Partie_politique/'));
 		}
 	}
 
@@ -157,9 +157,9 @@ class  Partie_politique extends CI_Controller
 				'DESCRPTION' => $this->input->post('DESCRPTION'),
 			);
 			$this->Modele->update('partie_politiques', array('ID_PARTIE_POLITIQUE ' => $id), $data);
-			$datas['message'] = '<div class="alert alert-success text-center" id="message">La modification du menu est faite avec succès</div>';
+			$datas['message'] = '<div class="alert alert-success text-center" id="message">La modification du parti politique est faite avec succès</div>';
 			$this->session->set_flashdata($datas);
-			redirect(base_url('administration/Partie_politique/'));
+			redirect(base_url('ihm/Partie_politique/'));
 		}
 	}
 
@@ -169,8 +169,8 @@ class  Partie_politique extends CI_Controller
 		$criteres['ID_PARTIE_POLITIQUE '] = $this->uri->segment(4);
 		$data['rows'] = $this->Modele->getOne($table, $criteres);
 		$this->Modele->delete($table, $criteres);
-		$data['message'] = '<div class="alert alert-success text-center" id="message">L"Element est supprimé avec succès</div>';
+		$data['message'] = '<div class="alert alert-success text-center" id="message">L\'element est supprimé avec succès</div>';
 		$this->session->set_flashdata($data);
-		redirect(base_url('administration/Partie_politique/'));
+		redirect(base_url('ihm/Partie_politique/'));
 	}
 }

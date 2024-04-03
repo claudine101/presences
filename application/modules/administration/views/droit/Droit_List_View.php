@@ -84,8 +84,8 @@
                     <table id='reponse1' class="table table-bordered table-striped table-hover table-condensed" style="width: 100%;">
                       <thead>
                         <tr>
-                         <th data-orderable="false">No</th>
-                          <th>Profil</th>
+                         <th data-orderable="false">NO</th>
+                          <th>PROFIL</th>
                           <th>IHM</th>
                           <th data-orderable="false">Options</th>
                         </tr>

@@ -39,7 +39,7 @@
 
                  <div class="row">
                   <div class="col-md-6">
-                    <label for="FName">Nouvelle Statut</label>
+                    <label for="FName">Description</label>
                     <input type="text" name="STATUT" autocomplete="off" id="STATUT" value="<?= set_value('STATUT') ?>"  class="form-control">
                     <?php echo form_error('STATUT', '<div class="text-danger">', '</div>'); ?> 
                     <div class="col-md-6" style="margin-top:31px;">

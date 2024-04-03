@@ -92,10 +92,10 @@
                     <table id='reponse1' class="table table-bordered table-striped table-hover table-condensed" style="width: 100%;">
                       <thead>
                         <tr>
-                          <th  data-orderable="false">No</th>
-                          <th>Nom utilisateur</th>
-                          <th>Profil</th>
-                          <th>Statut</th>
+                          <th  data-orderable="false">NO</th>
+                          <th>NOM UTILISATEUR</th>
+                          <th>PROFIL</th>
+                          <th>STATUT</th>
                           <th data-orderable="false">OPTIONS</th>
                         </tr>
                       </thead>

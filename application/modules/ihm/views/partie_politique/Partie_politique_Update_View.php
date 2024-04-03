@@ -17,7 +17,7 @@
               <h4 class="m-0"><?=$title?></h4>
             </div><!-- /.col -->
             <div class="col-sm-3">
-              <a href="<?=base_url('PSR/Partie_politique/index')?>" class='btn btn-primary float-right'>
+              <a href="<?=base_url('ihm/Partie_politique/index')?>" class='btn btn-primary float-right'>
                 <i class="nav-icon fas fa-list ul"></i>
                 Liste
               </a>
@@ -35,13 +35,13 @@
 
               <div class="col-md-12">
 
-               <form  name="myform" method="post" class="form-horizontal" action="<?= base_url('administration/Partie_politique/update'); ?>" >
+               <form  name="myform" method="post" class="form-horizontal" action="<?= base_url('ihm/Partie_politique/update'); ?>" >
 
                 <div class="row">
                   <div class="col-md-6">
 
                     <input type="hidden" class="form-control" name="ID_PARTIE_POLITIQUE" value="<?=$data['ID_PARTIE_POLITIQUE']?>" >
-                    <label for="FName">Statut</label>
+                    <label for="FName">Description</label>
                     <input type="text" name="DESCRPTION" value="<?=$data['DESCRPTION'] ?>"  id="DESCRPTION" class="form-control">
 
                     <?php echo form_error('DESCRPTION', '<div class="text-danger">', '</div>'); ?> 

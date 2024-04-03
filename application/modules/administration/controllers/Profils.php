@@ -104,7 +104,7 @@ class  Profils extends CI_Controller
 
 	function ajouter()
 	{
-		$data['title'] = 'Nouvelle Profil';
+		$data['title'] = 'Nouveau Profil';
 		$this->load->view('profils/Profil_Add_View', $data);
 	}
 	function validate_name($name)
@@ -139,7 +139,7 @@ class  Profils extends CI_Controller
 	function getOne($id)
 	{
 		$data['data'] = $this->Modele->getOne('profils', array('ID_PROFIL' => $id));
-		$data['title'] = 'Modification du status';
+		$data['title'] = 'Modification du profil';
 		$this->load->view('profils/Profil_Update_View', $data);
 	}
 
@@ -157,7 +157,7 @@ class  Profils extends CI_Controller
 				'STATUT' => $this->input->post('STATUT'),
 			);
 			$this->Modele->update('profils', array('ID_PROFIL' => $id), $data);
-			$datas['message'] = '<div class="alert alert-success text-center" id="message">La modification du menu est faite avec succès</div>';
+			$datas['message'] = '<div class="alert alert-success text-center" id="message">La modification du profil est faite avec succès</div>';
 			$this->session->set_flashdata($datas);
 			redirect(base_url('administration/Profils/'));
 		}
@@ -169,7 +169,7 @@ class  Profils extends CI_Controller
 		$criteres['ID_PROFIL'] = $this->uri->segment(4);
 		$data['rows'] = $this->Modele->getOne($table, $criteres);
 		$this->Modele->delete($table, $criteres);
-		$data['message'] = '<div class="alert alert-success text-center" id="message">L"Element est supprimé avec succès</div>';
+		$data['message'] = '<div class="alert alert-success text-center" id="message">L\'element est supprimé avec succès</div>';
 		$this->session->set_flashdata($data);
 		redirect(base_url('administration/Profils'));
 	}

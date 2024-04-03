@@ -20,7 +20,7 @@
             </div><!-- /.col -->
 
             <div class="col-sm-3">
-              <a href="<?= base_url('administration/Utilisateur/index') ?>" class='btn btn-primary float-right'>
+              <a href="<?= base_url('administration/Utilisateurs/index') ?>" class='btn btn-primary float-right'>
                 <i class="nav-icon fas fa-list ul"></i>
                 Liste
               </a>
@@ -42,7 +42,7 @@
                   <div class="row">
                     <div class="col-md-6">
                       <input type="hidden" name="ID_UTILISATEUR" autocomplete="off" id="ID_UTILISATEUR" value="<?= $data['ID_UTILISATEUR'] ?>" class="form-control">
-                      <label for="FName">Nom</label>
+                      <label for="FName">Nom de l'utilisateur</label>
                       <input type="text" name="USERNAME" autocomplete="off" id="USERNAME" value="<?= $data['USERNAME'] ?>" class="form-control">
                       <?php echo form_error('USERNAME', '<div class="text-danger">', '</div>'); ?>
                     </div>

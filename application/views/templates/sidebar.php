@@ -179,7 +179,7 @@
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Utilisateurs' || $this->router->class == 'Partie_politique' || $this->router->class == 'Profils' || $this->router->class == 'Droit') echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Utilisateurs'  || $this->router->class == 'Profils' || $this->router->class == 'Droit') echo 'active'; ?>">
               <i class="nav-icon fa fa-user-md"></i>
               <p>
                 Administration
@@ -200,12 +200,7 @@
                 </a>
               </li>
 
-              <li class="nav-item">
-                <a href="<?= base_url('administration/Partie_politique/index') ?>" class="nav-link <?php if ($this->router->class == 'Partie_politique') echo 'active'; ?>">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Partie politiques</p>
-                </a>
-              </li>
+             
             
                 <li class="nav-item">
                   <a href="<?= base_url('administration/Droit/index') ?>" class="nav-link <?php if ($this->router->class == 'Droit') echo 'active'; ?>">
@@ -622,7 +617,7 @@
 <!-- IHM -->
 
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes') echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes'||$this->router->class =='Partie_politique') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
               <p>
                 IHM
@@ -630,6 +625,12 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="<?= base_url('ihm/Partie_politique/index') ?>" class="nav-link <?php if ($this->router->class == 'Partie_politique') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Partie politiques</p>
+                </a>
+              </li>
               <li class="nav-item">
                 <a href="<?= base_url('ihm/Postes/index') ?>" class="nav-link <?php if ($this->router->class == 'Postes') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
