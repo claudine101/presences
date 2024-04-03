@@ -617,7 +617,7 @@
 <!-- IHM -->
 
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes'||$this->router->class =='Partie_politique') echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes'||$this->router->class =='Partie_politique'||$this->router->class =='Provinces') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
               <p>
                 IHM
@@ -635,6 +635,12 @@
                 <a href="<?= base_url('ihm/Postes/index') ?>" class="nav-link <?php if ($this->router->class == 'Postes') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Postes </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('ihm/Provinces/index') ?>" class="nav-link <?php if ($this->router->class == 'Provinces') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Provinces </p>
                 </a>
               </li>
 
