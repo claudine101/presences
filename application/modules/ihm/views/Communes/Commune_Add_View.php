@@ -17,7 +17,7 @@
               <h4 class="m-0"><?=$title?></h4>
             </div><!-- /.col -->
             <div class="col-sm-3">
-              <a href="<?=base_url('ihm/Provinces/index')?>" class='btn btn-primary float-right'>
+              <a href="<?=base_url('ihm/Communes/index')?>" class='btn btn-primary float-right'>
                 <i class="nav-icon fas fa-list ul"></i>
                 Liste
               </a>
@@ -35,27 +35,38 @@
 
               <div class="col-md-12">
 
-                <form  name="myform" method="post" class="form-horizontal" action="<?= base_url('ihm/Provinces/add'); ?>" >
+                <form  name="myform" method="post" class="form-horizontal" action="<?= base_url('ihm/Communes/add'); ?>" >
 
-                 
-
+                
                 <div class="row">
+                
+                
+                      <div class="col-md-6">
+                    <label for="FName">Provinces</label>
+                    <select class="form-control input-sm" name="PROVINCE_ID" id="PROVINCE_ID" onchange='liste()'>
+                          <option value="">Selectionner un province</option>
+                          <?php foreach ($provinces as $key) { ?>
+                            <option value="<?php echo $key['PROVINCE_ID'] ?>"><?php echo  $key['PROVINCE_NAME'] ?></option>
+                          <?php } ?>
+                        </select>
+                    <?php echo form_error('PROVINCE_ID', '<div class="text-danger">', '</div>'); ?> 
+                  </div>
                   <div class="col-md-6">
                     <label for="FName">Description</label>
-                    <input type="text" name="PROVINCE_NAME" autocomplete="off" id="PROVINCE_NAME" value="<?= set_value('PROVINCE_NAME') ?>"  class="form-control">
-                    <?php echo form_error('PROVINCE_NAME', '<div class="text-danger">', '</div>'); ?> 
+                    <input type="text" name="COMMUNE_NAME" autocomplete="off" id="COMMUNE_NAME" value="<?= set_value('COMMUNE_NAME') ?>"  class="form-control">
+                    <?php echo form_error('COMMUNE_NAME', '<div class="text-danger">', '</div>'); ?> 
                   </div>
                   <div class="col-md-6">
                     <label for="FName">Latitude</label>
-                    <input type="number" name="PROVINCE_LATITUDE" autocomplete="off" id="PROVINCE_LATITUDE" value="<?= set_value('PROVINCE_LATITUDE') ?>"  class="form-control">
-                    <?php echo form_error('PROVINCE_LATITUDE', '<div class="text-danger">', '</div>'); ?> 
+                    <input type="number" name="COMMUNE_LATITUDE" autocomplete="off" id="COMMUNE_LATITUDE" value="<?= set_value('COMMUNE_LATITUDE') ?>"  class="form-control">
+                    <?php echo form_error('COMMUNE_LATITUDE', '<div class="text-danger">', '</div>'); ?> 
                   </div>
                   <div class="col-md-6">
                     <label for="FName">Longitude</label>
-                    <input type="number" name="PROVINCE_LONGITUDE" autocomplete="off" id="PROVINCE_LONGITUDE" value="<?= set_value('PROVINCE_LONGITUDE') ?>"  class="form-control">
-                    <?php echo form_error('PROVINCE_LONGITUDE', '<div class="text-danger">', '</div>'); ?> 
+                    <input type="number" name="COMMUNE_LONGITUDE" autocomplete="off" id="COMMUNE_LONGITUDE" value="<?= set_value('COMMUNE_LONGITUDE') ?>"  class="form-control">
+                    <?php echo form_error('COMMUNE_LONGITUDE', '<div class="text-danger">', '</div>'); ?> 
                   </div>
-                  <div class="col-md-6" style="margin-top:31px;">
+                  <div class="col-md-12" style="margin-top:31px;">
                     <button type="submit" style="float: right;" class="btn btn-primary"><span class="fas fa-save"></span> Enregistrer</button>
                     </div>
 
