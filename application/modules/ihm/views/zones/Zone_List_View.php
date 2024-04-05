@@ -42,18 +42,44 @@
       <!-- Content Header (Page header) -->
       <div class="content-header">
         <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-8">
-              <h4 class="m-0"><?= $title ?></h4>
+        <div class="row mb-2">
+            <div class="col-sm-2">
+              <h4 class="m-0"><?=$title?></h4>
             </div><!-- /.col -->
+            <div class="col-sm-8">
+              <div class="row">
+                      <div class="form-group col-md-6">
+                      <label id="Ftype" for="Ftype" style="color:white">Province</label>
+                      <select required class="form-control form-control-sm" name="PROVINCE_ID" id="PROVINCE_ID" onchange="onSelected();">
+                        <option value="">---Sélectionner---</option>
+                        <?php
+                        foreach ($provinces as $value) {
+                        ?>
+                          <option value="<?= $value['PROVINCE_ID'] ?>"><?= $value['PROVINCE_NAME'] ?></option>
+                        <?php
+                        }
+                        ?>
+                      </select>
+                      <!-- <div><font color="red" id="error_province"></font></div>  -->
+                      <?php echo form_error('PROVINCE_ID', '<div class="text-danger">', '</div>'); ?>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label id="Ftype" for="Ftype" style="color:white">Commune</label>
+                      <select required class="form-control form-control-sm" name="COMMUNE_ID" id="COMMUNE_ID" onchange="onSelected_com();">
+                        <option value="">---Sélectionner---</option>
+                      </select>
+                      <!-- <div><font color="red" id="error_commune"></font></div> -->
+                      <?php echo form_error('COMMUNE_ID', '<div class="text-danger">', '</div>'); ?>
+                    </div>
 
-
-            <div class="col-sm-4 text-right">
-
-
+                    
+                    
+                    </div>
+            </div><!-- /.col -->
+            <div class="col-sm-2 text-right">
               <span style="margin-right: 15px">
                 <div class="col-sm-3" style="float:right;">
-                  <a href="<?= base_url('ihm/Provinces/ajouter') ?>" style="width: 100px;" class='btn btn-primary btn-sm float-right'>
+                  <a href="<?=base_url('ihm/Zones/ajouter')?>" style="width: 100px;" class='btn btn-primary btn-sm float-right'>
                     <i class="nav-icon fas fa-plus"></i>
                     Nouveau
                   </a>
@@ -82,8 +108,9 @@
                     <thead>
                       <tr>
                       <th data-orderable="false">NO</th>
+                        <th>ZONE</th>
+                        <th>COMMUNE</th>
                         <th>PROVINCE</th>
-                        <th>CODE PAYS</th>
                         <th>LATITUDE</th>
                         <th>LONGITUDE</th>
                         <th data-orderable="false">OPTIONS</th>
@@ -154,9 +181,13 @@
   /* "oreder":[], */
   "order":[[0,'DESC']],
   "ajax":{
-  url: "<?php echo base_url('ihm/Provinces/listing/'); ?>",
+  url: "<?php echo base_url('ihm/Zones/listing/'); ?>",
   type:"POST",
-  data : { },
+  data : {
+    PROVINCE_ID: $('#PROVINCE_ID').val(),
+    COMMUNE_ID: $('#COMMUNE_ID').val(),
+
+  },
   beforeSend : function() {
   }
   },
@@ -191,7 +222,31 @@
   }
   }
   });
-
-
+  }
+  function onSelected()
+  {
+   liste();
+    get_communes();
+  }
+  function onSelected_com()
+  {
+    liste();
+    /* get_zones(); */
+  }
+  function get_communes(){
+    var PROVINCE_ID = $('#PROVINCE_ID').val();
+    if (PROVINCE_ID == '') {
+      $('#COMMUNE_ID').html('<option value="">---Sélectionner---</option>');
+    }
+    else { 
+      $.ajax({
+        url: "<?= base_url() ?>ihm/Provinces/get_communes/" + PROVINCE_ID,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data) {
+          $('#COMMUNE_ID').html(data);
+        }
+      });
+    }
   }
   </script>

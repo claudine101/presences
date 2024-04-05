@@ -47,7 +47,6 @@
                       <select class="form-control" name="PROVINCE_ID" id="PROVINCE_ID" >
                         <option value="">---Sélectionner---</option>
                         <?php
-
                         foreach ($provinces as $value) {
 
                           $selected = "";

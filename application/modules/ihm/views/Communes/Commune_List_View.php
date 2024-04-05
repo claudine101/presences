@@ -88,7 +88,7 @@
                     <thead>
                       <tr>
                       <th data-orderable="false">NO</th>
-                        <th>DESCRIPTION</th>
+                        <th>COMMUNE</th>
                         <th>PROVINCE</th>
                         <th>LATITUDE</th>
                         <th>LONGITUDE</th>

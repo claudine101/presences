@@ -182,4 +182,39 @@ class  Provinces extends CI_Controller
 		$this->session->set_flashdata($data);
 		redirect(base_url('ihm/Provinces/'));
 	}
+
+	function get_communes($ID_PROVINCE=0)
+	{
+		$communes=$this->Model->getRequete('SELECT COMMUNE_ID,COMMUNE_NAME FROM syst_communes WHERE PROVINCE_ID='.$ID_PROVINCE.' ORDER BY COMMUNE_NAME ASC');
+		$html='<option value="">---selectionner---</option>';
+		foreach ($communes as $key)
+		{
+			$html.='<option value="'.$key['COMMUNE_ID'].'">'.$key['COMMUNE_NAME'].'</option>';
+		}
+		echo json_encode($html);
+	}
+
+	function get_zones($ID_COMMUNE=0)
+	{
+		$zones=$this->Model->getRequete('SELECT ZONE_ID,ZONE_NAME FROM syst_zones WHERE COMMUNE_ID='.$ID_COMMUNE.' ORDER BY ZONE_NAME ASC');
+		$html='<option value="">---selectionner---</option>';
+		foreach ($zones as $key)
+		{
+			$html.='<option value="'.$key['ZONE_ID'].'">'.$key['ZONE_NAME'].'</option>';
+		}
+		echo json_encode($html);
+	}
+
+	function get_collines($ID_ZONE=0)
+	{
+		$collines=$this->Model->getRequete('SELECT COLLINE_ID,COLLINE_NAME FROM syst_collines WHERE ZONE_ID='.$ID_ZONE.' ORDER BY COLLINE_NAME ASC');
+		$html='<option value="">---selectionner---</option>';
+		foreach ($collines as $key)
+		{
+			$html.='<option value="'.$key['COLLINE_ID'].'">'.$key['COLLINE_NAME'].'</option>';
+		}
+		echo json_encode($html);
+	}
+
+
 }

@@ -617,7 +617,7 @@
 <!-- IHM -->
 
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes'||$this->router->class =='Partie_politique'||$this->router->class =='Provinces'||$this->router->class =='Communes' ) echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes'||$this->router->class =='Partie_politique'||$this->router->class =='Provinces'||$this->router->class =='Communes'||$this->router->class =='Zones') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
               <p>
                 IHM
@@ -647,6 +647,12 @@
                 <a href="<?= base_url('ihm/Communes/index') ?>" class="nav-link <?php if ($this->router->class == 'Communes') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Communes </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('ihm/Zones/index') ?>" class="nav-link <?php if ($this->router->class == 'Zones') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Zones </p>
                 </a>
               </li>
 
