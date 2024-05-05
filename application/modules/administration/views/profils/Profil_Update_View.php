@@ -15,7 +15,7 @@
           <div class="row mb-2">
             <div class="col-sm-9">
 
-              <h4 class="m-0"><?=$title?></h4>
+              <h4 class="m-0"style="color:blue"><?=$title?></h4>
             </div><!-- /.col -->
             <div class="col-sm-3">
               <a href="<?=base_url('administration/Profils/index')?>" class='btn btn-primary float-right'>
@@ -43,9 +43,9 @@
 
                     <input type="hidden" class="form-control" name="ID_PROFIL" value="<?=$data['ID_PROFIL']?>" >
                     <label for="FName">Description</label>
-                    <input type="text" name="STATUT" value="<?=$data['STATUT'] ?>"  id="STATUT" class="form-control">
+                    <input type="text" name="DESCRIPTION" value="<?=$data['DESCRIPTION'] ?>"  id="DESCRIPTION" class="form-control">
 
-                    <?php echo form_error('STATUT', '<div class="text-danger">', '</div>'); ?> 
+                    <?php echo form_error('DESCRIPTION', '<div class="text-danger">', '</div>'); ?> 
 
                   </div>
 

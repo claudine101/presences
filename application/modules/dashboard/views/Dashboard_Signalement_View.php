@@ -66,7 +66,7 @@
             <div class="container-fluid">
               <div class="col-sm-6 p-md-0">
                 <div class="welcome-text">
-                <h4 style='color:#FFFFFF;margin-left: 20px'><?=$title?></h4>
+                <h4 style='color:#FFFFFF;margin-left: 20px'style="color:blue"><?=$title?></h4>
 
                 </div>
               </div>

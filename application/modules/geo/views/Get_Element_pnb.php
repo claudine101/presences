@@ -377,7 +377,7 @@ if (current_val[5]==0) {
 
 
 
-/* poste PNB*/
+/* poste RECECA-INKINGI*/
 
 
 var data_poste = data_poste.split("$");

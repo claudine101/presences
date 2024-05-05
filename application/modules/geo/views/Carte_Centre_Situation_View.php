@@ -634,7 +634,7 @@
 
                 <div class="row">
                 <div class="col-sm-12">
-                  <label>Elément de la PNB</label>
+                  <label>Elément de la RECECA-INKINGI</label>
                   <form id="form_data">
                   <div class="input-group">
 

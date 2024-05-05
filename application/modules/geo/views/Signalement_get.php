@@ -116,7 +116,7 @@
 
 <br>
 <small>Source: <a href="#link to source">MediaBox</a></small>
-    <!-- <button type="button" class="btn btn-primary form-control"><a href="<?php echo base_url();?>/PSR/Psr_elements/index" style="color:#fff"> Element PNB >></a> </button> -->
+    <!-- <button type="button" class="btn btn-primary form-control"><a href="<?php echo base_url();?>/PSR/Psr_elements/index" style="color:#fff"> Element RECECA-INKINGI >></a> </button> -->
  
 </div>
 

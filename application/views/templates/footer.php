@@ -1,6 +1,6 @@
 <!-- /.content-wrapper -->
 <footer class="main-footer">
-  <strong>Copy right &copy; <?=date('Y')?> <a href="http://wasili.bi">PNB</a>.</strong>
+  <strong>Copy right &copy; <?=date('Y')?> <a href="http://wasili.bi">RECECA-INKINGI</a>.</strong>
   Tous droits réservés.
   <div class="float-right d-none d-sm-inline-block">
     <b>Version</b> 1.0

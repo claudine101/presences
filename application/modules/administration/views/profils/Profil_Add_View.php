@@ -14,7 +14,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-9">
-              <h4 class="m-0"><?=$title?></h4>
+              <h4 class="m-0"style="color:blue"><?=$title?></h4>
             </div><!-- /.col -->
             <div class="col-sm-3">
               <a href="<?=base_url('administration/Profils/index')?>" class='btn btn-primary float-right'>
@@ -40,8 +40,8 @@
                  <div class="row">
                   <div class="col-md-6">
                     <label for="FName">Description</label>
-                    <input type="text" name="STATUT" autocomplete="off" id="STATUT" value="<?= set_value('STATUT') ?>"  class="form-control">
-                    <?php echo form_error('STATUT', '<div class="text-danger">', '</div>'); ?> 
+                    <input type="text" name="DESCRIPTION" autocomplete="off" id="DESCRIPTION" value="<?= set_value('DESCRIPTION') ?>"  class="form-control">
+                    <?php echo form_error('DESCRIPTION', '<div class="text-danger">', '</div>'); ?> 
                     <div class="col-md-6" style="margin-top:31px;">
                       <button type="submit" style="float: right;" class="btn btn-primary"><span class="fas fa-save"></span> Enregistrer</button>
                     </div>

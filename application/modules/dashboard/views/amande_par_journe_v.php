@@ -209,7 +209,7 @@
                               text: "MEDIABOX"
                     },
                     series: [{
-                              name: 'Fonctionnaire PNB',
+                              name: 'Fonctionnaire RECECA-INKINGI',
                               color: '#1E90FF',
                               data: [<?= $donne ?>]
                     }]

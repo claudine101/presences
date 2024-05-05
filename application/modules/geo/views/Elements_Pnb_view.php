@@ -281,7 +281,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-8">
-             <h4 class="m-0"><b>Postes d'affectation des fonctionnaires de la PNB</b></h4>
+             <h4 class="m-0"><b>Postes d'affectation des fonctionnaires de la RECECA-INKINGI</b></h4>
            </div><!-- /.col -->
 
            
@@ -392,15 +392,15 @@
                    
                       <tr>
                        <td><img style="margin-top: 25px; height: 40px;" src="https://a.tiles.mapbox.com/v4/marker/pin-m-police+000.png?access_token=pk.eyJ1IjoibWFydGlubWVkaWFib3giLCJhIjoiY2s4OXc1NjAxMDRybzNobTE2dmo1a3ZndCJ9.W9Cm7Pjp25FQ00bII9Be6Q"></label></td>
-                       <td>&emsp;<input type="checkbox" checked  name="opt3"><b style="color:#000;font-size: 15px"> Poste d'affectation PNB (<a href="#" onclick="getincident(3)" id="lieux"><?=number_format($lieux,0,',',' ')?></a>) </b></td>
+                       <td>&emsp;<input type="checkbox" checked  name="opt3"><b style="color:#000;font-size: 15px"> Poste d'affectation RECECA-INKINGI (<a href="#" onclick="getincident(3)" id="lieux"><?=number_format($lieux,0,',',' ')?></a>) </b></td>
                        </tr>
                        <tr>
                        <td><label style='background:red;width: 16px;height: 15px;border-radius: 10px;'></label></td>
-                       <td>&emsp;<input type="checkbox" checked  name="opt2"> Fonctionnaires de la PNB non actif (<a href="#" onclick="getincident(1)" id="nonActif"><?=number_format($nonActif,0,',',' ')?></a>)</td>
+                       <td>&emsp;<input type="checkbox" checked  name="opt2"> Fonctionnaires de la RECECA-INKINGI non actif (<a href="#" onclick="getincident(1)" id="nonActif"><?=number_format($nonActif,0,',',' ')?></a>)</td>
                        </tr>
                        <tr>
                        <td><label style='background:#30d930;width: 16px;height: 15px;border-radius: 10px;'></label></td>
-                       <td>&emsp;<input type="checkbox" checked  name="opt1"> Fonctionnaires de la PNB Actif 
+                       <td>&emsp;<input type="checkbox" checked  name="opt1"> Fonctionnaires de la RECECA-INKINGI Actif 
                          (<a href="#" onclick="getincident(2)" id="actif"><?=number_format($actif,0,',',' ')?></a>)</td>
                        </tr>
                              
@@ -414,7 +414,7 @@
 
 
               <br>
-                  <button type="button" class="btn btn-primary form-control"><a href="<?php echo base_url();?>/PSR/Psr_elements/index" style="color:#fff"> Fonctionnaires de la PNB >></a> </button>
+                  <button type="button" class="btn btn-primary form-control"><a href="<?php echo base_url();?>/PSR/Psr_elements/index" style="color:#fff"> Fonctionnaires de la RECECA-INKINGI >></a> </button>
                
               </div>
 

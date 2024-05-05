@@ -14,7 +14,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-9">
-              <h4 class="m-0"><?=$title?></h4>
+              <h4 class="m-0"style="color:blue"><?=$title?></h4>
             </div><!-- /.col -->
             <div class="col-sm-3">
               <a href="<?=base_url('ihm/Zones/index')?>" class='btn btn-primary float-right'>

@@ -39,7 +39,7 @@ class Amende_percu_journe extends CI_Controller
 
 
 
-    $data['title'] = "Performance des fonctionnaires de la PNB";
+    $data['title'] = "Performance des fonctionnaires de la RECECA-INKINGI";
     $data['donne'] = $donne;
     $data['nombre'] = $nombre;
 

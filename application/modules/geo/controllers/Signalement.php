@@ -38,14 +38,14 @@ class Signalement extends CI_Controller
 
     $string_msg = $user['NOM_PROPRIETAIRE'] . " " . $user['PRENOM_PROPRIETAIRE'] . "\nvotre véhicule " . $user['MARQUE_VOITURE'] . " immatriculé " . $user['NUMERO_PLAQUE'] . " vient d'être verbalisé pour " . str_replace("\n", ",", $infrationsData) . " Totale: " . number_format($montantAmende, 0, ',', " ") . " FBU à payer dans un délais de 72h";
 
-    $sms = $user['NOM_PROPRIETAIRE'] . " " . $user['PRENOM_PROPRIETAIRE'] . ",votre vehicule " . $user['MARQUE_VOITURE'] . " plaque " . $user['NUMERO_PLAQUE'] . " est verbalise par la PNB  amende : " . number_format($montantAmende, 0, ',', " ") . " FBU a payer dans un delais de 72h";
+    $sms = $user['NOM_PROPRIETAIRE'] . " " . $user['PRENOM_PROPRIETAIRE'] . ",votre vehicule " . $user['MARQUE_VOITURE'] . " plaque " . $user['NUMERO_PLAQUE'] . " est verbalise par la RECECA-INKINGI  amende : " . number_format($montantAmende, 0, ',', " ") . " FBU a payer dans un delais de 72h";
 
 
     // $reponse = $this->notifications->send_sms_smpp($user['TELEPHONE'], $sms);
 
     $emailTo =  $user['EMAIL'];
 
-    //$this->notifications->send_mail($emailTo , 'Verbalisation PNB', null, $string_msg, null);
+    //$this->notifications->send_mail($emailTo , 'Verbalisation RECECA-INKINGI', null, $string_msg, null);
 
 
 

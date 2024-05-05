@@ -44,7 +44,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-8">
-              <h4 class="m-0"><?= $title ?></h4>
+              <h4 class="m-0"style="color:blue"><?=$title?></h4>
             </div><!-- /.col -->
 
 

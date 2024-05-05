@@ -44,7 +44,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-8">
-              <h4 class="m-0"><?= $title ?></h4>
+              <h4 class="m-0" style="color:blue"><?= $title ?></h4>
             </div><!-- /.col -->
 
 
@@ -57,7 +57,7 @@
                         <select class="form-control input-sm" name="ID_PROFIL" id="ID_PROFIL" onchange='liste()'>
                           <option value="">Profil...</option>
                           <?php foreach ($profil as $key) { ?>
-                            <option value="<?php echo $key['ID_PROFIL'] ?>"><?php echo  $key['STATUT'] ?></option>
+                            <option value="<?php echo $key['ID_PROFIL'] ?>"><?php echo  $key['DESCRIPTION'] ?></option>
                           <?php } ?>
                         </select>
                       </div>

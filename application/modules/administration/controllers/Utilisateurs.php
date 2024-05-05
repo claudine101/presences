@@ -21,7 +21,7 @@ class Utilisateurs extends CI_Controller
 	function index()
 	{
 		$data['title'] = 'Utilisateurs';
-        $data['profil'] = $this->Modele->getRequete('SELECT ID_PROFIL, STATUT FROM profils WHERE 1 order by STATUT ASC');
+        $data['profil'] = $this->Modele->getRequete('SELECT ID_PROFIL, DESCRIPTION FROM profils WHERE 1 order by DESCRIPTION ASC');
 		$this->load->view('users/Utilisateur_List_View', $data);
 	}
 
@@ -33,7 +33,7 @@ class Utilisateurs extends CI_Controller
         if (!empty($profil)) {
              $condition .=  ' and u.ID_PROFIL= "' . $profil . '"';
         }
-		$query_principal = 'SELECT u.ID_UTILISATEUR, u.USERNAME, u.NOM, u.PRENOM, u.NUMERO_CNI, u.TELEPHONE,p.STATUT,
+		$query_principal = 'SELECT u.ID_UTILISATEUR, u.USERNAME,p.DESCRIPTION,
          u.PASSWORD, u.ID_PROFIL, u.IS_ACTIVE, u.DATE_INSERTION FROM utilisateurs u  JOIN profils p  ON p.ID_PROFIL=u.ID_PROFIL  WHERE 1 '. $condition . ' ';
 
 		$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;
@@ -45,8 +45,8 @@ class Utilisateurs extends CI_Controller
 		}
 		$order_by = '';
 		$order_column = array('ID_UTILISATEUR','USERNAME', 'ID_PROFIL', 'IS_ACTIVE');
-		$order_by = isset($_POST['order']) ? ' ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY USERNAME,PRENOM ,NUMERO_CNI ASC';
-		$search = !empty($_POST['search']['value']) ? ("AND USERNAME LIKE'%$var_search%' OR PRENOM LIKE '%$var_search%' OR NOM LIKE '%$var_search' OR NUMERO_CNI LIKE '%$var_search' ") : '';
+		$order_by = isset($_POST['order']) ? ' ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY USERNAME ASC';
+		$search = !empty($_POST['search']['value']) ? ("AND USERNAME LIKE'%$var_search%'") : '';
 		$critaire = '';
 		$query_secondaire = $query_principal . ' ' . $critaire . ' ' . $search . ' ' . $order_by . '   ' . $limit;
 		$query_filter = $query_principal . ' ' . $critaire . ' ' . $search;
@@ -91,7 +91,7 @@ class Utilisateurs extends CI_Controller
 			<div class='modal-content'>
 
 			<div class='modal-body'>
-			<center><h5><strong>Voulez-vous supprimer?</strong> <br><b style='background-color:prink;color:green;'><i>" . $row->USERNAME . " " . $row->PRENOM . "</i></b></h5></center>
+			<center><h5><strong>Voulez-vous supprimer?</strong> <br><b style='background-color:prink;color:green;'><i>" . $row->USERNAME . " </i></b></h5></center>
 			</div>
 
 			<div class='modal-footer'>
@@ -105,9 +105,8 @@ class Utilisateurs extends CI_Controller
 			$sub_array = array();
             $u=++$u;
 			$sub_array[]=$u;
-			// $sub_array[] = '<table> <tbody><tr><td><img alt="Avtar" style="border-radius:50%;width:30px;height:30px" src="https://app.mediabox.bi/wasiliEate/uploads/personne.png"></td><td>' . $row->USERNAME . ' ' . $row->PRENOM . ' </td></tr></tbody></table>';
 			$sub_array[] = $row->USERNAME;
-			$sub_array[] = $row->STATUT;
+			$sub_array[] = $row->DESCRIPTION;
 			$sub_array[] = $this->get_icon($row->IS_ACTIVE,$row);
 			$sub_array[] = $option;
 			$data[] = $sub_array;
@@ -135,7 +134,7 @@ class Utilisateurs extends CI_Controller
 	function ajouter()
 	{
 
-		$data['profil'] = $this->Modele->getRequete('SELECT ID_PROFIL,STATUT FROM `profils` WHERE 1');
+		$data['profil'] = $this->Modele->getRequete('SELECT ID_PROFIL,DESCRIPTION FROM `profils` WHERE 1');
 		$data['title'] = 'Nouvel utilisateur';
 		$this->load->view('users/Utilisateur_Add_View', $data);
 	}
@@ -151,9 +150,9 @@ class Utilisateurs extends CI_Controller
                }
              
      }
-     function get_icon($statut, $row)
+     function get_icon($DESCRIPTION, $row)
      {
-       $html = ($statut == 1) ? "<a class='btn btn-success btn-sm' id='".$row->USERNAME."'  title='".$row->USERNAME."'  onclick='desactiver(".$row->ID_UTILISATEUR.",this.title,this.id)' style='float:right' ><span class = 'fa fa-check'></span></a>" : "<a class = 'btn btn-danger btn-sm' id='".$row->USERNAME."'  title='".$row->USERNAME."'  onclick='activer(".$row->ID_UTILISATEUR.",this.title,this.id)' style='float:right'><span class = 'fa fa-ban' ></span></a>" ;
+       $html = ($DESCRIPTION == 1) ? "<a class='btn btn-success btn-sm' id='".$row->USERNAME."'  title='".$row->USERNAME."'  onclick='desactiver(".$row->ID_UTILISATEUR.",this.title,this.id)' style='float:right' ><span class = 'fa fa-check'></span></a>" : "<a class = 'btn btn-danger btn-sm' id='".$row->USERNAME."'  title='".$row->USERNAME."'  onclick='activer(".$row->ID_UTILISATEUR.",this.title,this.id)' style='float:right'><span class = 'fa fa-ban' ></span></a>" ;
        return $html;
      }
 
@@ -190,7 +189,7 @@ class Utilisateurs extends CI_Controller
 	{
 
 		$data['data'] = $this->Modele->getOne('utilisateurs', array('ID_UTILISATEUR' => $id));
-		$data['profil'] = $this->Modele->getRequete('SELECT ID_PROFIL,STATUT FROM `profils` WHERE 1');
+		$data['profil'] = $this->Modele->getRequete('SELECT ID_PROFIL,DESCRIPTION FROM `profils` WHERE 1');
 
 		$data['title'] = "Modification de l'utilisateur";
 		$this->load->view('users/Utilisateur_Update_View', $data);

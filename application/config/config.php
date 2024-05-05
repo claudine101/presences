@@ -26,7 +26,7 @@ $config['modules_locations'] = array(APPPATH.'modules/'=>'../modules/');
 |
 */
 
-$config['base_url'] = 'http://localhost/ceni/';
+$config['base_url'] = 'http://localhost/presences/';
 
 /*
 |--------------------------------------------------------------------------
