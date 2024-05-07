@@ -341,4 +341,10 @@ class  Employes extends CI_Controller
 		$this->session->set_flashdata($data);
 		redirect(base_url('donnees/Employes/'));
 	}
+	function get_qrcode()
+	{
+		$data['title'] = 'Liste des QRcode';
+		$this->load->view('qrcode/Qr_presence_list_view', $data);
+	}
+	
 }

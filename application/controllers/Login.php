@@ -34,7 +34,7 @@ class Login extends CI_Controller
 
     $user = $this->Model->getRequeteOne('SELECT * FROM utilisateurs WHERE  USERNAME="' . $login . '"');
 
-    $droit = $this->Model->getRequeteOne('SELECT *  FROM droits WHERE ID_PROFIL="' . $user['ID_PROFIL'] . '" ');
+    // $droit = $this->Model->getRequeteOne('SELECT *  FROM droits WHERE ID_PROFIL="' . $user['ID_PROFIL'] . '" ');
 
     $message = "";
     if (!empty($user)) {

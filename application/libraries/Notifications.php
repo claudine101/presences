@@ -294,17 +294,16 @@ public function send_sms($string_tel = NULL,$string_msg)
 
    public function generateQrcode($data,$name)
    {
-      if(!is_dir('uploads/QRCODE')) //create the folder if it does not already exists
+      if(!is_dir('uploads/qrcode')) //create the folder if it does not already exists
        {
-          mkdir('uploads/QRCODE',0777,TRUE);
+          mkdir('uploads/qrcode',0777,TRUE);
        }
-
       $Ciqrcode = new Ciqrcode();
       $params['data'] = $data;
       $params['level'] = 'H';
       $params['size'] = 10;
       $params['overwrite'] = TRUE;
-      $params['savename'] = FCPATH . 'uploads/QRCODE/' . $name . '.png';
+      $params['savename'] = FCPATH . 'uploads/qrcode/' . $name . '.png';
       $Ciqrcode->generate($params);
    }
 

@@ -205,7 +205,7 @@
           <!-- IHM -->
 
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Postes'||$this->router->class =='Partie_politique'||$this->router->class =='Provinces'||$this->router->class =='Communes' ||$this->router->class =='Zones' ||$this->router->class =='Collines') echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class =='Employes'||$this->router->class =='Provinces'||$this->router->class =='Communes' ||$this->router->class =='Zones' ||$this->router->class =='Collines') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
               <p>
                 IHM
@@ -254,7 +254,7 @@
  <!-- CONFIGURATION -->
 
   <li class="nav-item">
-          <a href="#" class="nav-link <?php if ($this->router->class == 'Couleur'  ||  $this->router->class == 'Infra_infractions' ||  $this->router->class == 'Infra_peines' ||  $this->router->class == 'Autres_controles_questionnaires' || $this->router->class == 'Identite' || $this->router->class == 'Type_Verification' || $this->router->class == 'Question_Categorie' || $this->router->class == 'Gravite' || $this->router->class == 'Chaussee' || $this->router->class == 'Liste_recouvrement' || $this->router->class == 'Historique_Commentaire' || $this->router->class == 'Recouv_Histo') echo 'active'; ?>">
+          <a href="#" class="nav-link <?php if ($this->router->class == 'Qr_presence') echo 'active'; ?>">
 
               <i class="nav-icon fa fa-history"></i>
               <p>
@@ -265,7 +265,7 @@
             <ul class="nav nav-treeview">
 
                 <li class="nav-item">
-                  <a href="<?= base_url('ihm/Historique_Commentaire/index') ?>" class="nav-link <?php if ($this->router->class == 'Historique_Commentaire') echo 'active'; ?>">
+                  <a href="<?= base_url('donnees/Qr_presence/index') ?>" class="nav-link <?php if ($this->router->class == 'Qr_presence') echo 'active'; ?>">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Generation de QRcode</p>
                   </a>
