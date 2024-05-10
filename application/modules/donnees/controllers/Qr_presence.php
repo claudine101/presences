@@ -196,8 +196,6 @@ class  Qr_presence extends CI_Controller
 				$DATE =$this->input->post('DATE_PRES');
 				$H_BEGIN =$this->input->post('HEURE_DEBUT');
 				$H_END=$this->input->post('HEURE_FIN');
-
-
 				$set=array('IS_ACTIVE'=>0);
 				//befor create,update all of data,set IS_ACTIVE ==0
 				$this->Model->update_table('qr_code_presence',array('IS_ACTIVE'=>1),$set);
