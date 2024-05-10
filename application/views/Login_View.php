@@ -28,12 +28,12 @@
 
 
 
-  <div class="container-fluid h-100">
+<div class="container-fluid h-100">
     <div class="d-flex justify-content-center h-100">
       <div class="user_card">
         <div class="d-flex justify-content-center h-100">
           <div class="brand_logo_container">
-            <img src="<?=base_url()?>uploads/images.jfif" class="brand_logo" alt=".">
+            <img src="<?=base_url()?>uploads/receca.png" class="brand_logo" alt=".">
           </div>
         </div>
         <div class="d-flex justify-content-center form_container">

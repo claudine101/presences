@@ -47,23 +47,6 @@
 
   <!-- Right navbar links -->
   <ul class="navbar-nav ml-auto">
-    <!-- Messages Dropdown Menu -->
-    <li class="nav-item dropdown">
-      <a class="nav-link" data-toggle="dropdown" href="#">
-        <i class="far fa-flag"></i>
-        <span class="badge badge-danger navbar-badge">2</span>
-      </a>
-      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-        <a href="<?php echo base_url(); ?>Language/index/french" class="dropdown-item">
-        FR</a>
-
-        <a href="<?php echo base_url(); ?>Language/index/french" class="dropdown-item">
-        ENG</a>
-      </div>
-    
-    </li>
-
-
 
     <!-- Notifications Dropdown Menu -->
     <li class="nav-item dropdown">

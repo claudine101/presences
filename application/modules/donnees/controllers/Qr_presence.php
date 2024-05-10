@@ -207,7 +207,7 @@ class  Qr_presence extends CI_Controller
 
 				$name="QrCode_".$uniq.'_'.uniqid().'';
 				$name2=base_url() . '/uploads/qrcode/'.$name.'.png';
-				$xyz=array('DATE_QR_CODE'=>$DATE,'HOUR_BEGIN'=>$H_BEGIN,'HOUR_END'=>$H_END,'USER_ID'=>$this->session->userdata('ID_UTILISATEUR'),'DATE_INSERTION'=>date('Y-m-d H:i:s'),'IS_ACTIVE'=>1,'PATH_QR_CODE'=>$name2);
+				$xyz=array('CODE'=>$uniq,'DATE_QR_CODE'=>$DATE,'HOUR_BEGIN'=>$H_BEGIN,'HOUR_END'=>$H_END,'USER_ID'=>$this->session->userdata('ID_UTILISATEUR'),'DATE_INSERTION'=>date('Y-m-d H:i:s'),'IS_ACTIVE'=>1,'PATH_QR_CODE'=>$name2);
 				//print_r($xyz);die();
 
 				$Qr_presence = $this->Model->create('qr_code_presence',$xyz);
