@@ -34,8 +34,8 @@ class  Employes extends CI_Controller
 
 		$i = 1;
 
-		$query_principal = 'SELECT col.COLLINE_ID,col.COLLINE_NAME,  zo.ZONE_ID ,zo.ZONE_NAME, co.COMMUNE_ID, co.COMMUNE_NAME,pro.PROVINCE_ID  ,pro.PROVINCE_NAME,ca.* FROM Employes ca JOIN syst_collines col ON  ca.ID_COLLINE_EMPLOYE=col.COLLINE_ID   JOIN syst_zones zo ON col.ZONE_ID=zo.ZONE_ID  JOIN syst_communes co ON zo.COMMUNE_ID=co.COMMUNE_ID JOIN syst_provinces pro ON
-		 pro.PROVINCE_ID=co.PROVINCE_ID  WHERE 1';
+		$query_principal = 'SELECT a.DESCRIPTION  ,col.COLLINE_ID,col.COLLINE_NAME,  zo.ZONE_ID ,zo.ZONE_NAME, co.COMMUNE_ID, co.COMMUNE_NAME,pro.PROVINCE_ID  ,pro.PROVINCE_NAME,ca.* FROM Employes ca JOIN syst_collines col ON  ca.ID_COLLINE_EMPLOYE=col.COLLINE_ID   JOIN syst_zones zo ON col.ZONE_ID=zo.ZONE_ID  JOIN syst_communes co ON zo.COMMUNE_ID=co.COMMUNE_ID JOIN syst_provinces pro ON
+		 pro.PROVINCE_ID=co.PROVINCE_ID JOIN  agences a ON a.ID_AGENCE=ca.ID_AGENCE  WHERE 1';
 		$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;
 		$var_search=str_replace("'", "\'", $var_search);
 		$limit = 'LIMIT 0,10';
@@ -46,7 +46,7 @@ class  Employes extends CI_Controller
 
 		$order_by = '';
 		
-		$order_column = array('ID_EMPLOYE','NOM_EMPLOYE', 'PRENOM_EMPLOYE','ADRESE_EMPLOYE','NUMERO_CNI_EMPLOYE', 'LIEU_NAISSANCE_EMPLOYE', 'IS_ACTIVE_EMPLOYE');
+		$order_column = array('ID_EMPLOYE','NOM_EMPLOYE', 'PRENOM_EMPLOYE','ADRESE_EMPLOYE','NUMERO_CNI_EMPLOYE', 'IS_ACTIVE_EMPLOYE','DESCRIPTION','COLLINE_NAME');
 
 		$order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY NOM_EMPLOYE DESC';
 
@@ -101,6 +101,7 @@ class  Employes extends CI_Controller
             $sub_array[] = $row->NUMERO_CNI_EMPLOYE;
 			$sub_array[] = $this->notifications->ago($row->DATE_NAISSANCE_EMPLOYE, date('Y-m-d'));
             $sub_array[] = $row->SEXE_EMPLOYE;
+            $sub_array[] = $row->DESCRIPTION;
 			$sub_array[] = $this->get_icon($row->IS_ACTIVE_EMPLOYE,$row);
 			$sub_array[] = $row->COLLINE_NAME.'-'.$row->ZONE_NAME.'-'.$row->COMMUNE_NAME.'-'.$row->PROVINCE_NAME;
 			$sub_array[] = $option;
@@ -133,6 +134,7 @@ class  Employes extends CI_Controller
 	{
 		$data['title'] = 'Nouveau employé ';
         $data['provinces'] = $this->Modele->getRequete('SELECT * FROM syst_provinces WHERE 1 order by PROVINCE_NAME ASC');
+		$data['agences'] = $this->Modele->getRequete('SELECT * FROM agences WHERE 1 order by DESCRIPTION ASC');
   
 		$this->load->view('employes/Employes_Add_View', $data);
 	}
@@ -154,9 +156,8 @@ class  Employes extends CI_Controller
 		$this->form_validation->set_rules('EMAIL_EMPLOYE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		$this->form_validation->set_rules('NUMERO_CNI_EMPLOYE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		$this->form_validation->set_rules('DATE_NAISSANCE_EMPLOYE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
-		
+		$this->form_validation->set_rules('ID_AGENCE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		$this->form_validation->set_rules('SEXE_EMPLOYE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
-	
 		$this->form_validation->set_rules('ID_COLLINE_EMPLOYE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		
         if ($this->form_validation->run() == FALSE) {
@@ -209,6 +210,13 @@ class  Employes extends CI_Controller
 				//echo "<img src='".$path."' >";
 				
 			}
+			$data_users = array(
+				'USERNAME' => $this->input->post('EMAIL_EMPLOYE'),
+				'PASSWORD' => md5($this->input->post('TELEPHONE_EMPLOYE')),
+				'ID_PROFIL' => 3,
+			);
+			$tableusers = 'utilisateurs';
+			$idUsers = $this->Modele->insert_last_id($tableusers, $data_users);
 
 			$data_insert = array(
 				'NOM_EMPLOYE' => $this->input->post('NOM_EMPLOYE'),
@@ -219,7 +227,9 @@ class  Employes extends CI_Controller
 				'DATE_NAISSANCE_EMPLOYE' => $this->input->post('DATE_NAISSANCE_EMPLOYE'),
 				'SEXE_EMPLOYE' => $this->input->post('SEXE_EMPLOYE'),
 				'PHOTO_EMPLOYE' => $pathfile,
+				'ID_AGENCE'=> $this->input->post('ID_AGENCE'),
 				'ID_COLLINE_EMPLOYE' => $this->input->post('ID_COLLINE_EMPLOYE'),
+				'ID_UTILISATEUR'=>$idUsers
 			);
 			$table = 'Employes';
 			$this->Modele->create($table, $data_insert);

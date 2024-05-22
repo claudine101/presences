@@ -177,7 +177,31 @@
 
 
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        
+      <li class="nav-item">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Dashboard_presence' ||$this->router->class =='Dashboard_hebdomadaire')  echo 'active'; ?>">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Tableau de bord 
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="<?= base_url('dashboard/Dashboard_hebdomadaire') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaire') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Rapport hebdomadaire </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('dashboard/Dashboard_presence') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_presence') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Rapport global</p>
+                </a>
+              </li>
+            </ul>
+              </li>
+              <?php if ($this->session->userdata('PARAMETRE') == 2) { ?>
           <li class="nav-item">
             <a href="#" class="nav-link <?php if ($this->router->class == 'Utilisateurs'  || $this->router->class == 'Profils' || $this->router->class == 'Droit') echo 'active'; ?>">
               <i class="nav-icon fa fa-user-md"></i>
@@ -202,10 +226,11 @@
             </ul>
 
           </li>
+          <?php } ?>
           <!-- IHM -->
-
+          <?php if ($this->session->userdata('PARAMETRE') == 2) { ?>
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class =='Employes'||$this->router->class =='Provinces'||$this->router->class =='Communes' ||$this->router->class =='Zones' ||$this->router->class =='Collines') echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class =='Employes'||$this->router->class =='Agences'||$this->router->class =='Provinces'||$this->router->class =='Communes' ||$this->router->class =='Zones' ||$this->router->class =='Collines') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
               <p>
                 IHM
@@ -219,6 +244,15 @@
                   <i class="far fa-circle nav-icon"></i>
                     <p>
                        Employes
+                    </p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('ihm/Agences/index') ?>" class="nav-link <?php if ($this->router->class == 'Agences') echo 'active'; ?>">
+                    <!-- <i class="nav-icon fas fa-user-circle" style="color:green"></i> -->
+                  <i class="far fa-circle nav-icon"></i>
+                    <p>
+                       Agences
                     </p>
                   </a>
                 </li>
@@ -249,10 +283,10 @@
 
             </ul>
           </li>
- 
+          <?php } ?>
       
  <!-- CONFIGURATION -->
-
+ <?php if ($this->session->userdata('PARAMETRE') == 2) { ?>
   <li class="nav-item">
           <a href="#" class="nav-link <?php if ($this->router->class == 'Qr_presence') echo 'active'; ?>">
 
@@ -273,7 +307,7 @@
                
             </ul>
           </li>
-
+          <?php } ?>
 </ul>
 
     </nav>

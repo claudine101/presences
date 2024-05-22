@@ -46,7 +46,7 @@ class Login extends CI_Controller
         );
 
         $this->session->set_userdata($session);
-        redirect(base_url('administration/Utilisateurs/index'));
+        redirect(base_url('dashboard/Dashboard_hebdomadaire/index'));
         
       } else
         $message .= "<center><span  id='erro_msg' style='color:red;font-size:12px'> Le nom d'utilisateur ou/et mot de passe incorect(s) !</span></center>";

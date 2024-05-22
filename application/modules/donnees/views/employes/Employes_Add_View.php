@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <?php include VIEWPATH . 'templates/header.php'; ?>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -86,7 +87,22 @@
 
                       <?php echo form_error('DATE_NAISSANCE_EMPLOYE', '<div class="text-danger">', '</div>'); ?>
                     </div>
-                    
+                    <div class="col-md-6">
+                      <label for="Ftype">Agences</label>
+                      <select class="form-control" name="ID_AGENCE" id="ID_AGENCE" >
+                        <option value="">---Sélectionner---</option>
+                        <?php
+                       
+                        foreach ($agences as $value) {
+                        ?>
+                          <option value="<?= $value['ID_AGENCE'] ?>"><?= $value['DESCRIPTION'] ?></option>
+                        <?php
+                        }
+                        ?>
+                      </select>
+                      <!-- <div><font color="red" id="error_province"></font></div>  -->
+                      <?php echo form_error('ID_AGENCE', '<div class="text-danger">', '</div>'); ?>
+                    </div>
                     <div class="col-md-6">
                       <label for="Ftype">Sexe</label>
                       <select class="form-control" name="SEXE_EMPLOYE" id="SEXE_EMPLOYE">

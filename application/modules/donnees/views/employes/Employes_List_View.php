@@ -94,8 +94,9 @@
                         <th>CNI</th>
                         <th>AGE</th>
                         <th>SEXE</th>
+                        <th>AGENCE</th>
                         <th>STATUT</th>
-                        <th>LIEU DE NAISSANCE</th>
+                        <th data-orderable="false">LIEU DE NAISSANCE</th>
                         <th data-orderable="false">OPTIONS</th>
  
                       </tr>

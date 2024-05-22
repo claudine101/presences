@@ -13,13 +13,15 @@ class Utilisateurs extends CI_Controller
 	}
 	public function have_droit()
 	{
-		// if ($this->session->userdata('IHM') != 1) {
+		if ($this->session->userdata('ID_PROFIL') != 2) {
 
-		// 	redirect(base_url());
-		// }
+			redirect(base_url());
+		}
 	}
 	function index()
 	{
+		// echo ($this->session->userdata('ID_PROFIL'));
+		// exit();
 		$data['title'] = 'Utilisateurs';
         $data['profil'] = $this->Modele->getRequete('SELECT ID_PROFIL, DESCRIPTION FROM profils WHERE 1 order by DESCRIPTION ASC');
 		$this->load->view('users/Utilisateur_List_View', $data);
