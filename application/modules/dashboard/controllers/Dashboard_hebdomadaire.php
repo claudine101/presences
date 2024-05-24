@@ -114,8 +114,8 @@ $titre="du  ".strftime('%d-%m-%Y',strtotime(date('Y-m-d')));
           COUNT(`ID_PRESENCE`) AS tout,
           DATE_FORMAT(`DATE_PRESENCE`, '%Y-%m-%d') as annees,
           (SELECT COUNT(`ID_UTILISATEUR`) FROM employes WHERE ID_UTILISATEUR NOT IN (SELECT (`ID_UTILISATEUR`) FROM presences) ) as absant,
-          SUM(CASE WHEN TIME(`DATE_PRESENCE`) > '09:00:00' THEN 1 ELSE 0 END) AS number_of_lates,
-          SUM(CASE WHEN TIME(`DATE_PRESENCE`) <= '09:00:00' THEN 1 ELSE 0 END) AS number_of_punctuals
+          SUM(CASE WHEN TIME(`DATE_PRESENCE`) > '07:40:00' THEN 1 ELSE 0 END) AS number_of_lates,
+          SUM(CASE WHEN TIME(`DATE_PRESENCE`) <= '07:40:00' THEN 1 ELSE 0 END) AS number_of_punctuals
       FROM
           presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
       WHERE 1 ".$criteres1." AND
