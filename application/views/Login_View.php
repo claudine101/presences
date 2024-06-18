@@ -25,7 +25,7 @@
   }
 </style>
 <!--Coded with love by Mutiullah Samim-->
-<body style="background-image: url(<?=base_url()?>upload/drap1.png?>);">
+<body style="background-image: url(<?=base_url()?>upload/siege-social.jpg?>);">
 <div class="container-fluid h-100">
     <div class="d-flex justify-content-center h-100">
       <div class="user_card">
