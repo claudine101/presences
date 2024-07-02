@@ -25,7 +25,7 @@
   }
 </style>
 <!--Coded with love by Mutiullah Samim-->
-<body style="background-image: url(<?=base_url()?>upload/drap1.png?>);  background-size: cover;
+<body style="background-image: url(<?=base_url()?>upload/siege-social.jpg?>);  background-size: cover;
     background-repeat: no-repeat; 
     background-position: center;" >
 <div class="container-fluid h-100">
