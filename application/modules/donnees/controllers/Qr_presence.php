@@ -15,10 +15,10 @@ class  Qr_presence extends CI_Controller
 
 	public function have_droit()
 	{
-		//  if ($this->session->userdata('PARAMETRE') != 1) {
+		if ($this->session->userdata('ID_PROFIL') != 2) {
 
-        //        redirect(base_url());
-        //   }
+			redirect(base_url());
+		}
 	}
 
 	function index()
