@@ -26,7 +26,7 @@ $config['modules_locations'] = array(APPPATH.'modules/'=>'../modules/');
 |
 */
 
-$config['base_url'] = 'http://localhost/presences/';
+$config['base_url'] = 'http://192.168.1.252/presences/';
 
 /*
 |--------------------------------------------------------------------------
