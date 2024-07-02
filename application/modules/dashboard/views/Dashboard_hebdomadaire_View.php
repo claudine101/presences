@@ -51,38 +51,27 @@
    <div class="white_shd full margin_bottom_10">
     <div class="full graph_head">
       <div class="row" style="margin-top: 0px">
-<div class="form-group col-md-6"><h4 style='color:#FFFFFF'>Evaluation de la Ponctualité et des Retards des Employés</h4></div>
-<div class="form-group col-md-3"></div>
-          <div class="form-group col-md-3">
-              <label style='color:#FFFFFF'>agences</label>
-              <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='get_rapport()'>
-                <option value="">agences</option>
-                <?php foreach ($agences as $key) { ?>
-                  <option value="<?php echo $key['ID_AGENCE'] ?>"><?php echo  $key['DESCRIPTION'] ?></option>
-                <?php } ?>
-              </select>
-          </div>
-    <!-- <div class="form-group col-md-2">
-<label style='color:#FFFFFF'>Année</label>
-<select class="form-control"  onchange="get_i()" name="mois" id="mois">
-       <option value="">Sélectionner</option>
-<?php
+          <div class="form-group col-md-6"><h4 style='color:#FFFFFF'>Evaluation de la Ponctualité et des Retards des Employés</h4></div>
+                <div class="form-group col-md-3">
+                    <label style='color:#FFFFFF'>agences</label>
+                    <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='get_rapport()'>
+                      <option value="">agences</option>
+                      <?php foreach ($agences as $key) { ?>
+                        <option value="<?php echo $key['ID_AGENCE'] ?>"><?php echo  $key['DESCRIPTION'] ?></option>
+                      <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                  <label style='color:#FFFFFF'>Avant  ou  après midi</label>
+                  <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='get_rapport()'>
+                      <option value="">Avant  ou  après midi</option>
+                      <option value="AM">Avant  midi </option>
+                      <option value="PM">Après midi</option>
+                      
+                    </select>
 
-foreach ($dattes as $value){
-if ($value['mois'] == set_value('mois'))
-{?>
-<option value="<?=$value['mois']?>" selected><?=$value['mois']?></option>
-<?php } else{ 
- ?>
-<option value="<?=$value['mois']?>" ><?=$value['mois']?></option>
-<?php } } ?>
-      </select>
-    </div> -->
-
-
-
-
-     </div>
+                </div>
+         </div>
    </div>
   </div>
  </div>
