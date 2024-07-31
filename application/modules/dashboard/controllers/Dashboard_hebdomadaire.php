@@ -24,6 +24,52 @@ function presentes(){
         
         $this->load->view('Profil_View',$data);
 }
+ public function upload() {
+        if ($_FILES['qr_code_image']['name']) {
+            // Configuration du téléchargement
+            $config['upload_path'] = './uploads/';
+            $config['allowed_types'] = 'gif|jpg|png';
+            $config['max_size'] = 2048;
+
+            $this->load->library('upload', $config);
+
+            if (!$this->upload->do_upload('qr_code_image')) {
+                // Erreur de téléchargement
+                $error = array('error' => $this->upload->display_errors());
+                $this->load->view('arrival_form', $error);
+            } else {
+                // Téléchargement réussi
+                $uploadData = $this->upload->data();
+                $filePath = $uploadData['full_path'];
+
+                // Décoder le QR code
+                $qrCode = $this->decodeQrCode($filePath);
+
+                if ($qrCode) {
+                    // Enregistrer l'arrivée
+                    $this->load->model('Arrival_model');
+                    $result = $this->Arrival_model->registerArrival($qrCode);
+
+                    if ($result) {
+                        echo "Arrivée enregistrée avec succès";
+                    } else {
+                        echo "Erreur lors de l'enregistrement de l'arrivée";
+                    }
+                } else {
+                    echo "Erreur lors de la lecture du QR code";
+                }
+            }
+        }
+    }
+
+    private function decodeQrCode($filePath) {
+        // Utiliser une bibliothèque pour lire le QR code
+        // Par exemple, utiliser ZBar ou une autre bibliothèque compatible avec PHP
+        $command = escapeshellcmd("zbarimg -q --raw " . $filePath);
+        $output = shell_exec($command);
+
+        return trim($output);
+    }
 function detail($agence=0)
 {
     

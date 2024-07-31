@@ -25,7 +25,15 @@ class Model extends CI_Model{
         return $query->num_rows();
         
     }
+    public function registerArrival($qrCode) {
+      // Logique pour valider le code QR et enregistrer l'arrivée
+      $data = array(
+          'employee_id' => $this->getEmployeeIdByQrCode($qrCode),
+          'arrival_time' => date('Y-m-d H:i:s')
+      );
 
+      return $this->db->insert('arrivals', $data);
+  }
 
 
 
