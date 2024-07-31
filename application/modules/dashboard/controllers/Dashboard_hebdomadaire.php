@@ -4,16 +4,26 @@ class Dashboard_hebdomadaire extends CI_Controller
       {
 function index(){
 
-$dattes=$this->Model->getRequete("SELECT DISTINCT date_format(presences.`DATE_PRESENCE`,'%Y') AS mois FROM presences ORDER BY  mois ASC");
-$agences=$this->Model->getRequete("SELECT ID_AGENCE, DESCRIPTION FROM agences WHERE 1");
-  
+                $dattes=$this->Model->getRequete("SELECT DISTINCT date_format(presences.`DATE_PRESENCE`,'%Y') AS mois FROM presences ORDER BY  mois ASC");
+                $agences=$this->Model->getRequete("SELECT ID_AGENCE, DESCRIPTION FROM agences WHERE 1");
+                
 
-$data['dattes']=$dattes;
-$data['agences']=$agences;
+                $data['dattes']=$dattes;
+                $data['agences']=$agences;
 
 
-$this->load->view('Dashboard_hebdomadaire_View',$data);
+                $this->load->view('Dashboard_hebdomadaire_View',$data);
      }
+function presentes(){
+
+        $dattes=$this->Model->getRequete("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISAEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+        
+        $data['dattes']=$dattes;
+        
+        
+        
+        $this->load->view('Profil_View',$data);
+}
 function detail($agence=0)
 {
     
