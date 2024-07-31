@@ -178,7 +178,7 @@
 
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Dashboard_presence' ||$this->router->class =='Dashboard_hebdomadaire')  echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Dashboard_presence' ||$this->router->class =='Dashboard_hebdomadaire'  ||$this->router->class =='Dashboard_hebdomadaires')  echo 'active'; ?>">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Tableau de bord 
@@ -187,6 +187,14 @@
             </a>
 
             <ul class="nav nav-treeview">
+            <?php if ($this->session->userdata('ID_PROFIL') != 4 || $this->session->userdata('ID_PROFIL') != 5) { ?>
+            <li class="nav-item">
+                <a href="<?= base_url('dashboard/Dashboard_hebdomadaires/presentes') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaires') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Mes ponctualites</p>
+                </a>
+              </li>
+              <?php } ?>
               <li class="nav-item">
                 <a href="<?= base_url('dashboard/Dashboard_hebdomadaire') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaire') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>

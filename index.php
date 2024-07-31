@@ -54,6 +54,15 @@
  * NOTE: If you change these, also change the error_reporting() code below
  */
 	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	// index.php
+
+// Charger Composer Autoloader si nécessaire
+if (file_exists(__DIR__.'/vendor/autoload.php')) {
+    require_once __DIR__.'/vendor/autoload.php';
+}
+
+// Reste du code...
+
 
 /*
  *---------------------------------------------------------------
