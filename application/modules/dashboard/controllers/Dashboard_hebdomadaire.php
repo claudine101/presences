@@ -16,12 +16,10 @@ function index(){
      }
 function presentes(){
 
-        $dattes=$this->Model->getRequete("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISAEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+        $dattes=$this->Model->getRequete("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
         
         $data['dattes']=$dattes;
-        
-        
-        
+    
         $this->load->view('Profil_View',$data);
 }
 function detail($agence=0)
