@@ -34,7 +34,7 @@ function presentes(){
             if (!$this->upload->do_upload('qr_code_image')) {
                 // Erreur de téléchargement
                 $error = array('error' => $this->upload->display_errors());
-                $this->load->view('arrival_form', $error);
+                $this->load->view('Profil_View', $error);
             } else {
                 // Téléchargement réussi
                 $uploadData = $this->upload->data();
