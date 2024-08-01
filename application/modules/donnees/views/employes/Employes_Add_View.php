@@ -104,6 +104,22 @@
                       <?php echo form_error('ID_AGENCE', '<div class="text-danger">', '</div>'); ?>
                     </div>
                     <div class="col-md-6">
+                      <label for="Ftype">Heure d'arrivees</label>
+                      <select class="form-control" name="ID_ARRIVE" id="ID_ARRIVE" >
+                        <option value="">---Sélectionner---</option>
+                        <?php
+                       
+                        foreach ($date_arrives as $value) {
+                        ?>
+                          <option value="<?= $value['ID_ARRIVE'] ?>"><?= $value['HEURES'] ?></option>
+                        <?php
+                        }
+                        ?>
+                      </select>
+                      <!-- <div><font color="red" id="error_province"></font></div>  -->
+                      <?php echo form_error('ID_ARRIVE', '<div class="text-danger">', '</div>'); ?>
+                    </div>
+                    <div class="col-md-6">
                       <label for="Ftype">Sexe</label>
                       <select class="form-control" name="SEXE_EMPLOYE" id="SEXE_EMPLOYE">
                         <option value="">---Sélectionner---</option>

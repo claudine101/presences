@@ -563,21 +563,29 @@ function presenter()
 		$data = $this->Modele->getOne('qr_code_presence', array('IS_ACTIVE' =>1));
        // Obtenir la date et l'heure actuelles
         $dateCurrent = new DateTime();
+        $date_arrive = $this->Modele->getOne('arrivees', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
+        date_default_timezone_set('Europe/Paris');
+        date_default_timezone_set('Africa/Bujumbura');
+       
+        $targetTimeAM = ($date_arrive['HEURES']);
+       
+        $targetTimePM = new DateTime('14:00');
+        // Récupérer l'heure actuelle au format H:i:s
+        $currentTime = date('H:i:s');
 
-        // Définir les heures cibles
-        $targetTimeAM = new DateTime('08:00');
-        $targetTimePM = new DateTime('14:30');
+        $current_time = new DateTime($currentTime);
+        $arrival_time = new DateTime($targetTimeAM);
+        // $arrival_timePm = new DateTime($targetTimePM);
 
+       
         // Formater la date actuelle pour obtenir AM ou PM
         $formattedDate = $dateCurrent->format('A');
-
-        // Vérifier si le format de la date actuelle est 'AM'
        
         $statu=0;
-        if ($dateCurrent < $targetTimeAM) {
+        if ($current_time<$arrival_time) {
             $statu=1;
         } 
-        elseif ($dateCurrent < $targetTimePM) {
+        elseif (($current_time < $targetTimePM) && $formattedDate=="PM" ) {
             $statu=1;
         } else {
             $statu=0;

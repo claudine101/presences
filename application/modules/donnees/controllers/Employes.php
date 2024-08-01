@@ -135,7 +135,8 @@ class  Employes extends CI_Controller
 		$data['title'] = 'Nouveau employé ';
         $data['provinces'] = $this->Modele->getRequete('SELECT * FROM syst_provinces WHERE 1 order by PROVINCE_NAME ASC');
 		$data['agences'] = $this->Modele->getRequete('SELECT * FROM agences WHERE 1 order by DESCRIPTION ASC');
-  
+		$data['date_arrives'] = $this->Modele->getRequete('SELECT * FROM arrivees WHERE 1 order by HEURES ASC');
+        
 		$this->load->view('employes/Employes_Add_View', $data);
 	}
 	function validate_name($name)
@@ -159,6 +160,7 @@ class  Employes extends CI_Controller
 		$this->form_validation->set_rules('ID_AGENCE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		$this->form_validation->set_rules('SEXE_EMPLOYE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		$this->form_validation->set_rules('ID_COLLINE_EMPLOYE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
+		$this->form_validation->set_rules('ID_ARRIVE', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		
         if ($this->form_validation->run() == FALSE) {
 			$this->ajouter();
@@ -214,6 +216,7 @@ class  Employes extends CI_Controller
 				'USERNAME' => $this->input->post('EMAIL_EMPLOYE'),
 				'PASSWORD' => md5($this->input->post('TELEPHONE_EMPLOYE')),
 				'ID_PROFIL' => 3,
+				'ID_ARRIVE'=> $this->input->post('ID_ARRIVE'),
 			);
 			$tableusers = 'utilisateurs';
 			$idUsers = $this->Modele->insert_last_id($tableusers, $data_users);
