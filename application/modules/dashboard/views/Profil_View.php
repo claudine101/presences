@@ -61,15 +61,15 @@
             </div><!-- /.col -->
             <div class="form-group col-md-6"><h4 style='color:blue'>Mes Ponctualités</h4></div>
           <div class="form-group col-md-3"></div>
-            <div class="col-sm-2 text-right">
+            <div class="col-sm-3 text-right">
               <span style="margin-right: 15px">
-                <div class="col-sm-3" style="float:right;">
+                <div  style="float:right;">
                 <?php 
                 $currentHour = (int)date('H');
                  if (($currentHour >= 12 && $nbre == 1) || $nbre == 0) { ?>
-               <a class = 'btn btn-info btn-sm' id='<?= $data['ID_UTILISATEUR'] ?>'  title='<?= $data['NOM_EMPLOYE'] ?>'  onclick='presenter("<?= $data['ID_UTILISATEUR'] ?>",this.title,this.id)' style='float:right'>
+               <a  class='btn btn-primary btn-sm float-right' id='<?= $data['ID_UTILISATEUR'] ?>'  title='<?= $data['NOM_EMPLOYE'] ?>'  onclick='presenter("<?= $data['ID_UTILISATEUR'] ?>",this.title,this.id)' style='float:right'>
                     <i class="nav-icon fas fa-plus"></i>
-                    Presenter 
+                    Se présenter 
                   </a>
                   <?php }?>
                 </div>

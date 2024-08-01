@@ -42,11 +42,20 @@ class Login extends CI_Controller
         $session = array(
           'ID_UTILISATEUR' => $user['ID_UTILISATEUR'],
           'USERNAME' => $user['USERNAME'],
-          'ID_PROFIL' => $user['ID_PROFIL']
+          'ID_PROFIL' => $user['ID_PROFIL'],
+          'ID_ARRIVE' => $user['ID_ARRIVE']
+
         );
 
         $this->session->set_userdata($session);
-        redirect(base_url('dashboard/Dashboard_hebdomadaire/index'));
+        if( $user['ID_PROFIL']==3){
+          redirect(base_url('dashboard/Dashboard_hebdomadaires/index'));
+
+        }
+        else {
+          redirect(base_url('dashboard/Dashboard_hebdomadaire/index'));
+
+        }
         
       } else
         $message .= "<center><span  id='erro_msg' style='color:red;font-size:12px'> Le nom d'utilisateur ou/et mot de passe incorect(s) !</span></center>";
