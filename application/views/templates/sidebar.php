@@ -187,7 +187,7 @@
             </a>
 
             <ul class="nav nav-treeview">
-            <?php if ($this->session->userdata('ID_PROFIL') != 4 || $this->session->userdata('ID_PROFIL') != 5) { ?>
+            <?php if ($this->session->userdata('ID_PROFIL') == 3 ) { ?>
             <li class="nav-item">
                 <a href="<?= base_url('dashboard/Dashboard_hebdomadaires/presentes') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaires') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
@@ -195,18 +195,25 @@
                 </a>
               </li>
               <?php } ?>
+            <?php if ($this->session->userdata('ID_PROFIL') == 2 ||  $this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
+
               <li class="nav-item">
                 <a href="<?= base_url('dashboard/Dashboard_hebdomadaire') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaire') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Rapport hebdomadaire </p>
                 </a>
               </li>
+              <?php } ?>
+
+            <?php if ($this->session->userdata('ID_PROFIL') == 2 ||$this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
               <li class="nav-item">
                 <a href="<?= base_url('dashboard/Dashboard_presence') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_presence') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Rapport global</p>
                 </a>
               </li>
+              <?php } ?>
+
             </ul>
               </li>
               <?php if ($this->session->userdata('ID_PROFIL') == 2) { ?>
