@@ -258,7 +258,7 @@ $(\"#mytable\").DataTable({
 \"processing\":true,
 \"serverSide\":true,
 \"bDestroy\": true,
-\"oreder\":[],
+\"order\":[[2,'DESC']],
 \"ajax\":{
 url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail/' . $this->input->post('agence'))."\",
 type:\"POST\",
