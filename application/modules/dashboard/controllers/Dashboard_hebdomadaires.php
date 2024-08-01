@@ -1,6 +1,6 @@
 
 <?php
-class Dashboard_hebdomadaire extends CI_Controller
+class Dashboard_hebdomadaires extends CI_Controller
       {
 function index(){
 
