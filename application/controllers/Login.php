@@ -49,7 +49,7 @@ class Login extends CI_Controller
 
         $this->session->set_userdata($session);
         if( $user['ID_PROFIL']==3){
-          redirect(base_url('dashboard/Dashboard_hebdomadaires/index'));
+          redirect(base_url('dashboard/Dashboard_hebdomadaires/presentes'));
 
         }
         else {
