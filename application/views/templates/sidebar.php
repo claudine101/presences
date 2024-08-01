@@ -187,7 +187,7 @@
             </a>
 
             <ul class="nav nav-treeview">
-            <?php if ($this->session->userdata('ID_PROFIL') == 3 ) { ?>
+            <?php if ($this->session->userdata('ID_PROFIL') == 3 || $this->session->userdata('ID_PROFIL') == 2) { ?>
             <li class="nav-item">
                 <a href="<?= base_url('dashboard/Dashboard_hebdomadaires/presentes') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaires') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
