@@ -28,7 +28,7 @@ class  Qr_presence extends CI_Controller
 	}
 	function delete()
 	{
-		$table = "qr_code_presence";
+		$table = "qr_code_presences";
 		$criteres['QR_CODE_PRES_ID'] = $this->uri->segment(4);
 		
 		$data['rows'] = $this->Modele->getOne($table, $criteres);
@@ -42,14 +42,14 @@ class  Qr_presence extends CI_Controller
     {
 		$set=array('IS_ACTIVE'=>0);
 				//befor create,update all of data,set IS_ACTIVE ==0
-				$this->Model->update_table('qr_code_presence',array('IS_ACTIVE'=>1),$set);
-          $this->Modele->update('qr_code_presence',array('QR_CODE_PRES_ID'=>$id),array('IS_ACTIVE'=>1));
+				$this->Model->update_table('qr_code_presences',array('IS_ACTIVE'=>1),$set);
+          $this->Modele->update('qr_code_presences',array('QR_CODE_PRES_ID'=>$id),array('IS_ACTIVE'=>1));
 
        print_r(json_encode(1));
     }
     function desactiver($id)
     {
-          $this->Modele->update('qr_code_presence',array('QR_CODE_PRES_ID'=>$id),array('IS_ACTIVE'=>0));
+          $this->Modele->update('qr_code_presences',array('QR_CODE_PRES_ID'=>$id),array('IS_ACTIVE'=>0));
        print_r(json_encode(1));
     }
 	function ajouter()
@@ -63,7 +63,7 @@ class  Qr_presence extends CI_Controller
 
 		$i = 1;
 
-		$query_principal = 'SELECT `QR_CODE_PRES_ID`, `DATE_QR_CODE`, `HOUR_BEGIN`, `HOUR_END`, `PATH_QR_CODE`, `USER_ID`, `IS_ACTIVE`, `DATE_INSERTION` FROM `qr_code_presence` WHERE 1';
+		$query_principal = 'SELECT `QR_CODE_PRES_ID`, `DATE_QR_CODE`, `HOUR_BEGIN`, `HOUR_END`, `PATH_QR_CODE`, `USER_ID`, `IS_ACTIVE`, `DATE_INSERTION` FROM `qr_code_presences` WHERE 1';
 		$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;
 		$var_search=str_replace("'", "\'", $var_search);
 		$limit = 'LIMIT 0,10';
@@ -153,11 +153,11 @@ class  Qr_presence extends CI_Controller
 			public function changer()
 			{
 				$QR_CODE_PRES_ID = $this->uri->segment(3);
-				$potes = $this->Model->getOne('qr_code_presence',array('QR_CODE_PRES_ID'=>$QR_CODE_PRES_ID));
+				$potes = $this->Model->getOne('qr_code_presences',array('QR_CODE_PRES_ID'=>$QR_CODE_PRES_ID));
 
 				if ($potes['IS_ACTIVE']==1) {
 				$stat=0;
-				$poste = $this->Model->update_table('qr_code_presence',array('QR_CODE_PRES_ID'=>$QR_CODE_PRES_ID),array('IS_ACTIVE'=>$stat));
+				$poste = $this->Model->update_table('qr_code_presences',array('QR_CODE_PRES_ID'=>$QR_CODE_PRES_ID),array('IS_ACTIVE'=>$stat));
 
 				$data['retour'] = base_url('Qr_presence/liste'); 
 				$data['message'] = "<div class='alert alert-danger'> Le qr_code  a été desactivé avec success.</div>";
@@ -166,7 +166,7 @@ class  Qr_presence extends CI_Controller
 				}
 				else{
 				$stat=1;
-				$poste = $this->Model->update_table('qr_code_presence',array('QR_CODE_PRES_ID'=>$QR_CODE_PRES_ID),array('IS_ACTIVE'=>$stat)); 
+				$poste = $this->Model->update_table('qr_code_presences',array('QR_CODE_PRES_ID'=>$QR_CODE_PRES_ID),array('IS_ACTIVE'=>$stat)); 
 
 				$data['retour'] = base_url('Qr_presence/liste'); 
 				$data['message'] = "<div class='alert alert-success'> Le qr_code  a été activé avec success.</div>";
@@ -198,7 +198,7 @@ class  Qr_presence extends CI_Controller
 				$H_END=$this->input->post('HEURE_FIN');
 				$set=array('IS_ACTIVE'=>0);
 				//befor create,update all of data,set IS_ACTIVE ==0
-				$this->Model->update_table('qr_code_presence',array('IS_ACTIVE'=>1),$set);
+				$this->Model->update_table('qr_code_presences',array('IS_ACTIVE'=>1),$set);
 				//Then ... insert
 				$uniq=$this->notifications->generate_password(10);
 				$dat=''.$uniq.'';
@@ -208,7 +208,7 @@ class  Qr_presence extends CI_Controller
 				$xyz=array('CODE'=>$uniq,'DATE_QR_CODE'=>$DATE,'HOUR_BEGIN'=>$H_BEGIN,'HOUR_END'=>$H_END,'USER_ID'=>$this->session->userdata('ID_UTILISATEUR'),'DATE_INSERTION'=>date('Y-m-d H:i:s'),'IS_ACTIVE'=>1,'PATH_QR_CODE'=>$name2);
 				//print_r($xyz);die();
 
-				$Qr_presence = $this->Model->create('qr_code_presence',$xyz);
+				$Qr_presence = $this->Model->create('qr_code_presences',$xyz);
 
 				if(!empty($Qr_presence)){
 				$data['message'] = "<div class='alert alert-success'> Le nouveau Qr_code  a été créé avec success.</div>";

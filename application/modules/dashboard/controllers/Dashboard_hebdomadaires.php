@@ -560,10 +560,10 @@ public function get_rapport_user(){
         }
 function presenter()
 	{
-		$data = $this->Modele->getOne('qr_code_presence', array('IS_ACTIVE' =>1));
+		$data = $this->Modele->getOne('qr_code_presences', array('IS_ACTIVE' =>1));
        // Obtenir la date et l'heure actuelles
         $dateCurrent = new DateTime();
-        $date_arrive = $this->Modele->getOne('arrivees', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
+        $date_arrive = $this->Modele->getOne('arrives', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
         date_default_timezone_set('Europe/Paris');
         date_default_timezone_set('Africa/Bujumbura');
        
