@@ -15,9 +15,9 @@ class  Zones extends CI_Controller
 
 	public function have_droit()
 	{
-		if ($this->session->userdata('ID_PROFIL') != 2) {
-
-			redirect(base_url());
+		if ($this->session->userdata('ID_PROFIL') != 2 && $this->session->userdata('ID_PROFIL') != 5 && $this->session->userdata('ID_PROFIL') != 4) {
+			// redirect(base_url());
+			redirect('Login');
 		}
 	}
 

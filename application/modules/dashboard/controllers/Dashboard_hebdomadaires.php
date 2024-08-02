@@ -2,18 +2,30 @@
 <?php
 class Dashboard_hebdomadaires extends CI_Controller
       {
-function index(){
+        function __construct()
+        {
+            parent::__construct();
+            $this->have_droit();
+        }
+        public function have_droit()
+        {
+            if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2) {
+                redirect('Login');
+            }
+           
+        }
+    function index(){
 
-                $dattes=$this->Model->getRequete("SELECT DISTINCT date_format(presences.`DATE_PRESENCE`,'%Y') AS mois FROM presences ORDER BY  mois ASC");
-                $agences=$this->Model->getRequete("SELECT ID_AGENCE, DESCRIPTION FROM agences WHERE 1");
-                
+                    $dattes=$this->Model->getRequete("SELECT DISTINCT date_format(presences.`DATE_PRESENCE`,'%Y') AS mois FROM presences ORDER BY  mois ASC");
+                    $agences=$this->Model->getRequete("SELECT ID_AGENCE, DESCRIPTION FROM agences WHERE 1");
+                    
 
-                $data['dattes']=$dattes;
-                $data['agences']=$agences;
+                    $data['dattes']=$dattes;
+                    $data['agences']=$agences;
 
 
-                $this->load->view('Dashboard_hebdomadaire_View',$data);
-     }
+                    $this->load->view('Dashboard_hebdomadaire_View',$data);
+        }
             function presentes(){
 
                     $dattes=$this->Model->getRequeteOne("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");

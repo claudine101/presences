@@ -14,7 +14,13 @@ class Login extends CI_Controller
   {
 
     if (!empty($this->session->userdata('USERNAME'))) {
-      redirect(base_url('administration/Utilisateurs/index'));
+      if(($this->session->userdata('ID_PROFIL'))==3){
+        redirect(base_url('dashboard/Dashboard_hebdomadaires/presentes'));
+      }
+      else {
+        redirect(base_url('dashboard/Dashboard_hebdomadaire/index'));
+
+      }
     } else {
       $datas['message'] = $params;
       $this->load->view('Login_View.php', $datas);
@@ -48,20 +54,15 @@ class Login extends CI_Controller
         );
 
         $this->session->set_userdata($session);
-        if( $user['ID_PROFIL']==3){
-          redirect(base_url('dashboard/Dashboard_hebdomadaires/presentes'));
-
-        }
-        else {
-          redirect(base_url('dashboard/Dashboard_hebdomadaire/index'));
-
-        }
+       
         
       } else
         $message .= "<center><span  id='erro_msg' style='color:red;font-size:12px'> Le nom d'utilisateur ou/et mot de passe incorect(s) !</span></center>";
     } else
       $message .= "<center><span id='erro_msg' style='color:red;font-size:12px'>L'utilisateur n'existe pas/plus dans notre système informatique !</span></center>";
-    $this->index($message);
+    // print_r( $session );
+    // exit()
+      $this->index($message);
   }
 
   public function do_logout()

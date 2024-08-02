@@ -15,7 +15,7 @@ class  Partie_politique extends CI_Controller
 
 	public function have_droit()
 	{
-		if ($this->session->userdata('ID_PROFIL') != 2) {
+		if ($this->session->userdata('ID_PROFIL') != 4|| $this->session->userdata('ID_PROFIL') != 2) {
 
 			redirect(base_url());
 		}
