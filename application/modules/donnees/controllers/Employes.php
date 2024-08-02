@@ -135,7 +135,7 @@ class  Employes extends CI_Controller
 		$data['title'] = 'Nouveau employé ';
         $data['provinces'] = $this->Modele->getRequete('SELECT * FROM syst_provinces WHERE 1 order by PROVINCE_NAME ASC');
 		$data['agences'] = $this->Modele->getRequete('SELECT * FROM agences WHERE 1 order by DESCRIPTION ASC');
-		$data['date_arrives'] = $this->Modele->getRequete('SELECT * FROM arrivees WHERE 1 order by HEURES ASC');
+		$data['date_arrives'] = $this->Modele->getRequete('SELECT * FROM arrives WHERE 1 order by HEURES ASC');
         
 		$this->load->view('employes/Employes_Add_View', $data);
 	}
