@@ -2,7 +2,19 @@
 <?php
  /// EDMOND :dashboard des Immatriculation
 class Dashboard_presence extends CI_Controller
-      {
+{
+          function __construct()
+            {
+                parent::__construct();
+                $this->have_droit();
+            }
+            public function have_droit()
+            {
+              if ($this->session->userdata('ID_PROFIL') != 2 && $this->session->userdata('ID_PROFIL') != 5 && $this->session->userdata('ID_PROFIL') != 4) {
+                // redirect(base_url());
+                redirect('Login');
+              }
+            }
 function index(){
 
 $dattes=$this->Model->getRequete("SELECT DISTINCT date_format(p.`DATE_PRESENCE`,'%Y') AS mois FROM presences  p ORDER BY  mois ASC");

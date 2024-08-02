@@ -216,7 +216,7 @@
 
             </ul>
               </li>
-              <?php if ($this->session->userdata('ID_PROFIL') == 2) { ?>
+          <?php if ($this->session->userdata('ID_PROFIL') == 2 ||$this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
           <li class="nav-item">
             <a href="#" class="nav-link <?php if ($this->router->class == 'Utilisateurs'  || $this->router->class == 'Profils' || $this->router->class == 'Droit') echo 'active'; ?>">
               <i class="nav-icon fa fa-user-md"></i>
@@ -243,7 +243,8 @@
           </li>
           <?php } ?>
           <!-- IHM -->
-          <?php if ($this->session->userdata('ID_PROFIL') == 2) { ?>
+          <?php if ($this->session->userdata('ID_PROFIL') == 2 ||$this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
+
           <li class="nav-item">
             <a href="#" class="nav-link <?php if ($this->router->class =='Employes'||$this->router->class =='Agences'||$this->router->class =='Provinces'||$this->router->class =='Communes' ||$this->router->class =='Zones' ||$this->router->class =='Collines') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
@@ -301,7 +302,8 @@
           <?php } ?>
       
  <!-- CONFIGURATION -->
- <?php if ($this->session->userdata('ID_PROFIL') == 2) { ?>
+ <?php if ($this->session->userdata('ID_PROFIL') == 2 ||$this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
+
   <li class="nav-item">
           <a href="#" class="nav-link <?php if ($this->router->class == 'Qr_presence') echo 'active'; ?>">
 
