@@ -68,14 +68,12 @@
             <div class="col-sm-3 text-right">
               <span style="margin-right: 15px">
                 <div  style="float:right;" id="presenterButton"  class="hidden">
-                <?php 
-                $currentHour = (int)date('H');
-                 if (($currentHour >= 12 && $nbre == 1) || $nbre == 0) { ?>
+                
                <a  class='btn btn-primary btn-sm float-right' id='<?= $data['ID_UTILISATEUR'] ?>'  title='<?= $data['NOM_EMPLOYE'] ?>'  onclick='presenter("<?= $data['ID_UTILISATEUR'] ?>",this.title,this.id)' style='float:right'>
                     <i class="nav-icon fas fa-plus"></i>
                     Se présenter 
                   </a>
-                  <?php }?>
+                
                 </div>
                
               </span>

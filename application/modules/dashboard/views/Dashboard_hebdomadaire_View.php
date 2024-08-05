@@ -63,7 +63,7 @@
                 </div>
                 <div class="form-group col-md-3">
                   <label style='color:#FFFFFF'>Avant  ou  après midi</label>
-                  <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='get_rapport()'>
+                  <select class="form-control input-sm" name="avant" id="avant" onchange='get_rapport()'>
                       <option value="">Avant  ou  après midi</option>
                       <option value="AM">Avant  midi </option>
                       <option value="PM">Après midi</option>
@@ -146,6 +146,8 @@
 
 function get_rapport(){
 var agence=$('#ID_AGENCE').val()
+var avant=$('#avant').val()
+
 $.ajax({
 url : "<?=base_url()?>dashboard/Dashboard_hebdomadaire/get_rapport",
 type : "POST",
@@ -153,7 +155,8 @@ dataType: "JSON",
 cache:false,
 data:{
 
-agence:agence
+agence:agence,
+avant:avant
  
 },
 success:function(data){   

@@ -244,12 +244,8 @@ class Dashboard_hebdomadaires extends CI_Controller
 
         $current_time = new DateTime($currentTime);
         $arrival_time = new DateTime($targetTimeAM);
-        // $arrival_timePm = new DateTime($targetTimePM);
-
-       
         // Formater la date actuelle pour obtenir AM ou PM
-        $formattedDate = $dateCurrent->format('A');
-       
+        $formattedDate = $current_time->format('A');
         $statu=0;
         if ($current_time<$arrival_time) {
             $statu=1;
@@ -259,7 +255,6 @@ class Dashboard_hebdomadaires extends CI_Controller
         } else {
             $statu=0;
         }
-
 			$data_insert = array(
 				'ID_UTILISATEUR' => $this->session->userdata('ID_UTILISATEUR'),
                 'QR_CODE_PRES_ID'=>$data['QR_CODE_PRES_ID'],

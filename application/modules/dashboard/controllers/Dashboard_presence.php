@@ -378,7 +378,7 @@ language: {
         type: 'spline',
         
         color: '#90EE90',
-        name:'Employés présents : (".number_format($immacat_controlet,0,',',' ').")',
+        name:'Présences : (".number_format($immacat_controlet,0,',',' ').")',
         borderColor:\"#90EE90\", 
         data: [".$immadeclare_categoriet."],
           marker: {
@@ -392,13 +392,13 @@ language: {
     {
         type: 'columnpyramid',
         color: '#000080',
-        name:'Employés ponctuels: (".number_format($immacat_traite,0,',',' ').")',
+        name:'Ponctuels: (".number_format($immacat_traite,0,',',' ').")',
         data: [".$immatraite_categorie."]
     },
     {
         type: 'columnpyramid',
        color: '#FF00FF',
-         name:' Employés en retard : (".number_format($immacat_controle,0,',',' ').")',
+         name:' Retards : (".number_format($immacat_controle,0,',',' ').")',
         data: [".$immaassure_categorie."]
     }  ]
 });

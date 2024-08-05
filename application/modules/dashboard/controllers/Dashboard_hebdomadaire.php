@@ -28,15 +28,29 @@ function index(){
 function detail($agence=0)
 {
     
-  $mois=$this->input->post('mois');
+  $avant=$this->input->post('avant');
   $jour=$this->input->post('jour');
   $KEY=$this->input->post('key');
 //   $agence=$this->input->post('agence');
 //  echo($agence);
 $critaire_agence='';
+$critaire_avant='';
+
 if($agence!=0){
     $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
 }
+
+if(!empty($avant)){
+    if($avant=='AM'){
+        $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
+
+    }
+    else{
+    $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
+
+    }
+
+ }
  $KEY2=$this->input->post('key2');
 $break=explode(".",$KEY2);
 $ID=$KEY2;
@@ -75,7 +89,7 @@ $query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE
 
         }
        
-        $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search.' '.$order_by.'   '.$limit;
+        $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
         $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
 
         $fetch_data = $this->Model->datatable($query_secondaire);
@@ -108,15 +122,30 @@ $query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE
 public function get_rapport(){ 
 
 $agence=$this->input->post('agence');
+$avant=$this->input->post('avant');
+
 $datte="";
 $criteres1="";
 $criteres2="";
+$criteres3="";
+
 
 $categorie="";
 $titre="du  ".strftime('%d-%m-%Y',strtotime(date('Y-m-d')));
 
          if(!empty($agence)){
             $criteres1.=" AND agences.`ID_AGENCE`= ".$agence." ";
+
+         }
+         if(!empty($avant)){
+            if($avant=='AM'){
+                $criteres3.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
+
+            }
+            else{
+            $criteres3.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
+
+            }
 
          }
 
@@ -129,7 +158,7 @@ $titre="du  ".strftime('%d-%m-%Y',strtotime(date('Y-m-d')));
           SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates
       FROM
           presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
-      WHERE 1 ".$criteres1." AND
+      WHERE 1 ".$criteres1."  ".$criteres3." AND
           `DATE_PRESENCE` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
           AND `DATE_PRESENCE` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
       GROUP BY
@@ -218,6 +247,7 @@ url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail/' . $this->input->post
 type:\"POST\",
 data:{
 key:this.key,
+avant:$('#avant').val(),
 key2:this.key2,
  mois:$('#mois').val(),
 jour:$('#jour').val(),
@@ -283,18 +313,18 @@ language: {
     series: [
     {
         color: '#90EE90',
-        name:'Employés présents: (".number_format($presence_traite,0,',',' ').")', 
+        name:'Présences: (".number_format($presence_traite,0,',',' ').")', 
         borderColor:\"#90EE90\", 
         data: [".$immadeclare_categoriet."]  
     },
     {
         color: 'red',
-        name:'Employés en retard : (".number_format($retard_traite,0,',',' ').")',
+        name:'Retards : (".number_format($retard_traite,0,',',' ').")',
         data: [".$retards."]
     },
      {
         color: 'green',
-         name:'Employés ponctuels: (".number_format($ponctuel_traite,0,',',' ').")', 
+         name:'Ponctuels: (".number_format($ponctuel_traite,0,',',' ').")', 
         data: [".$ponctuels."]
     }
     
