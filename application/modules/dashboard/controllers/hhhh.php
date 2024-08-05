@@ -18,22 +18,26 @@ ORDER BY
 
 
 
-    WITH RECURSIVE calendar AS (
-    SELECT CURDATE() - INTERVAL 1 MONTH AS date
-    UNION ALL
-    SELECT date + INTERVAL 1 DAY
-    FROM calendar
-    WHERE date + INTERVAL 1 DAY <= CURDATE()
-)
+    -- Créer une table temporaire pour générer la liste des dates
+CREATE TEMPORARY TABLE temp_dates (date DATE);
 
+-- Insérer les dates des 30 derniers jours (ajustez la période si nécessaire)
+INSERT INTO temp_dates
+SELECT CURDATE() - INTERVAL seq DAY
+FROM (SELECT @rownum := @rownum + 1 AS seq FROM (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a, (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b, (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c, (SELECT @rownum := -1) r) d
+WHERE CURDATE() - INTERVAL seq DAY >= CURDATE() - INTERVAL 1 MONTH;
+
+-- Exclure les samedis et dimanches
+DELETE FROM temp_dates WHERE DAYOFWEEK(date) IN (1, 7);
+
+-- Calculer les absences
 SELECT COUNT(date) AS absences
-FROM (
-    SELECT date
-    FROM calendar
-    WHERE DAYOFWEEK(date) NOT IN (1, 7) -- Exclure les samedis (7) et dimanches (1)
-) AS working_days
+FROM temp_dates
 WHERE date NOT IN (
     SELECT DATE(DATE_PRESENCE)
     FROM presences
     WHERE ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."
 );
+
+-- Supprimer la table temporaire après usage
+DROP TEMPORARY TABLE temp_dates;
