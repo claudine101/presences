@@ -1,14 +1,5 @@
 SELECT
-    MONTHNAME(`DATE_PRESENCE`) AS month_name,
-    COUNT(`ID_PRESENCE`) AS total_presence,
-    DATE_FORMAT(`DATE_PRESENCE`, '%m') AS month,
-    (SELECT COUNT(`ID_UTILISATEUR`) 
-     FROM employes 
-     WHERE ID_AGENCE = employes.ID_AGENCE
-       AND ID_UTILISATEUR NOT IN (
-           SELECT ID_UTILISATEUR 
-           FROM presences 
-           WHERE DATE_FORMAT(`DATE_PRESENCE`, '%m') = DATE_FORMAT(presences.`DATE_PRESENCE`, '%m')
+|           WHERE DATE_FORMAT(`DATE_PRESENCE`, '%m') = DATE_FORMAT(presences.`DATE_PRESENCE`, '%m')
        )
     ) AS absences,
     SUM(CASE WHEN (`STATUT`) = 1 THEN 1 ELSE 0 END) AS number_of_punctuals,
@@ -23,3 +14,26 @@ GROUP BY
     MONTH(`DATE_PRESENCE`)
 ORDER BY
     MONTH(`DATE_PRESENCE`);
+
+
+
+
+    WITH RECURSIVE calendar AS (
+    SELECT CURDATE() - INTERVAL 1 MONTH AS date
+    UNION ALL
+    SELECT date + INTERVAL 1 DAY
+    FROM calendar
+    WHERE date + INTERVAL 1 DAY <= CURDATE()
+)
+
+SELECT COUNT(date) AS absences
+FROM (
+    SELECT date
+    FROM calendar
+    WHERE DAYOFWEEK(date) NOT IN (1, 7) -- Exclure les samedis (7) et dimanches (1)
+) AS working_days
+WHERE date NOT IN (
+    SELECT DATE(DATE_PRESENCE)
+    FROM presences
+    WHERE ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."
+);
