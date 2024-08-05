@@ -267,10 +267,17 @@ class Dashboard_hebdomadaires extends CI_Controller
 			);
 			$table = 'presences';
 			$this->Modele->create($table, $data_insert);
-			echo json_encode(1);
+            
+            echo json_encode(1);
+
 		}
 
-
+    function getNbre()
+    {
+        $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+        $nbre=$nbres['Nbre'];
+        echo json_encode(array('nbres'=>$nbre));
+    }        
 
  function detail($agence=0)
 {

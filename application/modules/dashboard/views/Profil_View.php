@@ -10,6 +10,10 @@
 
 
 <style type="text/css">
+.hidden {
+    display: none;
+}
+
   .mapbox-improve-map {
     display: none;
   }
@@ -63,7 +67,7 @@
           <div class="form-group col-md-3"></div>
             <div class="col-sm-3 text-right">
               <span style="margin-right: 15px">
-                <div  style="float:right;">
+                <div  style="float:right;" id="presenterButton"  class="hidden">
                 <?php 
                 $currentHour = (int)date('H');
                  if (($currentHour >= 12 && $nbre == 1) || $nbre == 0) { ?>
@@ -142,8 +146,31 @@
 <script type="text/javascript">
 $( document ).ready(function() {
 get_rapport();
+checkNbre()
 // alert();
 });   
+
+function checkNbre(){
+var agence=$('#ID_AGENCE').val()
+$.ajax({
+url : "<?=base_url()?>dashboard/Dashboard_hebdomadaires/getNbre",
+type : "POST",
+dataType: "JSON",
+cache:false,
+success:function(data){   
+  var nbres = data.nbres;
+            var currentHour = new Date().getHours();
+            if ((currentHour >= 12 && nbres == 1) || nbres == 0) {
+                $('#presenterButton').removeClass('hidden'); // Afficher le conteneur du bouton
+            } else {
+                $('#presenterButton').addClass('hidden'); // Masquer le bouton si la condition n'est pas remplie
+            }
+
+},            
+
+});  
+}
+
 
 function get_rapport(){
 var agence=$('#ID_AGENCE').val()
@@ -187,6 +214,8 @@ if (result.isConfirmed) {
     },
     success:function(data) {
       console.log(data);
+      get_rapport()
+      checkNbre()
       Swal.fire('Confirmé!', '', 'success')
     },
     error:function() {
