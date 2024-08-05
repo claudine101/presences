@@ -187,7 +187,6 @@ if (result.isConfirmed) {
     },
     success:function(data) {
       console.log(data);
-      liste()
       Swal.fire('Confirmé!', '', 'success')
     },
     error:function() {
