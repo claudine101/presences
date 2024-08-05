@@ -26,8 +26,8 @@ $config['modules_locations'] = array(APPPATH.'modules/'=>'../modules/');
 |
 */
 
-$config['base_url'] = 'http://192.168.1.252/presences/';
-//$config['base_url'] = 'http://127.0.0.1/presences/';
+// $config['base_url'] = 'http://192.168.1.252/presences/';
+$config['base_url'] = 'http://127.0.0.1/presences/';
 
 /*
 |--------------------------------------------------------------------------
@@ -393,7 +393,7 @@ $config['encryption_key'] = '';
 
 $config['sess_driver'] = 'files'; // Utilisez 'files', 'database', ou un autre pilote de session
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_expiration'] = 120;
+$config['sess_expiration'] = 1800;
 $config['sess_save_path'] = sys_get_temp_dir(); // Chemin de sauvegarde des sessions
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300; // Temps en secondes avant de mettre à jour l'ID de session
