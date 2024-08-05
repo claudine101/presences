@@ -84,12 +84,15 @@
 
 
         
-<div class="row">
+        <div class="row">
  
  <div class="col-md-12" style="margin-bottom: 20px"></div>       
-<div id="container"  class="col-md-12" ></div>
-<div class="col-md-12" style="margin-bottom: 20px"></div>
-
+ <div id="container"  class="col-md-12" ></div>
+ <div class="col-md-12" style="margin-bottom: 20px"></div>
+  <div id="container1"  class="col-md-12" ></div>
+ <div class="col-md-12" style="margin-bottom: 20px"></div>
+ <div id="container2"  class="col-md-12 " ></div>
+ 
 </div>
 </div>
 </div>
@@ -127,7 +130,10 @@
 </div>
 </div></div></div>
 <div id="nouveau">
-</div>
+    </div>
+<div id="nouveau1">
+    </div>
+<div id="nouveau2">
 
 
 </div>
@@ -183,8 +189,12 @@ agence:agence
 
 },
 success:function(data){   
-$('#container').html("");             
+  $('#container').html("");             
 $('#nouveau').html(data.rapp );
+$('#container1').html("");             
+$('#nouveau1').html(data.rapp1 );
+
+
 
 },            
 

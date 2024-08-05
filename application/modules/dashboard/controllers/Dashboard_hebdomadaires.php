@@ -225,7 +225,7 @@ class Dashboard_hebdomadaires extends CI_Controller
     </script>
          ";
     
-    echo json_encode(array('rapp'=>$rapp,'nbres'=>$nbre));
+    echo json_encode(array('rapp'=>$rapp, 'rapp2'=>$rapp,'nbres'=>$nbre));
         }
     function presenter()
 	{
