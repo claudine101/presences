@@ -15,7 +15,7 @@ class Login extends CI_Controller
 
     if (!empty($this->session->userdata('USERNAME'))) {
       if(($this->session->userdata('ID_PROFIL'))==3){
-        redirect(base_url('dashboard/Dashboard_hebdomadaires/presentes'));
+        redirect(base_url('dashboard/Dashboard_hebdomadaires/index'));
       }
       else {
         redirect(base_url('dashboard/Dashboard_hebdomadaire/index'));

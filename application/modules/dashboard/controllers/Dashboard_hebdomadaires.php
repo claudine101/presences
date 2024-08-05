@@ -14,7 +14,7 @@ class Dashboard_hebdomadaires extends CI_Controller
             }
            
         }
-        function presentes(){
+        function index(){
 
                 $dattes=$this->Model->getRequeteOne("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
                 $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
@@ -135,7 +135,7 @@ class Dashboard_hebdomadaires extends CI_Controller
     \"bDestroy\": true,
     \"oreder\":[],
     \"ajax\":{
-    url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail1/' . $this->input->post('agence'))."\",
+    url:\"".base_url('dashboard/Dashboard_hebdomadaires/detail/' . $this->input->post('agence'))."\",
     type:\"POST\",
     data:{
     key:this.key,
@@ -267,12 +267,19 @@ class Dashboard_hebdomadaires extends CI_Controller
 			);
 			$table = 'presences';
 			$this->Modele->create($table, $data_insert);
-			echo json_encode(1);
+            
+            echo json_encode(1);
+
 		}
 
+    function getNbre()
+    {
+        $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+        $nbre=$nbres['Nbre'];
+        echo json_encode(array('nbres'=>$nbre));
+    }        
 
-
- function detail1($agence=0)
+ function detail($agence=0)
 {
     
         $mois=$this->input->post('mois');
