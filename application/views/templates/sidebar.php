@@ -189,13 +189,13 @@
             <ul class="nav nav-treeview">
             <?php if ($this->session->userdata('ID_PROFIL') == 3 || +$this->session->userdata('ID_PROFIL') == 2) { ?>
             <li class="nav-item">
-                <a href="<?= base_url('dashboard/Dashboard_hebdomadaires/presentes') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaires') echo 'active'; ?>">
+                <a href="<?= base_url('dashboard/Dashboard_hebdomadaires') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaires') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Mes ponctualites</p>
                 </a>
               </li>
               <?php } ?>
-            <?php if ($this->session->userdata('ID_PROFIL') == 2 ||  $this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
+            <?php if ($this->session->userdata('ID_PROFIL') == 3 ||  $this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
 
               <li class="nav-item">
                 <a href="<?= base_url('dashboard/Dashboard_hebdomadaire') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaire') echo 'active'; ?>">

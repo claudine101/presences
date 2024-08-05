@@ -9,12 +9,12 @@ class Dashboard_hebdomadaires extends CI_Controller
         }
         public function have_droit()
         {
-            //if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2) {
-                //redirect('Login');
-           // }
+            if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2) {
+                redirect('Login');
+           }
            
         }
-        function presentes(){
+        function index(){
 
                 $dattes=$this->Model->getRequeteOne("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
                 $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
@@ -133,9 +133,9 @@ class Dashboard_hebdomadaires extends CI_Controller
     \"processing\":true,
     \"serverSide\":true,
     \"bDestroy\": true,
-    \"oreder\":[],
+    \"order\":[[1,'DESC']],
     \"ajax\":{
-    url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail1/' . $this->input->post('agence'))."\",
+    url:\"".base_url('dashboard/Dashboard_hebdomadaires/detail/' . $this->input->post('agence'))."\",
     type:\"POST\",
     data:{
     key:this.key,
@@ -272,7 +272,7 @@ class Dashboard_hebdomadaires extends CI_Controller
 
 
 
- function detail1($agence=0)
+ function detail($agence=0)
 {
     
         $mois=$this->input->post('mois');
