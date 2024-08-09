@@ -1,219 +1,30 @@
 
 <?php
-class Dashboard_hebdomadaire extends CI_Controller
-{
-function __construct()
-{
-    parent::__construct();
-    $this->have_droit();
-}
-public function have_droit()
-{
-    if ($this->session->userdata('ID_PROFIL') != 2 && $this->session->userdata('ID_PROFIL') != 5 && $this->session->userdata('ID_PROFIL') != 4) {
-        redirect('Login');
+class Dashboard_annuel extends CI_Controller
+      {
+        function __construct()
+        {
+            parent::__construct();
+            $this->have_droit();
         }
-}
-function index(){
+        public function have_droit()
+        {
+            if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2) {
+                redirect('Login');
+           }
+           
+        }
+        function index(){
 
-    $dattes=$this->Model->getRequete("SELECT DISTINCT date_format(presences.`DATE_PRESENCE`,'%Y') AS mois FROM presences ORDER BY  mois ASC");
-    $agences=$this->Model->getRequete("SELECT ID_AGENCE, DESCRIPTION FROM agences WHERE 1");
-    $data['agences']=$agences;
+            $dattes=$this->Model->getRequete("SELECT DISTINCT date_format(p.`DATE_PRESENCE`,'%Y') AS mois FROM presences  p ORDER BY  mois ASC");
+  
+            $agences=$this->Model->getRequete("SELECT ID_AGENCE, DESCRIPTION FROM agences WHERE 1");
+            $data['agences']=$agences;
+            $data['dattes']=$dattes;
+
+                $this->load->view('Dashboard_annuel_View',$data);
+        }
     
-
-    $data['dattes']=$dattes;
-    $data['agences']=$agences;
-
-
-    $this->load->view('Dashboard_hebdomadaire_View',$data);
-}
-function detail_absants()
-{
-    $avant=$this->input->post('avant');
-    $agence=$this->input->post('agence');
-    $jour=$this->input->post('jour');
-    $KEY=$this->input->post('key');
-  //   $agence=$this->input->post('agence');
-  //  echo($agence);
-  $critaire_agence='';
-  $critaire_avant='';
-  
-  if(!empty($agence)){
-      $critaire_agence.=" AND e.`ID_AGENCE`= ".$agence." ";
-  }
-  
-  if(!empty($avant)){
-      if($avant=='AM'){
-          $critaire_avant.=" AND periode LIKE  '%AM%'";
-  
-      }
-      else{
-      $critaire_avant.=" AND periode LIKE  '%PM%'";
-  
-      }
-  
-   }
-  $critere = " ";
-
-  $critere = " AND DATE_FORMAT(a.date_absence, '%Y-%m-%d') = '".$KEY."'";
-
-
-
-
-$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
-
-
-$query_principal="
-SELECT  e.*,a.date_absence,a.periode
-    FROM employes e LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
-      WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." 
-      "   . $critaire_avant."  "   . $critaire_agence."  
-";
-
-        $limit='LIMIT 0,10';
-        if($_POST['length'] != -1)
-        {
-            $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
-        }
-        $order_by='';
-        if($_POST['order']['0']['column']!=0)
-        {
-            $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY ID_PRESENCE ASC'; 
-        }
-
-        $search = !empty($_POST['search']['value']) ? ("AND (NOM_EMPLOYE LIKE '%$var_search%'  OR PRENOM_EMPLOYE LIKE '%$var_search%' OR EMAIL_EMPLOYE LIKE '%$var_search%'  ) ") : '';
-
-
-        $critaire='';
-        if(!empty($mois) && empty($jour)){
-        
-
-        }
-        
-        $query_secondaire=$query_principal.'  '.$critaire.' '.$search.' '.$order_by.'   '.$limit;
-        $query_filter=$query_principal.'  '.$critaire.' '.$search;
-
-        $fetch_data = $this->Model->datatable($query_secondaire);
-        $u=0;
-        $data = array();
-        foreach ($fetch_data as $row) 
-        {  
-            $u++;
-            $intrant=array();
-            $intrant[] = $u;
-            $intrant[] =$row->NOM_EMPLOYE;
-            $intrant[] =$row->PRENOM_EMPLOYE;
-            $intrant[] =$row->EMAIL_EMPLOYE;
-            $intrant[] =$row->TELEPHONE_EMPLOYE;
-            $intrant[] =$row->periode;
-            //  $intrant[] =$row->SEXE_EMPLOYE;
-            $intrant[] =$row->date_absence;
-            $data[] = $intrant;
-          }
-
-        $output = array(
-            "draw" => intval($_POST['draw']),
-            "recordsTotal" =>$this->Model->all_data($query_principal),
-            "recordsFiltered" => $this->Model->filtrer($query_filter),
-            "data" => $data
-        );
-
-        echo json_encode($output);
-    }
-function detail($agence=0)
-{
-    
-  $avant=$this->input->post('avant');
-  $jour=$this->input->post('jour');
-  $KEY=$this->input->post('key');
-//   $agence=$this->input->post('agence');
-//  echo($agence);
-$critaire_agence='';
-$critaire_avant='';
-
-if($agence!=0){
-    $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
-}
-
-if(!empty($avant)){
-    if($avant=='AM'){
-        $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
-
-    }
-    else{
-    $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
-
-    }
-
- }
- $KEY2=$this->input->post('key2');
-$break=explode(".",$KEY2);
-$ID=$KEY2;
-
-$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
-
-
-$query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE, p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE FROM presences p JOIN employes e ON e.ID_UTILISATEUR=p.ID_UTILISATEUR  JOIN agences a ON a.ID_AGENCE=e.ID_AGENCE WHERE 1 ";
-
-        $limit='LIMIT 0,10';
-        if($_POST['length'] != -1)
-        {
-            $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
-        }
-        $order_by='';
-        if($_POST['order']['0']['column']!=0)
-        {
-            $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY PRENOM_EMPLOYE  ASC'; 
-        }
-
-        $search = !empty($_POST['search']['value']) ? ("AND (NOM_EMPLOYE LIKE '%$var_search%'  OR PRENOM_EMPLOYE LIKE '%$var_search%' OR EMAIL_EMPLOYE LIKE '%$var_search%' OR TELEPHONE_EMPLOYE LIKE '%$var_search%'  ) ") : '';
-
-
-        $critaire='';
-        if($ID==1){  
-
-        $critaire=" AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
-
-        }elseif ($ID==2) { 
-
-          $critaire=" AND  `STATUT`=1 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
-        }
-        elseif ($ID==3) { 
-
-          $critaire=" AND  `STATUT`=0 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
-
-        }
-       
-        $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
-        $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
-
-        $fetch_data = $this->Model->datatable($query_secondaire);
-        $u=0;
-        $data = array();
-        foreach ($fetch_data as $row) 
-        {  
-            $u++;
-            $intrant=array();
-            $intrant[] = $u;
-            $intrant[] =$row->NOM_EMPLOYE;
-            $intrant[] =$row->PRENOM_EMPLOYE;
-            $intrant[] =$row->EMAIL_EMPLOYE;
-            $intrant[] =$row->TELEPHONE_EMPLOYE;
-            $intrant[] =$row->DESCRIPTION;
-            $intrant[] =$row->DATE_PRESENCE;
-            $data[] = $intrant;
-        }
-
-        $output = array(
-            "draw" => intval($_POST['draw']),
-            "recordsTotal" =>$this->Model->all_data($query_principal),
-            "recordsFiltered" => $this->Model->filtrer($query_filter),
-            "data" => $data
-        );
-
-        echo json_encode($output);
-    }
-
-
     public function get_rapport_user(){ 
         $agence=$this->input->post('agence');
         $avant=$this->input->post('avant');
@@ -251,21 +62,18 @@ $query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE
                  }
     
           $control=$this->Model->getRequete("SELECT
-          DAYNAME(`DATE_PRESENCE`) AS day_of_week,
-          COUNT(`ID_PRESENCE`) AS tout,
-          DATE_FORMAT(`DATE_PRESENCE`, '%Y-%m-%d') as annees,
-          (SELECT COUNT(`ID_UTILISATEUR`) FROM employes WHERE ID_UTILISATEUR NOT IN (SELECT (`ID_UTILISATEUR`) FROM presences) ) as absant,
-            SUM(CASE WHEN (`STATUT`) =1 THEN 1 ELSE 0 END) AS number_of_punctuals,
+             MONTHNAME(`DATE_PRESENCE`) AS day_of_week,
+              DATE_FORMAT(`DATE_PRESENCE`, '%m') as annees,
+              (SELECT COUNT(`ID_UTILISATEUR`) FROM employes WHERE ID_UTILISATEUR NOT IN (SELECT (`ID_UTILISATEUR`) FROM presences) ) as absant,
+             SUM(CASE WHEN (`STATUT`) =1 THEN 1 ELSE 0 END) AS number_of_punctuals,
           SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates
-      FROM
-          presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
-      WHERE 1 ".$criteres1."  ".$criteres3." AND
-          `DATE_PRESENCE` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
-          AND `DATE_PRESENCE` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
-      GROUP BY
-          DAYOFWEEK(`DATE_PRESENCE`)
-      ORDER BY
-          DAYOFWEEK(`DATE_PRESENCE`);
+          FROM
+              presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
+          WHERE 1".$criteres1."  ".$criteres3." 
+          GROUP BY
+              MONTH(`DATE_PRESENCE`)
+          ORDER BY
+              MONTH(`DATE_PRESENCE`);
           ");
     
     
@@ -291,18 +99,14 @@ $query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE
           $ponctuel_traite=$ponctuel_traite+$value['number_of_punctuals'];
         
     }
-    
+    $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+    $nbre=$nbres['Nbre'];
 
-    $absants=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%Y-%m-%d') as mois, DAYNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
-FROM absences a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.id_utilisateur
-WHERE 1  AND
-  `date_absence` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
-  AND `date_absence` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
-".$criteres4."  ".$criteres5." 
-GROUP BY
-  DAYOFWEEK(`date_absence`)
-ORDER BY
-  DAYOFWEEK(`date_absence`);"
+    $absants=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%m') as mois, MONTHNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
+        FROM absences a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.id_utilisateur
+        WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$criteres4."  ".$criteres5." 
+        GROUP BY mois
+        ORDER BY mois"
   );
 
 $nombre=0;
@@ -359,13 +163,15 @@ $(\"#mytablea\").DataTable({
 \"bDestroy\": true,
 \"oreder\":[],
 \"ajax\":{
-url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail_absants')."\",
+url:\"".base_url('dashboard/Dashboard_annuel/detail_absants')."\",
 type:\"POST\",
 data:{
 key:this.key,
 key2:this.key2,
+agance:$('#ID_AGENCE').val(),
 avant:$('#avant').val(),
-agence:$('#ID_AGENCE').val()
+
+
 }
 },
 lengthMenu: [[10,50, 100, row_count], [10,50, 100, \"All\"]],
@@ -487,7 +293,6 @@ series: [
                     events: {
                       click: function()
     {
-        
     $(\"#titre\").html(\"Détails \");
     $(\"#myModal\").modal();
     var row_count ='1000000';
@@ -497,7 +302,7 @@ series: [
     \"bDestroy\": true,
     \"order\":[[1,'DESC']],
     \"ajax\":{
-    url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail')."\",
+    url:\"".base_url('dashboard/Dashboard_annuel/detail_presence')."\",
     type:\"POST\",
     data:{
     key:this.key,
@@ -579,12 +384,199 @@ series: [
     </script>
          ";
     
-    echo json_encode(array('rapp'=>$rapp, 'rapp_absent'=>$rapp_absent));
+    echo json_encode(array('rapp'=>$rapp, 'rapp_absent'=>$rapp_absent,'nbres'=>$nbre));
 }
+function detail_absants()
+{
+    $avant=$this->input->post('avant');
+    $agence=$this->input->post('agence');
+    $KEY=$this->input->post('key');
+  //   $agence=$this->input->post('agence');
+  //  echo($agence);
+  $critaire_agence='';
+  $critaire_avant='';
+  
+  if($agence!=0){
+      $critaire_agence.=" AND e.`ID_AGENCE`= ".$agence." ";
+  }
+  
+  if(!empty($avant)){
+      if($avant=='AM'){
+          $critaire_avant.=" AND periode LIKE  '%AM%'";
+  
+      }
+      else{
+      $critaire_avant.=" AND periode LIKE  '%PM%'";
+  
+      }
+  
+   }
+  $critere = " ";
 
-}
+  $critere = " AND DATE_FORMAT(a.date_absence, '%m') = '".$KEY."'";
+
+
+
+
+$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+
+
+$query_principal="
+SELECT  e.*,a.date_absence
+    FROM employes e LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
+      WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$critaire_agence." ".$critaire_avant."
+";
+
+        $limit='LIMIT 0,10';
+        if($_POST['length'] != -1)
+        {
+            $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+        }
+        $order_by='';
+        if($_POST['order']['0']['column']!=0)
+        {
+            $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY ID_PRESENCE ASC'; 
+        }
+
+        $search = !empty($_POST['search']['value']) ? ("AND (NOM_EMPLOYE LIKE '%$var_search%'  OR PRENOM_EMPLOYE LIKE '%$var_search%' OR EMAIL_EMPLOYE LIKE '%$var_search%'  ) ") : '';
+
+
+        $critaire='';
+        if(!empty($mois) && empty($jour)){
+        
+
+        }
+        
+        $query_secondaire=$query_principal.'  '.$critaire.' '.$search.' '.$order_by.'   '.$limit;
+        $query_filter=$query_principal.'  '.$critaire.' '.$search;
+
+        $fetch_data = $this->Model->datatable($query_secondaire);
+        $u=0;
+        $data = array();
+        foreach ($fetch_data as $row) 
+        {  
+            $u++;
+            $intrant=array();
+            $intrant[] = $u;
+            $intrant[] =$row->NOM_EMPLOYE;
+            $intrant[] =$row->PRENOM_EMPLOYE;
+            $intrant[] =$row->EMAIL_EMPLOYE;
+            $intrant[] =$row->TELEPHONE_EMPLOYE;
+            $intrant[] =$row->DATE_NAISSANCE_EMPLOYE;
+            //  $intrant[] =$row->SEXE_EMPLOYE;
+            $intrant[] =$row->date_absence;
+            $data[] = $intrant;
+          }
+
+        $output = array(
+            "draw" => intval($_POST['draw']),
+            "recordsTotal" =>$this->Model->all_data($query_principal),
+            "recordsFiltered" => $this->Model->filtrer($query_filter),
+            "data" => $data
+        );
+
+        echo json_encode($output);
+    }
+  
+        function detail_presence()
+        {
+            
+          $avant=$this->input->post('avant');
+          $KEY=$this->input->post('key');
+          $agence=$this->input->post('agence');
+        //  echo($agence);
+        $critaire_agence='';
+        $critaire_avant='';
+        
+        if($agence!=0){
+            $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
+        }
+        
+        if(!empty($avant)){
+            if($avant=='AM'){
+                $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
+        
+            }
+            else{
+            $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
+        
+            }
+        
+         }
+         $KEY2=$this->input->post('key2');
+        $break=explode(".",$KEY2);
+        $ID=$KEY2;
+        
+        $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+        
+        
+        $query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE, p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE FROM presences p JOIN employes e ON e.ID_UTILISATEUR=p.ID_UTILISATEUR  JOIN agences a ON a.ID_AGENCE=e.ID_AGENCE WHERE 1 ";
+        
+                $limit='LIMIT 0,10';
+                if($_POST['length'] != -1)
+                {
+                    $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+                }
+                $order_by='';
+                if($_POST['order']['0']['column']!=0)
+                {
+                    $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY PRENOM_EMPLOYE  ASC'; 
+                }
+        
+                $search = !empty($_POST['search']['value']) ? ("AND (NOM_EMPLOYE LIKE '%$var_search%'  OR PRENOM_EMPLOYE LIKE '%$var_search%' OR EMAIL_EMPLOYE LIKE '%$var_search%' OR TELEPHONE_EMPLOYE LIKE '%$var_search%'  ) ") : '';
+        
+        
+                $critaire='';
+                
+                  $critaire=" AND  `STATUT`=1 AND date_format(p.`DATE_PRESENCE`,'%m') LIKE '%".$KEY."%'";
+                
+
+                  $critaire='';
+        if($ID==1){  
+
+        $critaire=" AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
+
+        }elseif ($ID==2) { 
+
+          $critaire=" AND  `STATUT`=1 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
+        }
+        elseif ($ID==3) { 
+
+          $critaire=" AND  `STATUT`=0 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
+
+        }
+               
+                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
+                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
+        
+                $fetch_data = $this->Model->datatable($query_secondaire);
+                $u=0;
+                $data = array();
+                foreach ($fetch_data as $row) 
+                {  
+                    $u++;
+                    $intrant=array();
+                    $intrant[] = $u;
+                    $intrant[] =$row->NOM_EMPLOYE;
+                    $intrant[] =$row->PRENOM_EMPLOYE;
+                    $intrant[] =$row->EMAIL_EMPLOYE;
+                    $intrant[] =$row->TELEPHONE_EMPLOYE;
+                    $intrant[] =$row->DESCRIPTION;
+                    $intrant[] =$row->DATE_PRESENCE;
+                    $data[] = $intrant;
+                }
+        
+                $output = array(
+                    "draw" => intval($_POST['draw']),
+                    "recordsTotal" =>$this->Model->all_data($query_principal),
+                    "recordsFiltered" => $this->Model->filtrer($query_filter),
+                    "data" => $data
+                );
+        
+                echo json_encode($output);
+            }
+        }
+        
     
-
-
 
 ?>

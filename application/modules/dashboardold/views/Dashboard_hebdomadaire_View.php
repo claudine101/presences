@@ -79,15 +79,15 @@
 
 <div class="row">
  
- <div class="col-md-12" style="margin-bottom: 20px"></div>       
- <div id="container"  class="col-md-12" ></div>
- <div class="col-md-12" style="margin-bottom: 20px"></div>
-  <div id="container1"  class="col-md-12" ></div>
- <div class="col-md-12" style="margin-bottom: 20px"></div>
- <div id="container2"  class="col-md-12 " ></div>
- 
+       <div class="col-md-12" style="margin-bottom: 20px"></div>       
+  <div id="container"  class="col-md-12" ></div>
+  <div class="col-md-12" style="margin-bottom: 20px"></div>
+  
 </div>
 </div>
+</div>
+
+
 <div class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog modal-lg" style ="width:1000px">
           <div class="modal-content  modal-lg">
@@ -117,35 +117,6 @@
       </div>
        
 
-      <div class="modal fade" id="myModala" role="dialog">
-        <div class="modal-dialog modal-lg" style ="width:1000px">
-          <div class="modal-content  modal-lg">
-            <div class="modal-header">
-              <h4 class="modal-title"><span id="titrea"></span></h4>
-            </div>
-            <div class="modal-body">
-              <div class="table-responsive">
-                <table id='mytablea' class='table table-bordered table-striped table-hover table-condensed' style="width:1000px">
-                  <thead>
-                   <th>#</th>
-                  <th>NOM </th>
-                  <th> PRENOM</th>
-                  <th>EMAIL</th>
-                  <th>TELEPHONE</th>
-                  <th>PERIODE</th>
-                  <th>DATE DE PRESENCE</th>
-                  </thead>
-                </table>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Quitter</button>
-            </div>
-          </div>
-        </div>
-      </div>
-       
-
 
 
 
@@ -153,9 +124,7 @@
 </div>
 </div></div></div>
 <div id="nouveau">
-    </div>
-<div id="nouveau1">
-    </div>
+</div>
 
 
 </div>
@@ -168,6 +137,7 @@
 </body>
 </html>
 
+
  <script type="text/javascript">
  $( document ).ready(function() {
     get_rapport();
@@ -176,28 +146,26 @@
 
 function get_rapport(){
 var agence=$('#ID_AGENCE').val()
-var avant=$('#avant').val();
+var avant=$('#avant').val()
+
 $.ajax({
-url : "<?=base_url()?>dashboard/Dashboard_hebdomadaire/get_rapport_user",
+url : "<?=base_url()?>dashboard/Dashboard_hebdomadaire/get_rapport",
 type : "POST",
 dataType: "JSON",
 cache:false,
 data:{
+
 agence:agence,
 avant:avant
+ 
 },
 success:function(data){   
-  $('#container').html("");             
+$('#container').html("");             
 $('#nouveau').html(data.rapp );
-$('#container1').html("");             
-$('#nouveau1').html(data.rapp_absent);
-
-
 
 },            
 
 });  
 }
-
 
 </script> 

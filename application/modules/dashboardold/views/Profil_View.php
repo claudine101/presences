@@ -10,6 +10,10 @@
 
 
 <style type="text/css">
+.hidden {
+    display: none;
+}
+
   .mapbox-improve-map {
     display: none;
   }
@@ -63,15 +67,13 @@
           <div class="form-group col-md-3"></div>
             <div class="col-sm-3 text-right">
               <span style="margin-right: 15px">
-                <div  style="float:right;">
-                <?php 
-                $currentHour = (int)date('H');
-                 if (($currentHour >= 12 && $nbre == 1) || $nbre == 0) { ?>
+                <div  style="float:right;" id="presenterButton"  class="hidden">
+                
                <a  class='btn btn-primary btn-sm float-right' id='<?= $data['ID_UTILISATEUR'] ?>'  title='<?= $data['NOM_EMPLOYE'] ?>'  onclick='presenter("<?= $data['ID_UTILISATEUR'] ?>",this.title,this.id)' style='float:right'>
                     <i class="nav-icon fas fa-plus"></i>
                     Se présenter 
                   </a>
-                  <?php }?>
+                
                 </div>
                
               </span>
@@ -82,12 +84,15 @@
 
 
         
-<div class="row">
+        <div class="row">
  
  <div class="col-md-12" style="margin-bottom: 20px"></div>       
-<div id="container"  class="col-md-12" ></div>
-<div class="col-md-12" style="margin-bottom: 20px"></div>
-
+ <div id="container"  class="col-md-12" ></div>
+ <div class="col-md-12" style="margin-bottom: 20px"></div>
+  <div id="container1"  class="col-md-12" ></div>
+ <div class="col-md-12" style="margin-bottom: 20px"></div>
+ <div id="container2"  class="col-md-12 " ></div>
+ 
 </div>
 </div>
 </div>
@@ -125,7 +130,10 @@
 </div>
 </div></div></div>
 <div id="nouveau">
-</div>
+    </div>
+<div id="nouveau1">
+    </div>
+<div id="nouveau2">
 
 
 </div>
@@ -142,8 +150,31 @@
 <script type="text/javascript">
 $( document ).ready(function() {
 get_rapport();
+checkNbre()
 // alert();
 });   
+
+function checkNbre(){
+var agence=$('#ID_AGENCE').val()
+$.ajax({
+url : "<?=base_url()?>dashboard/Dashboard_hebdomadaires/getNbre",
+type : "POST",
+dataType: "JSON",
+cache:false,
+success:function(data){   
+  var nbres = data.nbres;
+            var currentHour = new Date().getHours();
+            if ((currentHour >= 12 && nbres == 1) || nbres == 0) {
+                $('#presenterButton').removeClass('hidden'); // Afficher le conteneur du bouton
+            } else {
+                $('#presenterButton').addClass('hidden'); // Masquer le bouton si la condition n'est pas remplie
+            }
+
+},            
+
+});  
+}
+
 
 function get_rapport(){
 var agence=$('#ID_AGENCE').val()
@@ -158,8 +189,12 @@ agence:agence
 
 },
 success:function(data){   
-$('#container').html("");             
+  $('#container').html("");             
 $('#nouveau').html(data.rapp );
+$('#container1').html("");             
+$('#nouveau1').html(data.rapp1 );
+
+
 
 },            
 
@@ -187,7 +222,8 @@ if (result.isConfirmed) {
     },
     success:function(data) {
       console.log(data);
-      liste()
+      get_rapport()
+      checkNbre()
       Swal.fire('Confirmé!', '', 'success')
     },
     error:function() {

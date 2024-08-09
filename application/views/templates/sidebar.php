@@ -178,7 +178,7 @@
 
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class == 'Dashboard_presence' ||$this->router->class =='Dashboard_hebdomadaire'  ||$this->router->class =='Dashboard_hebdomadaires')  echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Dashboard_annuel' ||$this->router->class == 'Dashboard_presence' ||$this->router->class =='Dashboard_hebdomadaire'  ||$this->router->class =='Dashboard_hebdomadaires')  echo 'active'; ?>">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Tableau de bord 
@@ -204,6 +204,15 @@
                 </a>
               </li>
               <?php } ?>
+              <?php if ($this->session->userdata('ID_PROFIL') == 2 ||  $this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
+
+              <li class="nav-item">
+                <a href="<?= base_url('dashboard/Dashboard_annuel') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_annuel') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Rapport annuel </p>
+                </a>
+              </li>
+            <?php } ?>
 
             <?php if ($this->session->userdata('ID_PROFIL') == 2 ||$this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
               <li class="nav-item">

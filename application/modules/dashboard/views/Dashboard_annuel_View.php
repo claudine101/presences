@@ -13,9 +13,6 @@
 .hidden {
     display: none;
 }
-  .wide-table {
-    width: 1000%; /* Utilise toute la largeur disponible */
-  }
 
   .mapbox-improve-map {
     display: none;
@@ -66,7 +63,17 @@
                     
                     </div>
             </div><!-- /.col -->
-            <div class="form-group col-md-6"><h4 style='color:blue'>Mes Ponctualités</h4></div>
+            <div class="form-group col-md-6"><h4 style='color:blue'>Rapport annuel</h4></div>
+            <div class="form-group col-md-3">
+                    <label  style='color:blue'>agences</label>
+                    <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='get_rapport()'>
+                      <option value="">agences</option>
+                      <?php foreach ($agences as $key) { ?>
+                        <option value="<?php echo $key['ID_AGENCE'] ?>"><?php echo  $key['DESCRIPTION'] ?></option>
+                      <?php } ?>
+                    </select>
+                </div>
+               
             <div class="form-group col-md-3">
                   <label  style='color:blue'>Avant  ou  après midi</label>
                   <select class="form-control input-sm" name="avant" id="avant" onchange='get_rapport()'>
@@ -77,20 +84,8 @@
                     </select>
 
             </div>
-            <div class="col-sm-3 text-right">
-              <span style="margin-right: 15px">
-                <div  style="float:right;" id="presenterButton"  class="hidden">
-                
-               <a  class='btn btn-primary btn-sm float-right' id='<?= $data['ID_UTILISATEUR'] ?>'  title='<?= $data['NOM_EMPLOYE'] ?>'  onclick='presenter("<?= $data['ID_UTILISATEUR'] ?>",this.title,this.id)' style='float:right'>
-                    <i class="nav-icon fas fa-plus"></i>
-                    Se présenter 
-                  </a>
-                
-                </div>
-               
-              </span>
-
-            </div><!-- /.col -->
+   
+            
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
 
@@ -119,11 +114,15 @@
       <div class="modal-body">
         <div class="table-responsive">
           <table id='mytable' class='table table-bordered table-striped table-hover table-condensed' >
-            <thead>
-             <th>#</th>
-            <th>DATE </th>
-            <th> STATUT</th>
-            </thead>
+          <thead>
+                   <th>#</th>
+                  <th>NOM </th>
+                  <th> PRENOM</th>
+                  <th>EMAIL</th>
+                  <th>TELEPHONE</th>
+                  <th>AGENCE</th>
+                  <th>DATE PRESENCE</th>
+                  </thead>
           </table>
         </div>
       </div>
@@ -134,22 +133,24 @@
   </div>
 </div>
  
-
-<div class="modal fade" id="myModal1" role="dialog">
+<div class="modal fade" id="myModala" role="dialog">
   <div class="modal-dialog modal-lg" >
     <div class="modal-content  modal-lg">
       <div class="modal-header">
-        <h4 class="modal-title"><span id="titre1"></span></h4>
+        <h4 class="modal-title"><span id="titrea"></span></h4>
       </div>
       <div class="modal-body">
         <div class="table-responsive">
-          <table id='mytable1' class='table table-bordered table-striped table-hover table-condensed wide-table' >
-            <thead>
-             <th>#</th>
-            <th>DATE </th>
-            <th>PERIODE </th>
-
-            </thead>
+          <table id='mytablea' class='table table-bordered table-striped table-hover table-condensed' >
+          <thead>
+                   <th>#</th>
+                  <th>NOM </th>
+                  <th> PRENOM</th>
+                  <th>EMAIL</th>
+                  <th>TELEPHONE</th>
+                  <th>AGENCE</th>
+                  <th>DATE ABSANT</th>
+                  </thead>
           </table>
         </div>
       </div>
@@ -160,6 +161,8 @@
   </div>
 </div>
  
+
+
 
 
 
@@ -169,7 +172,6 @@
     </div>
 <div id="nouveau1">
     </div>
-<div id="nouveau2">
 
 
 </div>
@@ -186,94 +188,44 @@
 <script type="text/javascript">
 $( document ).ready(function() {
 get_rapport();
-checkNbre()
-// alert();
 });   
 
-function checkNbre(){
-var agence=$('#ID_AGENCE').val()
-$.ajax({
-url : "<?=base_url()?>dashboard/Dashboard_hebdomadaires/getNbre",
-type : "POST",
-dataType: "JSON",
-cache:false,
-success:function(data){   
-  var nbres = data.nbres;
-            var currentHour = new Date().getHours();
-            if ((currentHour >= 12 && nbres == 1) || nbres == 0) {
-                $('#presenterButton').removeClass('hidden'); // Afficher le conteneur du bouton
-            } else {
-                $('#presenterButton').addClass('hidden'); // Masquer le bouton si la condition n'est pas remplie
-            }
+function get_i() {
 
-},            
-
-});  
+$('#jour').html('');
+$('#heure').html('');
+get_rapport();
+  
 }
 
+function get_m() {
+
+$('#heure').html('');
+get_rapport();
+
+}
 
 function get_rapport(){
-var avant=$('#avant').val()
+var agence=$('#ID_AGENCE').val()
+var avant=$('#avant').val();
 $.ajax({
-url : "<?=base_url()?>dashboard/Dashboard_hebdomadaires/get_rapport_user",
+url : "<?=base_url()?>dashboard/Dashboard_annuel/get_rapport_user",
 type : "POST",
 dataType: "JSON",
 cache:false,
 data:{
-  avant:avant
+agence:agence,
+avant:avant
 },
 success:function(data){   
   $('#container').html("");             
 $('#nouveau').html(data.rapp );
 $('#container1').html("");             
-$('#nouveau1').html(data.rapp_absant );
-
-
-
+$('#nouveau1').html(data.rapp_absent);
 },            
 
 });  
 }
-
-
-function presenter(id,nom=null,prenom=null){
-Swal.fire({
-title: 'Souhaitez-vous presenter  '+nom,
-showDenyButton: true,
-confirmButtonText: 'Maintenant',
-denyButtonText: `Pas maintenant`,
-}).then((result) => {
-/* Read more about isConfirmed, isDenied below */
-if (result.isConfirmed) {
-/* Debut ajax*/
-   $.ajax({
-    url : "<?=base_url()?>dashboard/Dashboard_hebdomadaires/presenter/"+id,
-    type : "PUT",
-    dataType: "JSON",
-    cache:false,
-    data: {},
-    beforeSend:function () { 
-    },
-    success:function(data) {
-      console.log(data);
-      get_rapport()
-      checkNbre()
-      Swal.fire('Confirmé!', '', 'success')
-    },
-    error:function() {
-      Swal.fire('Erreur de la connexion', '', 'info')
-    }
-});
-
-  
-} else if (result.isDenied) {
-  Swal.fire('Non Confirmé', '', 'info')
-}
-})
-
-
-//Fin ajax
-
-}
-
 </script> 
+
+
