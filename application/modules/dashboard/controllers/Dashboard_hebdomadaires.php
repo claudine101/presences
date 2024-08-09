@@ -409,11 +409,11 @@ language: {
        // Obtenir la date et l'heure actuelles
         $dateCurrent = new DateTime();
         $date_arrive = $this->Modele->getOne('arrives', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
-        $date_arrive_pm = $this->Modele->getOne('arrives_pm', array('ID_ARRIVE_PM' => $this->session->userdata('ID_ARRIVE_PM')));
-        
+       
         date_default_timezone_set('Europe/Paris');
         date_default_timezone_set('Africa/Bujumbura');
        
+        $date_arrive_pm = $this->Modele->getOne('arrives_pm', array('ID_ARRIVE_PM' => $this->session->userdata('ID_ARRIVE_PM')));
         $targetTimeAM = ($date_arrive['HEURES']);
         $targetTimePM = ($date_arrive_pm['HEURES']);
 
