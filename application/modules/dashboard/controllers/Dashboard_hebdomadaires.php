@@ -404,12 +404,13 @@ language: {
 }
     function presenter()
 	{
+        date_default_timezone_set('Africa/Bujumbura');
 		$data = $this->Modele->getOne('qr_code_presences', array('IS_ACTIVE' =>1));
        // Obtenir la date et l'heure actuelles
         $dateCurrent = new DateTime();
         $date_arrive = $this->Modele->getOne('arrives', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
-        date_default_timezone_set('Europe/Paris');
-        date_default_timezone_set('Africa/Bujumbura');
+        
+        $date_arrive_pm = $this->Modele->getOne('arrives_pm', array('ID_ARRIVE_PM' => $this->session->userdata('ID_ARRIVE_PM')));
        
         $targetTimeAM = ($date_arrive['HEURES']);
         $targetTimePM = new DateTime($date_arrive_pm['HEURES']);
@@ -438,6 +439,7 @@ language: {
         }
 
         print_r($current_time);
+        print_r($dateCurrent);
         print_r($targetTimePM);
         print_r($statu);
 
