@@ -199,6 +199,7 @@ dataType: "JSON",
 cache:false,
 success:function(data){   
   var nbres = data.nbres;
+  /* alert(nbres) */
             var currentHour = new Date().getHours();
             if ((currentHour >= 12 && nbres == 1) || nbres == 0) {
                 $('#presenterButton').removeClass('hidden'); // Afficher le conteneur du bouton

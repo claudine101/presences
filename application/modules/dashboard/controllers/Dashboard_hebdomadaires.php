@@ -17,11 +17,13 @@ class Dashboard_hebdomadaires extends CI_Controller
         function index(){
 
                 $dattes=$this->Model->getRequeteOne("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+                
+                $absants=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM absences WHERE  DATE_FORMAT(date_absence, '%Y-%m-%d') = CURDATE() AND  id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."");
+                
                 $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
                 $data['nbre']=$nbres['Nbre'];
-
                 $data['data']=$dattes;
-                $data['nbre']=$nbres['Nbre'];
+                $data['nbre']=( $absants['Nbre']+$nbres['Nbre']);
 
                 $this->load->view('Profil_View',$data);
         }
@@ -455,7 +457,9 @@ language: {
     function getNbre()
     {
         $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
-        $nbre=$nbres['Nbre'];
+        
+        $absants=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM absences WHERE  DATE_FORMAT(date_absence, '%Y-%m-%d') = CURDATE() AND  id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."");
+        $nbre=( $absants['Nbre']+$nbres['Nbre']);
         echo json_encode(array('nbres'=>$nbre));
     }        
 
