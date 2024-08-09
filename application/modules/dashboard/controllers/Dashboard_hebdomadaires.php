@@ -407,7 +407,6 @@ language: {
         date_default_timezone_set('Africa/Bujumbura');
 		$data = $this->Modele->getOne('qr_code_presences', array('IS_ACTIVE' =>1));
        // Obtenir la date et l'heure actuelles
-        $dateCurrent = new DateTime();
         $date_arrive = $this->Modele->getOne('arrives', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
         
         $date_arrive_pm = $this->Modele->getOne('arrives_pm', array('ID_ARRIVE_PM' => $this->session->userdata('ID_ARRIVE_PM')));
@@ -427,7 +426,8 @@ language: {
        
     
         // Formater la date actuelle pour obtenir AM ou PM
-        $formattedDate = $current_time->format('A');
+
+        $formattedDate = $current_time->add(new DateInterval('PT1H'))->format('A');
         $statu=0;
         if ($current_time<$arrival_time) {
             $statu=1;
@@ -438,12 +438,7 @@ language: {
             $statu=0;
         }
 
-        print_r($current_time);
-        print_r($dateCurrent);
-        print_r($targetTimePM);
-        print_r($statu);
-
-        exit();
+        
        
 			$data_insert = array(
 				'ID_UTILISATEUR' => $this->session->userdata('ID_UTILISATEUR'),
