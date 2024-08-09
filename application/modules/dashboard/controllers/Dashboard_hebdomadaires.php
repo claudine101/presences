@@ -429,8 +429,8 @@ language: {
         // Ajouter 15 minutes
         $arrival_time=$time->modify('+00 minutes');
        
-    //   print_r($arrival_time);
-    //   exit();
+      print_r($arrival_time);
+      exit();
         // Formater la date actuelle pour obtenir AM ou PM
         $formattedDate =$current_time->add(new DateInterval('PT1H'))->format('A');
         $statu=0;
