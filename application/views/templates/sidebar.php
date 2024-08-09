@@ -144,29 +144,25 @@
        $assureur = "";
        $logo=!empty($this->session->userdata('ICON_LOGO')) ? $this->session->userdata('ICON_LOGO') : "receca.png";
        }
+       $logo=!empty($this->session->userdata('PHOTO_EMPLOYE')) ? $this->session->userdata('PHOTO_EMPLOYE') : "receca.png";
+
 
    ?>
 
-   <?php if ($this->session->userdata('PROFIL_ID') == 2) { ?>
+  
         <!-- <a href="#" class="d-block"><img src="<?= $image ?>" id="imageLogo"> <?= $assureur ?> </a> -->
          <img height="13.5%" width="100%" src="<?= $logo?>" alt="" class="brand-image">
-        <?php }else{  ?>
-        
-         <img height="13.5%" width="100%" src="<?= base_url() ?>upload/inkingi.png" alt="" class="brand-image">
-         <?php } ?>
-<!-- <?= $assureur ?> -->
+      
  
   <!-- Sidebar -->
   <div class="sidebar">
     <!-- Sidebar user panel (optional) -->
     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
       <div class="image">
-          <?php if (!empty($this->session->userdata('ICON_LOGO'))) { ?>
-        <a href="#" class="d-block"><img src="<?= $this->session->userdata('ICON_LOGO')?>" id="imageLogo">  <?= $this->session->userdata('USER_NAME') ?> </a>
-        <?php }else{  ?>
-        <a href="#" class="d-block"><i class="fa fa-user"></i> <?= $this->session->userdata('USERNAME') ?></a>
+        
+        <a href="#" class="d-block"><?= $this->session->userdata('NOM_EMPLOYE') ?>  <?= $this->session->userdata('PRENOM_EMPLOYE') ?> </a>
+        <a href="#" class="d-block"><i class="fa fa-email"></i> <?= $this->session->userdata('USERNAME') ?></a>
 
-         <?php } ?>
       </div>
       <!--  <div class="info">
        

@@ -38,7 +38,8 @@ class Login extends CI_Controller
     $criteresmail['USERNAME'] = $login;
     $criteresmail['PASSWORD'] = $PASSWORD;
 
-    $user = $this->Model->getRequeteOne('SELECT * FROM utilisateurs WHERE  USERNAME="' . $login . '"');
+    $user = $this->Model->getRequeteOne('SELECT u.* ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,e.PHOTO_EMPLOYE FROM utilisateurs u 
+    JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR  WHERE  USERNAME="' . $login . '"');
 
     // $droit = $this->Model->getRequeteOne('SELECT *  FROM droits WHERE ID_PROFIL="' . $user['ID_PROFIL'] . '" ');
 
@@ -50,8 +51,10 @@ class Login extends CI_Controller
           'USERNAME' => $user['USERNAME'],
           'ID_PROFIL' => $user['ID_PROFIL'],
           'ID_ARRIVE' => $user['ID_ARRIVE'],
-          'ID_ARRIVE_PM' => $user['ID_ARRIVE_PM']
-
+          'ID_ARRIVE_PM' => $user['ID_ARRIVE_PM'],
+          'NOM_EMPLOYE' => $user['NOM_EMPLOYE'],
+          'PRENOM_EMPLOYE' => $user['PRENOM_EMPLOYE'],
+          'PHOTO_EMPLOYE' => $user['PHOTO_EMPLOYE']
 
         );
 
