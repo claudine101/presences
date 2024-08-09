@@ -119,33 +119,30 @@ SELECT  e.*,a.date_absence,a.periode
 
         echo json_encode($output);
     }
-function detail($agence=0)
+function details($agence=0)
 {
     
   $avant=$this->input->post('avant');
   $jour=$this->input->post('jour');
   $KEY=$this->input->post('key');
 //   $agence=$this->input->post('agence');
-//  echo($agence);
-$critaire_agence='';
-$critaire_avant='';
-
-if($agence!=0){
-    $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
-}
-
-if(!empty($avant)){
+    // print_r($agence);
+    // exit();
+    $criteres1="";
+    $criteres3="";
+    
+    if(!empty($agence)){
+    $criteres1.=" AND a.`ID_AGENCE`= ".$agence." ";
+    }
+    if(!empty($avant)){
     if($avant=='AM'){
-        $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
-
+        $criteres3.=" AND TIME(`DATE_PRESENCE`)<'12:00:00' ";
     }
     else{
-    $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
-
+        $criteres3.=" AND TIME(`DATE_PRESENCE`)>='12:00:00' ";
     }
-
- }
- $KEY2=$this->input->post('key2');
+  }
+$KEY2=$this->input->post('key2');
 $break=explode(".",$KEY2);
 $ID=$KEY2;
 
@@ -185,8 +182,8 @@ $query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE
         // $critaire1="AND`STAUT`=0AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
 // '.$critaire1.'
        
-        $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
-        $query_filter=$query_principal.''.$critaire.' '.$critaire_agence.' '.$critaire_avant.' '.$search;
+        $query_secondaire=$query_principal.'  '.$critaire.' '.$criteres1.' '.$criteres3.' '.$search.' '.$order_by.'   '.$limit;
+        $query_filter=$query_principal.''.$critaire.' '.$criteres1.' '.$criteres3.' '.$search;
 
         $fetch_data = $this->Model->datatable($query_secondaire);
         $u=0;
@@ -489,7 +486,6 @@ series: [
                     events: {
                       click: function()
     {
-        
     $(\"#titre\").html(\"Détails \");
     $(\"#myModal\").modal();
     var row_count ='1000000';
@@ -499,7 +495,7 @@ series: [
     \"bDestroy\": true,
     \"order\":[[1,'DESC']],
     \"ajax\":{
-    url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail')."\",
+    url:\"".base_url('dashboard/Dashboard_hebdomadaire/details/' . $this->input->post('agence'))."\",
     type:\"POST\",
     data:{
     key:this.key,

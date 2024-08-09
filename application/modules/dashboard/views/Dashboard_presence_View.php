@@ -256,7 +256,6 @@ function get_m() {
 
 <script> 
 function get_rapport(){
-
 var mois=$('#mois').val();
 var jour=$('#jour').val();
 var heure=$('#heure').val();
