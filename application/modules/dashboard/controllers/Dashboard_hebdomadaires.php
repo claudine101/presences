@@ -409,9 +409,11 @@ language: {
        // Obtenir la date et l'heure actuelles
         $dateCurrent = new DateTime();
         $date_arrive = $this->Modele->getOne('arrives', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
+       
         date_default_timezone_set('Europe/Paris');
         date_default_timezone_set('Africa/Bujumbura');
        
+        $date_arrive_pm = $this->Modele->getOne('arrives_pm', array('ID_ARRIVE_PM' => $this->session->userdata('ID_ARRIVE_PM')));
         $targetTimeAM = ($date_arrive['HEURES']);
        
         $targetTimePM = new DateTime('14:15');
@@ -425,8 +427,8 @@ language: {
         // Ajouter 15 minutes
         $arrival_time=$time->modify('+00 minutes');
        
-    print_r($arrival_time);
-    exit();
+      print_r($arrival_time);
+      exit();
         // Formater la date actuelle pour obtenir AM ou PM
         $formattedDate =$current_time->add(new DateInterval('PT1H'))->format('A');
         $statu=0;
