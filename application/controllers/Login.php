@@ -49,7 +49,9 @@ class Login extends CI_Controller
           'ID_UTILISATEUR' => $user['ID_UTILISATEUR'],
           'USERNAME' => $user['USERNAME'],
           'ID_PROFIL' => $user['ID_PROFIL'],
-          'ID_ARRIVE' => $user['ID_ARRIVE']
+          'ID_ARRIVE' => $user['ID_ARRIVE'],
+          'ID_ARRIVE_PM' => $user['ID_ARRIVE_PM']
+
 
         );
 
