@@ -163,7 +163,7 @@ $(\"#mytablea\").DataTable({
 \"bDestroy\": true,
 \"oreder\":[],
 \"ajax\":{
-url:\"".base_url('dashboard/Dashboard_annuel/detail_absants')."\",
+url:\"".base_url('dashboard/Dashboard_annuel/detail_absants/' . $this->input->post('agence'))."\",
 type:\"POST\",
 data:{
 key:this.key,
@@ -302,7 +302,7 @@ series: [
     \"bDestroy\": true,
     \"order\":[[1,'DESC']],
     \"ajax\":{
-    url:\"".base_url('dashboard/Dashboard_annuel/detail_presence')."\",
+    url:\"".base_url('dashboard/Dashboard_annuel/detail_presence/' . $this->input->post('agence'))."\",
     type:\"POST\",
     data:{
     key:this.key,
@@ -386,31 +386,32 @@ series: [
     
     echo json_encode(array('rapp'=>$rapp, 'rapp_absent'=>$rapp_absent,'nbres'=>$nbre));
 }
-function detail_absants()
-{
-    $avant=$this->input->post('avant');
-    $agence=$this->input->post('agence');
-    $KEY=$this->input->post('key');
-  //   $agence=$this->input->post('agence');
-  //  echo($agence);
-  $critaire_agence='';
-  $critaire_avant='';
-  
-  if($agence!=0){
-      $critaire_agence.=" AND e.`ID_AGENCE`= ".$agence." ";
-  }
-  
-  if(!empty($avant)){
-      if($avant=='AM'){
-          $critaire_avant.=" AND periode LIKE  '%AM%'";
-  
-      }
-      else{
-      $critaire_avant.=" AND periode LIKE  '%PM%'";
-  
-      }
-  
+
+
+   function detail_absants($agence=0)
+   {
+       
+     $avant=$this->input->post('avant');
+     $KEY=$this->input->post('key');
+     $criteres1="";
+     $criteres3="";
+   
+   if(!empty($agence)){
+   $criteres1.=" AND e.`ID_AGENCE`= ".$agence." ";
    }
+   if(!empty($avant)){
+   if($avant=='AM'){
+       $criteres3.=" AND periode LIKE  '%AM%'";
+   }
+   else{
+       $criteres3.=" AND periode LIKE  '%PM%'";
+   }
+ }
+
+
+
+
+
   $critere = " ";
 
   $critere = " AND DATE_FORMAT(a.date_absence, '%m') = '".$KEY."'";
@@ -424,7 +425,7 @@ $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : nu
 $query_principal="
 SELECT  e.*,a.date_absence
     FROM employes e LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
-      WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$critaire_agence." ".$critaire_avant."
+      WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$criteres1." ".$criteres3."
 ";
 
         $limit='LIMIT 0,10';
@@ -478,32 +479,26 @@ SELECT  e.*,a.date_absence
         echo json_encode($output);
     }
   
-        function detail_presence()
+        function detail_presence($agence=0)
         {
             
           $avant=$this->input->post('avant');
           $KEY=$this->input->post('key');
-          $agence=$this->input->post('agence');
-        //  echo($agence);
-        $critaire_agence='';
-        $critaire_avant='';
+          $criteres1="";
+          $criteres3="";
         
-        if($agence!=0){
-            $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
+        if(!empty($agence)){
+        $criteres1.=" AND a.`ID_AGENCE`= ".$agence." ";
         }
-        
         if(!empty($avant)){
-            if($avant=='AM'){
-                $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
-        
-            }
-            else{
-            $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
-        
-            }
-        
-         }
-         $KEY2=$this->input->post('key2');
+        if($avant=='AM'){
+            $criteres3.=" AND TIME(`DATE_PRESENCE`)<'12:00:00' ";
+        }
+        else{
+            $criteres3.=" AND TIME(`DATE_PRESENCE`)>='12:00:00' ";
+        }
+      }
+      $KEY2=$this->input->post('key2');
         $break=explode(".",$KEY2);
         $ID=$KEY2;
         
@@ -546,8 +541,8 @@ SELECT  e.*,a.date_absence
 
         }
                
-                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
-                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
+                $query_secondaire=$query_principal.'  '.$critaire.' '.$criteres3.' '.$criteres1.' '.$search.' '.$order_by.'   '.$limit;
+                $query_filter=$query_principal.'  '.$critaire.' '.$criteres1.' '.$criteres3.' '.$search;
         
                 $fetch_data = $this->Model->datatable($query_secondaire);
                 $u=0;

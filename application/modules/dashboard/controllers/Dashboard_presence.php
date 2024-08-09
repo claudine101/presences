@@ -172,6 +172,8 @@ $critaire_avant='';
 $datte="";
 $criteres1="";
 $criteres2="";
+$criteres3="";
+
 
 $categorie="";
 $titre="Jusqu\'au ".strftime('%d-%m-%Y',strtotime(date('Y-m-d')));
@@ -221,11 +223,11 @@ if(!empty($agence)){
 
 if(!empty($avant)){
   if($avant=='AM'){
-     $criteres1.=" AND TIME(p.`DATE_PRESENCE`)<'12:00:00' ";
+     $criteres3.=" AND TIME(p.`DATE_PRESENCE`)<'12:00:00' ";
 
   }
   else{
-  $criteres1.=" AND TIME(p.`DATE_PRESENCE`)>='12:00:00' ";
+  $criteres3.=" AND TIME(p.`DATE_PRESENCE`)>='12:00:00' ";
 
   }
 
@@ -263,7 +265,9 @@ $datjour=$this->Model->getRequete('SELECT DISTINCT DATE_FORMAT(p.DATE_PRESENCE, 
       } 
       } 
 
-$control=$this->Model->getRequete("SELECT DISTINCT ".$categorie." AS mois,COUNT(p.`ID_PRESENCE`) AS tout,(SELECT COUNT(p.`ID_PRESENCE`) FROM presences p WHERE `STATUT`=1 AND ".$categorie."=mois ) as trouve,(SELECT COUNT(p.`ID_PRESENCE`) FROM presences p WHERE `STATUT`!=1 AND ".$categorie."=mois ) as pas_trouve FROM presences p  JOIN employes e on e.ID_UTILISATEUR=p.ID_UTILISATEUR JOIN agences a  on a.ID_AGENCE=e.ID_AGENCE where 1 ".$criteres1." GROUP BY mois ORDER BY mois ASC");
+$control=$this->Model->getRequete("SELECT DISTINCT ".$categorie." AS mois,COUNT(p.`ID_PRESENCE`) AS tout,(SELECT COUNT(p.`ID_PRESENCE`) FROM presences 
+p WHERE `STATUT`=1 AND ".$categorie."=mois ) as trouve,(SELECT COUNT(p.`ID_PRESENCE`) FROM presences 
+p WHERE `STATUT`!=1 AND ".$categorie."=mois ) as pas_trouve FROM presences p  JOIN employes e on e.ID_UTILISATEUR=p.ID_UTILISATEUR JOIN agences a  on a.ID_AGENCE=e.ID_AGENCE where 1 ".$criteres1." GROUP BY mois ORDER BY mois ASC");
 
 
 $immatraite_categorie=" ";
@@ -412,7 +416,7 @@ $(\"#mytablea\").DataTable({
 \"bDestroy\": true,
 \"oreder\":[],
 \"ajax\":{
-url:\"".base_url('dashboard/Dashboard_presence/detail_absants')."\",
+url:\"".base_url('dashboard/Dashboard_presence/detail_absants/' . $this->input->post('agence'))."\",
 type:\"POST\",
 data:{
 key:this.key,
@@ -640,14 +644,14 @@ echo json_encode(array('rapp'=>$rapp, 'rapp_absent'=>$rapp_absent,'select_month'
 
 
 
-function detail_absants()
+function detail_absants($agence=0)
 {
   $mois=$this->input->post('mois');
   $jour=$this->input->post('jour');
   $KEY=$this->input->post('key');
   $KEY2=$this->input->post('key2');
   $avant=$this->input->post('avant');
-  $agence=$this->input->post('agence');
+  // $agence=$this->input->post('agence');
   $break=explode(".",$KEY2);
   $ID=$KEY2;
   $critere = " ";
@@ -686,7 +690,7 @@ $criteres_date.=" AND date_format(a.date_absence,'%Y-%m')='".$jour."'";
         $critaire_avant='';
         
         if(!empty($agence)){
-            $critaire_agence.=" AND e.`IDAGENCE`= ".$agence." ";
+            $critaire_agence.=" AND e.`ID_AGENCE`= ".$agence." ";
         }
         
         if(!empty($avant)){
