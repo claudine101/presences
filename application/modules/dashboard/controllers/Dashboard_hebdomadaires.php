@@ -178,7 +178,7 @@ language: {
 \"sLengthMenu\":     \"Afficher _MENU_ &eacute;l&eacute;ments\",
 \"sInfo\":           \"Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments\",
 \"sInfoEmpty\":      \"Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment\",
-\"sInfoFiltered\":   \"(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)\",
+\"sInfoFiltered\":   \"\",
  \"sInfoPostFix\":    \"\",
 \"sLoadingRecords\": \"Chargement en cours...\",
 \"sZeroRecords\":    \"Aucun &eacute;l&eacute;ment &agrave; afficher\",
@@ -349,7 +349,7 @@ language: {
     \"sLengthMenu\":     \"Afficher _MENU_ &eacute;l&eacute;ments\",
     \"sInfo\":           \"Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments\",
     \"sInfoEmpty\":      \"Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment\",
-    \"sInfoFiltered\":   \"(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)\",
+    \"sInfoFiltered\":   \"\",
      \"sInfoPostFix\":    \"\",
     \"sLoadingRecords\": \"Chargement en cours...\",
     \"sZeroRecords\":    \"Aucun &eacute;l&eacute;ment &agrave; afficher\",
@@ -414,12 +414,17 @@ language: {
        
         $targetTimeAM = ($date_arrive['HEURES']);
        
-        $targetTimePM = new DateTime('14:00');
+        $targetTimePM = new DateTime('14:15');
         // Récupérer l'heure actuelle au format H:i:s
         $currentTime = date('H:i:s');
         $current_time = new DateTime($currentTime);
-        $arrival_time = new DateTime($targetTimeAM);
+        $time= new DateTime($targetTimeAM);
+ 
+    // Ajouter 15 minutes
+      $arrival_time=$time->modify('+15 minutes');
        
+    //   print_r($arrival_time);
+    //   exit();
         // Formater la date actuelle pour obtenir AM ou PM
         $formattedDate =$current_time->add(new DateInterval('PT1H'))->format('A');
         $statu=0;
