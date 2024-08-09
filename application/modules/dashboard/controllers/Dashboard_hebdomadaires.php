@@ -424,10 +424,10 @@ language: {
         $current_time = new DateTime($currentTime);
         $time= new DateTime($targetTimeAM);
         $time_pm= new DateTime($targetTimePM);
-        $arrival_time_pm=$time_pm->modify('+15 minutes');
+        $arrival_time_pm=$time_pm->modify('+00 minutes');
 
         // Ajouter 15 minutes
-        $arrival_time=$time->modify('+15 minutes');
+        $arrival_time=$time->modify('+00 minutes');
        
     //   print_r($arrival_time);
     //   exit();
