@@ -9,7 +9,7 @@ class Dashboard_hebdomadaires extends CI_Controller
         }
         public function have_droit()
         {
-            if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2 && $this->session->userdata('ID_PROFIL') != 1) {
+            if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2) {
                 redirect('Login');
            }
            
@@ -18,8 +18,6 @@ class Dashboard_hebdomadaires extends CI_Controller
 
                 $dattes=$this->Model->getRequeteOne("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
                 $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
-                $absances=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM absences a WHERE  DATE_FORMAT(a.date_absence, '%Y-%m-%d') = CURDATE() AND  a.id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."");
-                
                 $data['nbre']=$nbres['Nbre'];
 
                 $data['data']=$dattes;
@@ -178,7 +176,7 @@ language: {
 \"sLengthMenu\":     \"Afficher _MENU_ &eacute;l&eacute;ments\",
 \"sInfo\":           \"Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments\",
 \"sInfoEmpty\":      \"Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment\",
-\"sInfoFiltered\":   \"\",
+\"sInfoFiltered\":   \"(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)\",
  \"sInfoPostFix\":    \"\",
 \"sLoadingRecords\": \"Chargement en cours...\",
 \"sZeroRecords\":    \"Aucun &eacute;l&eacute;ment &agrave; afficher\",
@@ -327,8 +325,9 @@ language: {
     data:{
     key:this.key,
     key2:this.key2,
-    agance:$('#ID_AGENCE').val(),
-    avant:$('#avant').val(),
+     mois:$('#mois').val(),
+    jour:$('#jour').val(),
+    heure:$('#heure').val(),
     
     
     }
@@ -349,7 +348,7 @@ language: {
     \"sLengthMenu\":     \"Afficher _MENU_ &eacute;l&eacute;ments\",
     \"sInfo\":           \"Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments\",
     \"sInfoEmpty\":      \"Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment\",
-    \"sInfoFiltered\":   \"\",
+    \"sInfoFiltered\":   \"(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)\",
      \"sInfoPostFix\":    \"\",
     \"sLoadingRecords\": \"Chargement en cours...\",
     \"sZeroRecords\":    \"Aucun &eacute;l&eacute;ment &agrave; afficher\",
@@ -409,28 +408,18 @@ language: {
        // Obtenir la date et l'heure actuelles
         $dateCurrent = new DateTime();
         $date_arrive = $this->Modele->getOne('arrives', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
-       
         date_default_timezone_set('Europe/Paris');
         date_default_timezone_set('Africa/Bujumbura');
        
-        $date_arrive_pm = $this->Modele->getOne('arrives_pm', array('ID_ARRIVE_PM' => $this->session->userdata('ID_ARRIVE_PM')));
         $targetTimeAM = ($date_arrive['HEURES']);
        
-        $targetTimePM = new DateTime('14:15');
+        $targetTimePM = new DateTime('12:00');
         // Récupérer l'heure actuelle au format H:i:s
         $currentTime = date('H:i:s');
         $current_time = new DateTime($currentTime);
-        $time= new DateTime($targetTimeAM);
-        $time_pm= new DateTime($targetTimePM);
-        $arrival_time_pm=$time_pm->modify('+00 minutes');
-
-        // Ajouter 15 minutes
-        $arrival_time=$time->modify('+00 minutes');
-       
-      print_r($arrival_time);
-      exit();
+        $arrival_time = new DateTime($targetTimeAM);
         // Formater la date actuelle pour obtenir AM ou PM
-        $formattedDate =$current_time->add(new DateInterval('PT1H'))->format('A');
+        $formattedDate = $current_time->format('A');
         $statu=0;
         if ($current_time<$arrival_time) {
             $statu=1;
@@ -440,11 +429,6 @@ language: {
         } else {
             $statu=0;
         }
-        //print_r($statu);
-        //print_r($current_time);
-        //print_r($targetTimePM);
-        //print_r($formattedDate);
-        //exit();
 			$data_insert = array(
 				'ID_UTILISATEUR' => $this->session->userdata('ID_UTILISATEUR'),
                 'QR_CODE_PRES_ID'=>$data['QR_CODE_PRES_ID'],
