@@ -9,7 +9,7 @@ class Dashboard_hebdomadaires extends CI_Controller
         }
         public function have_droit()
         {
-            if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2) {
+            if ($this->session->userdata('ID_PROFIL') != 3 && $this->session->userdata('ID_PROFIL') != 2 && $this->session->userdata('ID_PROFIL') != 1) {
                 redirect('Login');
            }
            
