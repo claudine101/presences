@@ -409,35 +409,29 @@ language: {
        // Obtenir la date et l'heure actuelles
         $dateCurrent = new DateTime();
         $date_arrive = $this->Modele->getOne('arrives', array('ID_ARRIVE' => $this->session->userdata('ID_ARRIVE')));
-        $date_arrive_pm = $this->Modele->getOne('arrives_pm', array('ID_ARRIVE_PM' => $this->session->userdata('ID_ARRIVE_PM')));
-        
         date_default_timezone_set('Europe/Paris');
         date_default_timezone_set('Africa/Bujumbura');
        
         $targetTimeAM = ($date_arrive['HEURES']);
-        $targetTimePM = ($date_arrive_pm['HEURES']);
-
        
-        // $targetTimePM = new DateTime('14:15');
+        $targetTimePM = new DateTime('14:15');
         // Récupérer l'heure actuelle au format H:i:s
         $currentTime = date('H:i:s');
         $current_time = new DateTime($currentTime);
         $time= new DateTime($targetTimeAM);
-        $time_pm= new DateTime($targetTimePM);
-        $arrival_time_pm=$time_pm->modify('+15 minutes');
-
-        // Ajouter 15 minutes
-        $arrival_time=$time->modify('+15 minutes');
+ 
+    // Ajouter 15 minutes
+      $arrival_time=$time->modify('+15 minutes');
        
-    //   print_r($arrival_time);
-    //   exit();
+    print_r($arrival_time);
+    exit();
         // Formater la date actuelle pour obtenir AM ou PM
         $formattedDate =$current_time->add(new DateInterval('PT1H'))->format('A');
         $statu=0;
         if ($current_time<$arrival_time) {
             $statu=1;
         } 
-        elseif (($current_time < $arrival_time_pm) && $formattedDate=="PM" ) {
+        elseif (($current_time < $targetTimePM) && $formattedDate=="PM" ) {
             $statu=1;
         } else {
             $statu=0;
