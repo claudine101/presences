@@ -1,5 +1,6 @@
 
 <?php
+add(new DateInterval('PT1H'))
 class Dashboard_annuel extends CI_Controller
       {
         function __construct()
