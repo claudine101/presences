@@ -50,24 +50,32 @@
             </div><!-- /.col -->
             <div class="col-sm-8">
               <div class="row">
-              
-             
-                    
-                    
+                    <div class="form-group col-md-2">
+                          <label style='color:blue'>agences</label>
+                          <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='liste()'>
+                            <option value="">agences</option>
+                            <?php foreach ($agences as $key) { ?>
+                              <option value="<?php echo $key['ID_AGENCE'] ?>"><?php echo  $key['DESCRIPTION'] ?></option>
+                            <?php } ?>
+                          </select>
+                      </div>
+                      <div class="form-group col-md-2">
+                        <label style='color:blue'>Date</label>
+                        <input onchange='liste()' type="date" name="DATE_PRESENCE" autocomplete="off" id="DATE_PRESENCE" value="<?= set_value('DATE_PRESENCE') ?>" class="form-control">
+
                     </div>
-            </div><!-- /.col -->
-            <div class="col-sm-2 text-right">
-              <span style="margin-right: 15px">
-                <div class="col-sm-3" style="float:right;">
-                  <a href="<?=base_url('donnees/Employes/ajouter')?>" style="width: 100px;" class='btn btn-primary btn-sm float-right'>
-                    <i class="nav-icon fas fa-plus"></i>
-                    Nouveau
-                  </a>
+                    <div class="form-group col-md-2">
+                        <label style='color:blue'>Avant  ou  après midi</label>
+                        <select class="form-control input-sm" name="avant" id="avant" onchange='liste()'>
+                            <option value="">Avant  ou  après midi</option>
+                            <option value="AM">Avant  midi </option>
+                            <option value="PM">Après midi</option>
+                          </select>
+                  </div>
                 </div>
-
-              </span>
-
             </div><!-- /.col -->
+            
+           
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
 
@@ -91,19 +99,10 @@
                       <th data-orderable="false">NO</th>
                         <th>Employes</th>
                         <th>CONTACT</th>
-                        <th>CNI</th>
-                        <th>AGE</th>
-                        <th>SEXE</th>
                         <th>AGENCE</th>
+                        <th>DATE DE PRESENCE</th>
                         <th>STATUT</th>
-                        <th data-orderable="false">LIEU DE NAISSANCE</th>
-                        <?php 
-                                   if($this->session->userdata('ID_PROFIL') == 5){	?>
                         <th data-orderable="false">OPTIONS</th>
-                                    
-                                    <?php    }
-                        ?>
-             
  
                       </tr>
                     </thead>
@@ -170,15 +169,14 @@
   /* "oreder":[], */
   "order":[[0,'DESC']],
   "ajax":{
-  url: "<?php echo base_url('donnees/Employes/listing/'); ?>",
+  url: "<?php echo base_url('donnees/Presences/listing/'); ?>",
   type:"POST",
   data : {
-    /* PROVINCE_ID: $('#PROVINCE_ID').val(),
-    COMMUNE_ID: $('#COMMUNE_ID').val(),
-    ZONE_ID: $('#ZONE_ID').val(), */
+  
+    avant: $('#avant').val(),
+    agence: $('#ID_AGENCE').val(),
+    dates: $('#DATE_PRESENCE').val()
     
-    ID_POSTE: $('#ID_POSTE').val(),
-    ID_PARTIE_POLITIQUE: $('#ID_PARTIE_POLITIQUE').val()
   },
   beforeSend : function() {
   }
@@ -294,7 +292,7 @@
       if (result.isConfirmed) {
       /* Debut ajax*/
          $.ajax({
-          url : "<?=base_url()?>donnees/Employes/activer/"+id,
+          url : "<?=base_url()?>donnees/Presences/activer/"+id,
           type : "PUT",
           dataType: "JSON",
           cache:false,
@@ -333,7 +331,7 @@
       if (result.isConfirmed) {
       /* Debut ajax*/
          $.ajax({
-          url : "<?=base_url()?>donnees/Employes/desactiver/"+id,
+          url : "<?=base_url()?>donnees/Presences/desactiver/"+id,
           type : "PUT",
           dataType: "JSON",
           cache:false,

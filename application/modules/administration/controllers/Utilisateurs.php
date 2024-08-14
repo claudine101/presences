@@ -111,7 +111,9 @@ class Utilisateurs extends CI_Controller
 			$sub_array[] = $row->USERNAME;
 			$sub_array[] = $row->DESCRIPTION;
 			$sub_array[] = $this->get_icon($row->IS_ACTIVE,$row);
-			$sub_array[] = $option;
+			if($this->session->userdata('ID_PROFIL') == 5){	
+				$sub_array[] = $option;
+			}
 			$data[] = $sub_array;
 		}
 

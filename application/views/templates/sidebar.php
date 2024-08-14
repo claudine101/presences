@@ -183,7 +183,7 @@
             </a>
 
             <ul class="nav nav-treeview">
-            <?php if ($this->session->userdata('ID_PROFIL') == 3 || $this->session->userdata('ID_PROFIL') == 1 || $this->session->userdata('ID_PROFIL') == 2) { ?>
+            <?php if ($this->session->userdata('ID_PROFIL') == 5  ||$this->session->userdata('ID_PROFIL') == 3 || $this->session->userdata('ID_PROFIL') == 1 || $this->session->userdata('ID_PROFIL') == 2) { ?>
             <li class="nav-item">
                 <a href="<?= base_url('dashboard/Dashboard_hebdomadaires') ?>" class="nav-link <?php if ($this->router->class == 'Dashboard_hebdomadaires') echo 'active'; ?>">
                   <i class="far fa-circle nav-icon"></i>
@@ -251,7 +251,7 @@
           <?php if ($this->session->userdata('ID_PROFIL') == 2 ||$this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
 
           <li class="nav-item">
-            <a href="#" class="nav-link <?php if ($this->router->class =='Employes'||$this->router->class =='Agences'||$this->router->class =='Provinces'||$this->router->class =='Communes' ||$this->router->class =='Zones' ||$this->router->class =='Collines') echo 'active'; ?>">
+            <a href="#" class="nav-link <?php if ($this->router->class =='Presences'||$this->router->class =='Employes'||$this->router->class =='Agences'||$this->router->class =='Provinces'||$this->router->class =='Communes' ||$this->router->class =='Zones' ||$this->router->class =='Collines') echo 'active'; ?>">
               <i class="nav-icon fa fa-desktop"></i>
               <p>
                 IHM
@@ -265,6 +265,15 @@
                   <i class="far fa-circle nav-icon"></i>
                     <p>
                        Employes
+                    </p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('donnees/Presences/index') ?>" class="nav-link <?php if ($this->router->class == 'Presences') echo 'active'; ?>">
+                    <!-- <i class="nav-icon fas fa-user-circle" style="color:green"></i> -->
+                  <i class="far fa-circle nav-icon"></i>
+                    <p>
+                       Presences
                     </p>
                   </a>
                 </li>

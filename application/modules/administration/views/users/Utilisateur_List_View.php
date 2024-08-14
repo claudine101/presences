@@ -96,7 +96,12 @@
                           <th>NOM UTILISATEUR</th>
                           <th>PROFIL</th>
                           <th>STATUT</th>
-                          <th data-orderable="false">OPTIONS</th>
+                          <?php 
+                                   if($this->session->userdata('ID_PROFIL') == 5){	?>
+                        <th data-orderable="false">OPTIONS</th>
+                                    
+                                    <?php    }
+                        ?>
                         </tr>
                       </thead>
                     </table>
