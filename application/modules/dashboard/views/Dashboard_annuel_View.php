@@ -116,10 +116,8 @@
           <table id='mytable' class='table table-bordered table-striped table-hover table-condensed' >
           <thead>
                    <th>#</th>
-                  <th>NOM </th>
-                  <th> PRENOM</th>
-                  <th>EMAIL</th>
-                  <th>TELEPHONE</th>
+                   <th>EMPLOYES</th>
+                  <th>CONTACT</th>
                   <th>AGENCE</th>
                   <th>DATE PRESENCE</th>
                   </thead>
@@ -144,12 +142,11 @@
           <table id='mytablea' class='table table-bordered table-striped table-hover table-condensed' >
           <thead>
                    <th>#</th>
-                  <th>NOM </th>
-                  <th> PRENOM</th>
-                  <th>EMAIL</th>
-                  <th>TELEPHONE</th>
+                   <th>EMPLOYES</th>
+                  <th>CONTACT</th>
                   <th>AGENCE</th>
                   <th>DATE ABSANT</th>
+                  <th>PERIODE</th>
                   </thead>
           </table>
         </div>

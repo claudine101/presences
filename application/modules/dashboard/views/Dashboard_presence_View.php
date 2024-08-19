@@ -147,22 +147,19 @@
 
 
 <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog modal-lg" style ="width:1000px">
-          <div class="modal-content  modal-lg">
-            <div class="modal-header" style ="background:#000">
-              <h4 class="modal-title"><span id="titre"></span></h4>
-            </div>
-            <div class="modal-body">
-              <div class="table-responsive">
-                <table id='mytable' class='table table-bordered table-striped table-hover table-condensed' style="width:1000px">
-                <thead>
+  <div class="modal-dialog modal-lg" >
+    <div class="modal-content  modal-lg">
+      <div class="modal-header">
+        <h4 class="modal-title"><span id="titre"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table id='mytable' class='table table-bordered table-striped table-hover table-condensed' >
+          <thead>
                    <th>#</th>
-                  <th>NOM </th>
-                  <th> PRENOM</th>
-                  <th>EMAIL</th>
-                  <th>TELEPHONE</th>
-                  <th>DATE DE NAISSANCE</th>
-                  <!-- <th>GENRE</th> -->
+                   <th>EMPLOYES</th>
+                  <th>CONTACT</th>
+                  <th>AGENCE</th>
                   <th>DATE DE PRESENCE</th>
                   </thead>
                 </table>
@@ -176,25 +173,23 @@
       </div>
 
 
+      
       <div class="modal fade" id="myModala" role="dialog">
-        <div class="modal-dialog modal-lg" style ="width:1000px">
-          <div class="modal-content  modal-lg">
-            <div class="modal-header" style ="background:#000">
-              <h4 class="modal-title"><span id="titrea"></span></h4>
-            </div>
-            <div class="modal-body">
-              <div class="table-responsive">
-                <table id='mytablea' class='table table-bordered table-striped table-hover table-condensed' style="width:1000px">
-                <thead>
+  <div class="modal-dialog modal-lg" >
+    <div class="modal-content  modal-lg">
+      <div class="modal-header">
+        <h4 class="modal-title"><span id="titrea"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table id='mytablea' class='table table-bordered table-striped table-hover table-condensed' >
+          <thead>
                    <th>#</th>
-                  <th>NOM </th>
-                  <th> PRENOM</th>
-                  <th>EMAIL</th>
-                  <th>TELEPHONE</th>
-                  <th>DATE DE NAISSANCE</th>
-                  <th>PERIODE</th>
+                   <th>EMPLOYES</th>
+                  <th>CONTACT</th>
+                  <th>AGENCE</th>
                   <th>DATE ABSANCE</th>
-
+                  <th>PERIODE</th>
                   </thead>
                 </table>
               </div>

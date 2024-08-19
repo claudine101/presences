@@ -63,8 +63,8 @@ $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : nu
 
 
 $query_principal="
-SELECT  e.*,a.date_absence,a.periode
-    FROM employes e LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
+SELECT  e.*,a.date_absence,a.periode,ag.DESCRIPTION
+    FROM employes e  LEFT JOIN  agences  ag on ag.ID_AGENCE=e.ID_AGENCE LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
       WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." 
       "   . $critaire_avant."  "   . $critaire_agence."  
 ";
@@ -100,13 +100,13 @@ SELECT  e.*,a.date_absence,a.periode
             $u++;
             $intrant=array();
             $intrant[] = $u;
-            $intrant[] =$row->NOM_EMPLOYE;
-            $intrant[] =$row->PRENOM_EMPLOYE;
-            $intrant[] =$row->EMAIL_EMPLOYE;
-            $intrant[] =$row->TELEPHONE_EMPLOYE;
-            $intrant[] =$row->periode;
-            //  $intrant[] =$row->SEXE_EMPLOYE;
+            $source = !empty($row->PHOTO_EMPLOYE) ? $row->PHOTO_EMPLOYE : "https://app.mediabox.bi/wasiliEate/uploads/personne.png";
+            $intrant[] = '<table> <tbody><tr><td><a href="' . $source . '" target="_blank" ><img alt="Avtar" style="border-radius:50%;width:30px;height:30px" src="' . $source . '"></a></td><td>' . $row->NOM_EMPLOYE . ' ' . $row->PRENOM_EMPLOYE . '</td></tr></tbody></table></a>';
+			$intrant[] = '<table> <tbody><tr><td>' . $row->TELEPHONE_EMPLOYE . ' ' . $row->EMAIL_EMPLOYE . '</td></tr></tbody></table></a>';
+            $intrant[] =$row->DESCRIPTION;
             $intrant[] =$row->date_absence;
+            $intrant[] =$row->periode;
+
             $data[] = $intrant;
           }
 
@@ -149,7 +149,13 @@ $ID=$KEY2;
 $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
 
 
-$query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE, p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE FROM presences p JOIN employes e ON e.ID_UTILISATEUR=p.ID_UTILISATEUR  JOIN agences a ON a.ID_AGENCE=e.ID_AGENCE WHERE 1 ";
+$query_principal=" SELECT  e.PHOTO_EMPLOYE
+ e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE,
+  p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,
+  e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE 
+  FROM presences p JOIN employes e ON e.ID_UTILISATEUR=p.ID_UTILISATEUR 
+   JOIN agences a ON a.ID_AGENCE=e.ID_AGENCE WHERE 1 ";
+
 
         $limit='LIMIT 0,10';
         if($_POST['length'] != -1)
@@ -193,10 +199,9 @@ $query_principal=" SELECT a.DESCRIPTION, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE
             $u++;
             $intrant=array();
             $intrant[] = $u;
-            $intrant[] =$row->NOM_EMPLOYE;
-            $intrant[] =$row->PRENOM_EMPLOYE;
-            $intrant[] =$row->EMAIL_EMPLOYE;
-            $intrant[] =$row->TELEPHONE_EMPLOYE;
+            $source = !empty($row->PHOTO_EMPLOYE) ? $row->PHOTO_EMPLOYE : "https://app.mediabox.bi/wasiliEate/uploads/personne.png";
+            $intrant[] = '<table> <tbody><tr><td><a href="' . $source . '" target="_blank" ><img alt="Avtar" style="border-radius:50%;width:30px;height:30px" src="' . $source . '"></a></td><td>' . $row->NOM_EMPLOYE . ' ' . $row->PRENOM_EMPLOYE . '</td></tr></tbody></table></a>';
+			$intrant[] = '<table> <tbody><tr><td>' . $row->TELEPHONE_EMPLOYE . ' ' . $row->EMAIL_EMPLOYE . '</td></tr></tbody></table></a>';
             $intrant[] =$row->DESCRIPTION;
             $intrant[] =$row->DATE_PRESENCE;
             $data[] = $intrant;

@@ -526,7 +526,7 @@ language: {
                     $intrant=array();
                     $intrant[] = $u;
                     $intrant[] =$row->DATE_PRESENCE;
-                    $intrant[] =$row->STATUT;
+                    $intrant[] =$row->STATUT==0 ? 'retard':'Ponctuel';
                     $data[] = $intrant;
                 }
 
