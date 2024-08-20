@@ -312,19 +312,24 @@ class  Employes extends CI_Controller
 				
 
 				while ($current_date <= $end_date) {
-					$data_am = array(
-						'ID_UTILISATEUR' => $id,
-				        'DATE_CONGE' =>date('Y-m-d',$current_date),
-						'PERIODE' =>0
-					);
-					$data_pm = array(
-						'ID_UTILISATEUR' => $id,
-				        'DATE_CONGE' => date('Y-m-d',$current_date),
-						'PERIODE' =>1
-					);
-					$table = 'conges';
-			        $this->Modele->create($table, $data_pm);
-			        $this->Modele->create($table, $data_am);
+
+					$day_of_week = date('N', $current_date); // 'N' renvoie 1 (lundi) à 7 (dimanche)
+					if ($day_of_week != 7 && $day_of_week != 6)
+					{
+							$data_am = array(
+								'ID_UTILISATEUR' => $id,
+								'DATE_CONGE' =>date('Y-m-d',$current_date),
+								'periode' =>'AM' 
+							);
+							$data_pm = array(
+								'ID_UTILISATEUR' => $id,
+								'DATE_CONGE' => date('Y-m-d',$current_date),
+								'periode' =>'PM'
+							);
+							$table = 'conges';
+							$this->Modele->create($table, $data_pm);
+							$this->Modele->create($table, $data_am);
+				  }
 					$current_date = strtotime('+1 day', $current_date);
 					
 				}
