@@ -67,7 +67,11 @@ $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : nu
 $query_principal="
 SELECT  e.*,a.DATE_CONGE,a.periode,ag.DESCRIPTION
     FROM employes e  LEFT JOIN  agences  ag on ag.ID_AGENCE=e.ID_AGENCE LEFT JOIN  conges a ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
-      WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." 
+      WHERE 1 AND
+      `DATE_CONGE` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
+      AND `DATE_CONGE` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
+      
+      ".$critere." 
       "   . $critaire_avant."  "   . $critaire_agence."  
 ";
 
