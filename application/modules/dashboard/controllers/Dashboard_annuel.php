@@ -253,6 +253,158 @@ series: [
    ";
 
 
+   
+$conges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%m') as mois, MONTHNAME(a.DATE_CONGE) AS day_of_week, COUNT(a.ID_UTILISATEUR) AS nombre_absents
+   FROM conges a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
+   WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$criteres4."  ".$criteres5." 
+   GROUP BY mois
+   ORDER BY mois"
+);
+
+$nombre=0;
+$donne="";
+
+$immatraite_categories=" ";
+$immacat_traites=0;
+
+foreach ($conges as $value) 
+{
+
+
+    
+$key_id1=($value['mois']>0) ? $value['mois'] : "0" ;
+$sommeAbsants=($value['nombre_absents']>0) ? $value['nombre_absents'] : "0" ;
+;
+$immatraite_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeAbsants.",key2:1,key:'". $key_id1."'},";
+
+$immacat_traites=$immacat_traites+$value['nombre_absents'];
+
+}
+  
+
+$rapp_conge="<script type=\"text/javascript\">
+Highcharts.chart('container2', {
+
+title: {
+ text: '<b> Rapport  des congés jusqu\'à le   ".$titre."  </b> '
+},
+subtitle: {
+ text: ''
+},
+xAxis: {
+ type: 'category', 
+},
+  plotOptions: {
+ series: {
+      pointPadding: 0.2,
+     borderWidth: 0,
+     depth: 40,
+      cursor:'pointer',
+      point:{
+         events: {
+
+
+click: function()
+{
+$(\"#titreb\").html(\"Les employés en congé \");
+$(\"#myModalb\").modal();
+var row_count ='1000000';
+$(\"#mytableb\").DataTable({
+\"processing\":true,
+\"serverSide\":true,
+\"bDestroy\": true,
+\"oreder\":[],
+\"ajax\":{
+url:\"".base_url('dashboard/Dashboard_annuel/detail_conges/' . $this->input->post('agence'))."\",
+type:\"POST\",
+data:{
+key:this.key,
+key2:this.key2,
+agance:$('#ID_AGENCE').val(),
+avant:$('#avant').val(),
+
+
+}
+},
+lengthMenu: [[10,50, 100, row_count], [10,50, 100, \"All\"]],
+pageLength: 10,
+\"columnDefs\":[{
+\"targets\":[],
+\"orderable\":false
+}],
+dom: 'Bfrtlip',
+buttons: [
+'excel', 'print','pdf'
+],
+language: {
+\"sProcessing\":     \"Traitement en cours...\",
+\"sSearch\":         \"Rechercher&nbsp;:\",
+\"sLengthMenu\":     \"Afficher _MENU_ &eacute;l&eacute;ments\",
+\"sInfo\":           \"Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments\",
+\"sInfoEmpty\":      \"Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment\",
+\"sInfoFiltered\":   \"\",
+\"sInfoPostFix\":    \"\",
+\"sLoadingRecords\": \"Chargement en cours...\",
+\"sZeroRecords\":    \"Aucun &eacute;l&eacute;ment &agrave; afficher\",
+\"sEmptyTable\":     \"Aucune donn&eacute;e disponible dans le tableau\",
+\"oPaginate\": {
+\"sFirst\":      \"Premier\",
+\"sPrevious\":   \"Pr&eacute;c&eacute;dent\",
+\"sNext\":       \"Suivant\",
+\"sLast\":       \"Dernier\"
+},
+\"oAria\": {
+\"sSortAscending\":  \": activer pour trier la colonne par ordre croissant\",
+\"sSortDescending\": \": activer pour trier la colonne par ordre d&eacute;croissant\"
+}
+}
+                       
+});
+
+
+                    
+
+            }
+        }
+    },
+    dataLabels: {
+      enabled: true,
+      format: '{point.y:0,f}'
+  },
+  showInLegend: true
+}
+}, 
+credits: {
+enabled: true,
+href: \"\",
+text: \"RECECA-INKINGI\"
+},
+labels: {
+ items: [{
+     html: '',
+     style: {
+         left: '50px',
+         top: '18px',
+         color: ( // theme
+             Highcharts.defaultOptions.title.style &&
+             Highcharts.defaultOptions.title.style.color
+         ) || 'black'
+     }
+ }]
+},
+series: [
+
+{
+ type: 'column',
+color: '#808000',
+ name:'En congé: (".number_format($immacat_traites,0,',',' ').")',
+ data: [".$immatraite_categories."]
+} ]
+});
+</script>
+";
+
+
          $rapp="<script type=\"text/javascript\">
         Highcharts.chart('container', {
        
@@ -384,7 +536,7 @@ series: [
     </script>
          ";
     
-    echo json_encode(array('rapp'=>$rapp, 'rapp_absent'=>$rapp_absent,'nbres'=>$nbre));
+    echo json_encode(array('rapp'=>$rapp,'rapp_conge'=>$rapp_conge, 'rapp_absent'=>$rapp_absent,'nbres'=>$nbre));
 }
 
 
@@ -479,6 +631,96 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
         echo json_encode($output);
     }
   
+    function detail_conges($agence=0)
+    {
+        
+      $avant=$this->input->post('avant');
+      $KEY=$this->input->post('key');
+      $criteres1="";
+      $criteres3="";
+    
+    if(!empty($agence)){
+    $criteres1.=" AND e.`ID_AGENCE`= ".$agence." ";
+    }
+    if(!empty($avant)){
+    if($avant=='AM'){
+        $criteres3.=" AND periode LIKE  '%AM%'";
+    }
+    else{
+        $criteres3.=" AND periode LIKE  '%PM%'";
+    }
+  }
+ 
+ 
+ 
+ 
+ 
+   $critere = " ";
+ 
+   $critere = " AND DATE_FORMAT(a.DATE_CONGE, '%m') = '".$KEY."'";
+ 
+ 
+ 
+ 
+ $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+ 
+ 
+ $query_principal="
+ SELECT  e.*,a.DATE_CONGE,ag.DESCRIPTION,a.periode
+     FROM employes e LEFT JOIN  agences  ag on ag.ID_AGENCE=e.ID_AGENCE LEFT JOIN  conges a ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
+       WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$criteres1." ".$criteres3."
+ ";
+ 
+         $limit='LIMIT 0,10';
+         if($_POST['length'] != -1)
+         {
+             $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+         }
+         $order_by='';
+         if($_POST['order']['0']['column']!=0)
+         {
+             $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY ID_PRESENCE ASC'; 
+         }
+ 
+         $search = !empty($_POST['search']['value']) ? ("AND (NOM_EMPLOYE LIKE '%$var_search%'  OR PRENOM_EMPLOYE LIKE '%$var_search%' OR EMAIL_EMPLOYE LIKE '%$var_search%'  ) ") : '';
+ 
+ 
+         $critaire='';
+         if(!empty($mois) && empty($jour)){
+         
+ 
+         }
+         
+         $query_secondaire=$query_principal.'  '.$critaire.' '.$search.' '.$order_by.'   '.$limit;
+         $query_filter=$query_principal.'  '.$critaire.' '.$search;
+ 
+         $fetch_data = $this->Model->datatable($query_secondaire);
+         $u=0;
+         $data = array();
+         foreach ($fetch_data as $row) 
+         {  
+             $u++;
+             $intrant=array();
+             $intrant[] = $u;
+             $source = !empty($row->PHOTO_EMPLOYE) ? $row->PHOTO_EMPLOYE : "https://app.mediabox.bi/wasiliEate/uploads/personne.png";
+             
+             $intrant[] = '<table> <tbody><tr><td><a href="' . $source . '" target="_blank" ><img alt="Avtar" style="border-radius:50%;width:30px;height:30px" src="' . $source . '"></a></td><td>' . $row->NOM_EMPLOYE . ' ' . $row->PRENOM_EMPLOYE . '</td></tr></tbody></table></a>';
+             $intrant[] = '<table> <tbody><tr><td>' . $row->TELEPHONE_EMPLOYE . ' ' . $row->EMAIL_EMPLOYE . '</td></tr></tbody></table></a>';
+             $intrant[] =$row->DESCRIPTION;
+             $intrant[] =$row->DATE_CONGE;
+             $intrant[] =$row->periode;
+             $data[] = $intrant;
+           }
+ 
+         $output = array(
+             "draw" => intval($_POST['draw']),
+             "recordsTotal" =>$this->Model->all_data($query_principal),
+             "recordsFiltered" => $this->Model->filtrer($query_filter),
+             "data" => $data
+         );
+ 
+         echo json_encode($output);
+     }
         function detail_presence($agence=0)
         {
             

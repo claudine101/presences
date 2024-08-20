@@ -26,6 +26,102 @@ function index(){
 
     $this->load->view('Dashboard_hebdomadaire_View',$data);
 }
+
+function detail_conges()
+{
+    $avant=$this->input->post('avant');
+    $agence=$this->input->post('agence');
+    $jour=$this->input->post('jour');
+    $KEY=$this->input->post('key');
+  //   $agence=$this->input->post('agence');
+  //  echo($agence);
+  $critaire_agence='';
+  $critaire_avant='';
+  
+  if(!empty($agence)){
+      $critaire_agence.=" AND e.`ID_AGENCE`= ".$agence." ";
+  }
+  $avant=$this->input->post('avant');
+  
+  if(!empty($avant)){
+      if($avant=='AM'){
+          $critaire_avant.=" AND periode LIKE  '%AM%'";
+  
+      }
+      else{
+      $critaire_avant.=" AND periode LIKE  '%PM%'";
+  
+      }
+  
+   }
+  $critere = " ";
+
+  $critere = " AND DATE_FORMAT(a.DATE_CONGE, '%Y-%m-%d') = '".$KEY."'";
+
+
+
+
+$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+
+
+$query_principal="
+SELECT  e.*,a.DATE_CONGE,a.periode,ag.DESCRIPTION
+    FROM employes e  LEFT JOIN  agences  ag on ag.ID_AGENCE=e.ID_AGENCE LEFT JOIN  conges a ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
+      WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." 
+      "   . $critaire_avant."  "   . $critaire_agence."  
+";
+
+        $limit='LIMIT 0,10';
+        if($_POST['length'] != -1)
+        {
+            $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+        }
+        $order_by='';
+        if($_POST['order']['0']['column']!=0)
+        {
+            $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY ID_PRESENCE ASC'; 
+        }
+
+        $search = !empty($_POST['search']['value']) ? ("AND (NOM_EMPLOYE LIKE '%$var_search%'  OR PRENOM_EMPLOYE LIKE '%$var_search%' OR EMAIL_EMPLOYE LIKE '%$var_search%'  ) ") : '';
+
+
+        $critaire='';
+        if(!empty($mois) && empty($jour)){
+        
+
+        }
+        
+        $query_secondaire=$query_principal.'  '.$critaire.' '.$search.' '.$order_by.'   '.$limit;
+        $query_filter=$query_principal.'  '.$critaire.' '.$search;
+
+        $fetch_data = $this->Model->datatable($query_secondaire);
+        $u=0;
+        $data = array();
+        foreach ($fetch_data as $row) 
+        {  
+            $u++;
+            $intrant=array();
+            $intrant[] = $u;
+            $source = !empty($row->PHOTO_EMPLOYE) ? $row->PHOTO_EMPLOYE : "https://app.mediabox.bi/wasiliEate/uploads/personne.png";
+            $intrant[] = '<table> <tbody><tr><td><a href="' . $source . '" target="_blank" ><img alt="Avtar" style="border-radius:50%;width:30px;height:30px" src="' . $source . '"></a></td><td>' . $row->NOM_EMPLOYE . ' ' . $row->PRENOM_EMPLOYE . '</td></tr></tbody></table></a>';
+			$intrant[] = '<table> <tbody><tr><td>' . $row->TELEPHONE_EMPLOYE . ' ' . $row->EMAIL_EMPLOYE . '</td></tr></tbody></table></a>';
+            $intrant[] =$row->DESCRIPTION;
+            $intrant[] =$row->DATE_CONGE;
+            $intrant[] =$row->periode;
+
+            $data[] = $intrant;
+          }
+
+        $output = array(
+            "draw" => intval($_POST['draw']),
+            "recordsTotal" =>$this->Model->all_data($query_principal),
+            "recordsFiltered" => $this->Model->filtrer($query_filter),
+            "data" => $data
+        );
+
+        echo json_encode($output);
+    }
+
 function detail_absants()
 {
     $avant=$this->input->post('avant');
@@ -455,16 +551,16 @@ series: [
 
 
 
-   $conges=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%Y-%m-%d') as mois, DAYNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
-   FROM absences a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.id_utilisateur
+   $conges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%Y-%m-%d') as mois, DAYNAME(a.DATE_CONGE) AS day_of_week, COUNT(a.ID_UTILISATEUR) AS nombre_absents
+   FROM conges a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
    WHERE 1  AND
-     `date_absence` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
-     AND `date_absence` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
+     `DATE_CONGE` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
+     AND `DATE_CONGE` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
    ".$criteres4."  ".$criteres5." 
    GROUP BY
-     DAYOFWEEK(`date_absence`)
+     DAYOFWEEK(`DATE_CONGE`)
    ORDER BY
-     DAYOFWEEK(`date_absence`);"
+     DAYOFWEEK(`DATE_CONGE`);"
      );
    
    $nombre=0;
@@ -473,7 +569,7 @@ series: [
    $immatraite_categories=" ";
    $immacat_traites=0;
    
-     foreach ($absants as $value) 
+     foreach ($conges as $value) 
      {
       
    
@@ -488,11 +584,11 @@ series: [
      }
           
    
-     $rapp_absent="<script type=\"text/javascript\">
-     Highcharts.chart('container1', {
+     $rapp_conge="<script type=\"text/javascript\">
+     Highcharts.chart('container2', {
     
    title: {
-         text: '<b> Rapport  des absances jusqu\'à le   ".$titre."  </b> '
+         text: '<b> Rapport  des congés jusqu\'à le   ".$titre."  </b> '
      },
      subtitle: {
          text: ''
@@ -512,16 +608,16 @@ series: [
    
    click: function()
    {
-   $(\"#titrea\").html(\"Les absants \");
-   $(\"#myModala\").modal();
+   $(\"#titreb\").html(\"Les employés en congé\");
+   $(\"#myModalb\").modal();
    var row_count ='1000000';
-   $(\"#mytablea\").DataTable({
+   $(\"#mytableb\").DataTable({
    \"processing\":true,
    \"serverSide\":true,
    \"bDestroy\": true,
    \"oreder\":[],
    \"ajax\":{
-   url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail_absants')."\",
+   url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail_conges')."\",
    type:\"POST\",
    data:{
    key:this.key,
@@ -600,8 +696,8 @@ series: [
    
      {
          type: 'column',
-         color: 'red',
-         name:'Absants: (".number_format($immacat_traites,0,',',' ').")',
+          color: '#808000',
+         name:'En congé: (".number_format($immacat_traites,0,',',' ').")',
          data: [".$immatraite_categories."]
      } ]
    });
@@ -741,7 +837,7 @@ $rapp="<script type=\"text/javascript\">
     </script>
          ";
     
-    echo json_encode(array('rapp'=>$rapp, 'rapp_absent'=>$rapp_absent));
+    echo json_encode(array('rapp'=>$rapp, 'rapp_absent'=>$rapp_absent, 'rapp_conge'=>$rapp_conge));
 }
 
 }

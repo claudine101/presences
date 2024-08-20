@@ -294,7 +294,7 @@ class  Employes extends CI_Controller
 					$data = array(
 						'ID_UTILISATEUR' => $id,
 				        'DATE_CONGE' => $this->input->post('DEBUT'),
-						'PERIODE' =>$periode
+						'periode' =>$periode==0?'PM' :'AM'
 					);
 					$table = 'conges';
 			        $this->Modele->create($table, $data);

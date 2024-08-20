@@ -37,11 +37,11 @@ class Dashboard_hebdomadaires extends CI_Controller
     if(!empty($avant)){
         if($avant=='AM'){
             $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
-            $critaire_avants.=" AND  periode LIKE  '%PM%'";
+            $critaire_avants.=" AND  periode LIKE  '%AM%'";
         }
         else{
         $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
-        $critaire_avants.=" AND  periode LIKE  '%AM%'";
+        $critaire_avants.=" AND  periode LIKE  '%PM%'";
         }
      }
 
@@ -155,9 +155,7 @@ type:\"POST\",
 data:{
 key:this.key,
 key2:this.key2,
- mois:$('#mois').val(),
-jour:$('#jour').val(),
-heure:$('#heure').val(),
+avant:$('#avant').val(),
 
 
 }
@@ -326,10 +324,7 @@ language: {
     type:\"POST\",
     data:{
     key:this.key,
-    key2:this.key2,
-     mois:$('#mois').val(),
-    jour:$('#jour').val(),
-    heure:$('#heure').val(),
+    avant:$('#avant').val(),
     
     
     }
@@ -489,10 +484,7 @@ ORDER BY mois");
  type:\"POST\",
  data:{
  key:this.key,
- key2:this.key2,
-  mois:$('#mois').val(),
- jour:$('#jour').val(),
- heure:$('#heure').val(),
+ avant:$('#avant').val(),
  
  
  }
@@ -633,15 +625,18 @@ ORDER BY mois");
  function detail($agence=0)
 {
     
-        $mois=$this->input->post('mois');
-        $jour=$this->input->post('jour');
-        $KEY=$this->input->post('key');
-        //   $agence=$this->input->post('agence');
-        //  echo($agence);
-        $critaire_agence='';
-        if($agence!=0){
-            $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
-        }
+    $critaire_avant="";
+    $avant=$this->input->post('avant');
+    $KEY=$this->input->post('key');
+
+   if(!empty($avant)){
+    if($avant=='AM'){
+        $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
+    }
+    else{
+    $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
+    }
+   }
         $KEY2=$this->input->post('key2');
         $break=explode(".",$KEY2);
         $ID=$KEY2;
@@ -681,8 +676,8 @@ ORDER BY mois");
 
                 }
             
-                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search.' '.$order_by.'   '.$limit;
-                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
+                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
+                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search;
 
                 $fetch_data = $this->Model->datatable($query_secondaire);
                 $u=0;
@@ -710,21 +705,21 @@ ORDER BY mois");
 
 
         function detail_absant($agence=0)
-       {
-    
-        $mois=$this->input->post('mois');
-        $jour=$this->input->post('jour');
-        $KEY=$this->input->post('key');
-        //   $agence=$this->input->post('agence');
-        //  echo($agence);
-        $critaire_agence='';
-        if($agence!=0){
-            $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
+        {
+         $critaire_avant="";
+         $avant=$this->input->post('avant');
+         $KEY=$this->input->post('key');
+  
+        if(!empty($avant)){
+            if($avant=='AM'){
+                $critaire_avant.=" AND periode LIKE  '%AM%'";
+        
+            }
+            else{
+            $critaire_avant.=" AND periode LIKE  '%PM%'";
+        
+            }
         }
-        $KEY2=$this->input->post('key2');
-        $break=explode(".",$KEY2);
-        $ID=$KEY2;
-
         $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
 
 
@@ -753,8 +748,8 @@ ORDER BY mois");
 
                 
             
-                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search.' '.$order_by.'   '.$limit;
-                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
+                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
+                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search;
 
                 $fetch_data = $this->Model->datatable($query_secondaire);
                 $u=0;
@@ -782,18 +777,20 @@ ORDER BY mois");
         function detail_conge($agence=0)
         {
      
-         $mois=$this->input->post('mois');
-         $jour=$this->input->post('jour');
-         $KEY=$this->input->post('key');
-         //   $agence=$this->input->post('agence');
-         //  echo($agence);
-         $critaire_agence='';
-         if($agence!=0){
-             $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
-         }
-         $KEY2=$this->input->post('key2');
-         $break=explode(".",$KEY2);
-         $ID=$KEY2;
+            $critaire_avant="";
+            $avant=$this->input->post('avant');
+            $KEY=$this->input->post('key');
+     
+           if(!empty($avant)){
+               if($avant=='AM'){
+                   $critaire_avant.=" AND periode LIKE  '%AM%'";
+           
+               }
+               else{
+               $critaire_avant.=" AND periode LIKE  '%PM%'";
+           
+               }
+           }
  
          $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
  
@@ -823,8 +820,8 @@ ORDER BY mois");
  
                  
              
-                 $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search.' '.$order_by.'   '.$limit;
-                 $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
+                 $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
+                 $query_filter=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search;
  
                  $fetch_data = $this->Model->datatable($query_secondaire);
                  $u=0;

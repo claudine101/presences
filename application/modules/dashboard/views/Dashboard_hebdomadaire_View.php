@@ -77,16 +77,14 @@
  </div>
 </div>
 
-<div class="row">
- 
- <div class="col-md-12" style="margin-bottom: 20px"></div>       
- <div id="container"  class="col-md-12" ></div>
- <div class="col-md-12" style="margin-bottom: 20px"></div>
-  <div id="container1"  class="col-md-12" ></div>
- <div class="col-md-12" style="margin-bottom: 20px"></div>
- <div id="container2"  class="col-md-12 " ></div>
- 
-</div>
+    <div class="card-body">
+            <div class="row">
+              <div id="container"  class="col-md-12" ></div>
+              <div class="col-md-12" style="margin-bottom: 20px"></div>
+              <div id="container1"  class="col-md-6" ></div>
+              <div id="container2"  class="col-md-6" ></div>
+            </div>
+       </div>
 </div>
 
   <div class="modal fade" id="myModal" role="dialog">
@@ -104,6 +102,35 @@
                   <th>CONTACT</th>
                   <th>AGENCE</th>
                   <th>DATE DE PRESENCE</th>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Quitter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="modal fade" id="myModalb" role="dialog">
+  <div class="modal-dialog modal-lg" >
+    <div class="modal-content  modal-lg">
+      <div class="modal-header">
+        <h4 class="modal-title"><span id="titreb"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table id='mytableb' class='table table-bordered table-striped table-hover table-condensed' >
+          <thead>
+                   <th>#</th>
+                   <th>EMPLOYES</th>
+                  <th>CONTACT</th>
+                  <th>AGENCE</th>
+                  <th>DATE DE PRESENCE</th>
+                  <th>PERIODE</th>
+
                   </thead>
                 </table>
               </div>
@@ -155,7 +182,8 @@
     </div>
 <div id="nouveau1">
     </div>
-
+    <div id="nouveau2">
+    </div>
 
 </div>
 
@@ -188,8 +216,12 @@ avant:avant
 success:function(data){   
   $('#container').html("");             
 $('#nouveau').html(data.rapp );
+
 $('#container1').html("");             
 $('#nouveau1').html(data.rapp_absent);
+
+$('#container2').html("");             
+$('#nouveau2').html(data.rapp_conge);
 
 
 
