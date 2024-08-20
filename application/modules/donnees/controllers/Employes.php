@@ -71,7 +71,8 @@ class  Employes extends CI_Controller
 
 			$option .= "<li><a hre='#' data-toggle='modal'
 			data-target='#mydelete" . $row->ID_EMPLOYE   . "'><font color='red'>&nbsp;&nbsp;Supprimer</font></a></li>";
-			$option .= "<li><a class='btn-md' href='" . base_url('donnees/Employes/getOne/' . $row->ID_EMPLOYE  ) . "'><label class='text-info'>&nbsp;&nbsp;Modifier</label></a></li>";
+			$option .= "<li><a class='btn-md' href='" . base_url('donnees/Employes/getOne/' . $row->ID_EMPLOYE  ) . "'><label class='text-info'>&nbsp;&nbsp;Modifier</label></a></li>
+			<li><a class='btn-md' href='" . base_url('donnees/Employes/declare/' . $row->ID_EMPLOYE  ) . "'><label class='text-warning'>&nbsp;&nbsp;Declarer</label></a></li>";
 			$option .= " </ul>
 			</div>
 			<div class='modal fade' id='mydelete" .  $row->ID_EMPLOYE   . "'>
@@ -269,6 +270,75 @@ class  Employes extends CI_Controller
 		$data['title'] = "Modification de l'employé ";
 		$this->load->view('employes/Employes_Update_View', $data);
 	}
+	function declare($id)
+	{
+		$employes = $this->Modele->getOne('Employes', array('ID_EMPLOYE' => $id));
+		$data['data'] =$employes;
+		$data['title'] = "Conge de : ".$employes['NOM_EMPLOYE']."  ".$employes['PRENOM_EMPLOYE'];
+		$this->load->view('employes/Employes_Conge_View', $data);
+	}
+	function declarer()
+	{
+		$this->form_validation->set_rules('DEBUT', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
+		$this->form_validation->set_rules('FIN', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
+		$id = $this->input->post('ID_EMPLOYE');
+		if ($this->form_validation->run() == FALSE) {
+			$this->declare($id);
+		} 
+		else {
+			$periode = $this->input->post('PERIODE');
+			
+				
+			   if($periode==0 || $periode==1 ){
+					// Prepare data for 22/08/2024 PM OU AM
+					$data = array(
+						'ID_UTILISATEUR' => $id,
+				        'DATE_CONGE' => $this->input->post('DEBUT'),
+						'PERIODE' =>$periode
+					);
+					$table = 'conges';
+			        $this->Modele->create($table, $data);
+					$datas['message'] = "<div class='alert alert-success text-center' id='message'>La modification de l'employé a été effectuée avec succès.</div>";
+				$this->session->set_flashdata($datas);
+				redirect(base_url('donnees/Employes/'));
+			   }
+			   else {
+				// Insert FULL days from 23/08/2024 to 25/08/2024
+				$start_date=$this->input->post('DEBUT');
+				$end_date=$this->input->post('FIN');
+
+				$current_date = strtotime($start_date);
+				$end_date = strtotime($end_date);
+				
+
+				while ($current_date <= $end_date) {
+					$data_am = array(
+						'ID_UTILISATEUR' => $id,
+				        'DATE_CONGE' =>date('Y-m-d',$current_date),
+						'PERIODE' =>0
+					);
+					$data_pm = array(
+						'ID_UTILISATEUR' => $id,
+				        'DATE_CONGE' => date('Y-m-d',$current_date),
+						'PERIODE' =>1
+					);
+					$table = 'conges';
+			        $this->Modele->create($table, $data_pm);
+			        $this->Modele->create($table, $data_am);
+					$current_date = strtotime('+1 day', $current_date);
+					
+				}
+
+				$datas['message'] = "<div class='alert alert-success text-center' id='message'>La modification de l'employé a été effectuée avec succès.</div>";
+				$this->session->set_flashdata($datas);
+				redirect(base_url('donnees/Employes/'));
+			   }
+				
+
+                
+		}
+	}
+
 
 	function update()
 	{

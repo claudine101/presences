@@ -149,7 +149,7 @@ $ID=$KEY2;
 $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
 
 
-$query_principal=" SELECT  e.PHOTO_EMPLOYE
+$query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
  e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE,
   p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,
   e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE 
@@ -297,7 +297,7 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE
     }
     
 
-    $absants=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%Y-%m-%d') as mois, DAYNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
+$absants=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%Y-%m-%d') as mois, DAYNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
 FROM absences a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.id_utilisateur
 WHERE 1  AND
   `date_absence` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
@@ -451,7 +451,166 @@ series: [
    ";
 
 
-         $rapp="<script type=\"text/javascript\">
+
+
+
+
+   $conges=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%Y-%m-%d') as mois, DAYNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
+   FROM absences a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.id_utilisateur
+   WHERE 1  AND
+     `date_absence` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
+     AND `date_absence` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
+   ".$criteres4."  ".$criteres5." 
+   GROUP BY
+     DAYOFWEEK(`date_absence`)
+   ORDER BY
+     DAYOFWEEK(`date_absence`);"
+     );
+   
+   $nombre=0;
+     $donne="";
+   
+   $immatraite_categories=" ";
+   $immacat_traites=0;
+   
+     foreach ($absants as $value) 
+     {
+      
+   
+            
+   $key_id1=($value['mois']>0) ? $value['mois'] : "0" ;
+   $sommeAbsants=($value['nombre_absents']>0) ? $value['nombre_absents'] : "0" ;
+   ;
+   $immatraite_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeAbsants.",key2:1,key:'". $key_id1."'},";
+   
+   $immacat_traites=$immacat_traites+$value['nombre_absents'];
+   
+     }
+          
+   
+     $rapp_absent="<script type=\"text/javascript\">
+     Highcharts.chart('container1', {
+    
+   title: {
+         text: '<b> Rapport  des absances jusqu\'à le   ".$titre."  </b> '
+     },
+     subtitle: {
+         text: ''
+     },
+     xAxis: {
+         type: 'category', 
+     },
+          plotOptions: {
+         series: {
+              pointPadding: 0.2,
+             borderWidth: 0,
+             depth: 40,
+              cursor:'pointer',
+              point:{
+                 events: {
+   
+   
+   click: function()
+   {
+   $(\"#titrea\").html(\"Les absants \");
+   $(\"#myModala\").modal();
+   var row_count ='1000000';
+   $(\"#mytablea\").DataTable({
+   \"processing\":true,
+   \"serverSide\":true,
+   \"bDestroy\": true,
+   \"oreder\":[],
+   \"ajax\":{
+   url:\"".base_url('dashboard/Dashboard_hebdomadaire/detail_absants')."\",
+   type:\"POST\",
+   data:{
+   key:this.key,
+   key2:this.key2,
+   avant:$('#avant').val(),
+   agence:$('#ID_AGENCE').val()
+   }
+   },
+   lengthMenu: [[10,50, 100, row_count], [10,50, 100, \"All\"]],
+   pageLength: 10,
+   \"columnDefs\":[{
+   \"targets\":[],
+   \"orderable\":false
+   }],
+   dom: 'Bfrtlip',
+   buttons: [
+   'excel', 'print','pdf'
+   ],
+   language: {
+   \"sProcessing\":     \"Traitement en cours...\",
+   \"sSearch\":         \"Rechercher&nbsp;:\",
+   \"sLengthMenu\":     \"Afficher _MENU_ &eacute;l&eacute;ments\",
+   \"sInfo\":           \"Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments\",
+   \"sInfoEmpty\":      \"Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment\",
+   \"sInfoFiltered\":   \"\",
+   \"sInfoPostFix\":    \"\",
+   \"sLoadingRecords\": \"Chargement en cours...\",
+   \"sZeroRecords\":    \"Aucun &eacute;l&eacute;ment &agrave; afficher\",
+   \"sEmptyTable\":     \"Aucune donn&eacute;e disponible dans le tableau\",
+   \"oPaginate\": {
+   \"sFirst\":      \"Premier\",
+   \"sPrevious\":   \"Pr&eacute;c&eacute;dent\",
+   \"sNext\":       \"Suivant\",
+   \"sLast\":       \"Dernier\"
+   },
+   \"oAria\": {
+   \"sSortAscending\":  \": activer pour trier la colonne par ordre croissant\",
+   \"sSortDescending\": \": activer pour trier la colonne par ordre d&eacute;croissant\"
+   }
+   }
+                               
+   });
+   
+   
+                            
+   
+                    }
+                }
+            },
+            dataLabels: {
+              enabled: true,
+              format: '{point.y:0,f}'
+          },
+          showInLegend: true
+      }
+   }, 
+   credits: {
+   enabled: true,
+   href: \"\",
+   text: \"RECECA-INKINGI\"
+   },
+       labels: {
+         items: [{
+             html: '',
+             style: {
+                 left: '50px',
+                 top: '18px',
+                 color: ( // theme
+                     Highcharts.defaultOptions.title.style &&
+                     Highcharts.defaultOptions.title.style.color
+                 ) || 'black'
+             }
+         }]
+     },
+   series: [
+   
+     {
+         type: 'column',
+         color: 'red',
+         name:'Absants: (".number_format($immacat_traites,0,',',' ').")',
+         data: [".$immatraite_categories."]
+     } ]
+   });
+   </script>
+      ";
+   
+
+
+$rapp="<script type=\"text/javascript\">
         Highcharts.chart('container', {
        
     chart: {

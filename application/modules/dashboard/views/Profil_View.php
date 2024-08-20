@@ -95,17 +95,15 @@
         </div><!-- /.container-fluid -->
 
 
-        
-        <div class="row">
- 
- <div class="col-md-12" style="margin-bottom: 20px"></div>       
- <div id="container"  class="col-md-12" ></div>
- <div class="col-md-12" style="margin-bottom: 20px"></div>
-  <div id="container1"  class="col-md-12" ></div>
- <div class="col-md-12" style="margin-bottom: 20px"></div>
- <div id="container2"  class="col-md-12 " ></div>
- 
-</div>
+        <div class="card-body">
+            <div class="row">
+              <div id="container"  class="col-md-12" ></div>
+              <div class="col-md-12" style="margin-bottom: 20px"></div>
+              <div id="container1"  class="col-md-6" ></div>
+              <div id="container2"  class="col-md-6" ></div>
+            </div>
+       </div>
+
 </div>
 </div>
 
@@ -144,6 +142,31 @@
       <div class="modal-body">
         <div class="table-responsive">
           <table id='mytable1' class='table table-bordered table-striped table-hover table-condensed wide-table' >
+            <thead>
+             <th>#</th>
+            <th>DATE </th>
+            <th>PERIODE </th>
+
+            </thead>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Quitter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal2" role="dialog">
+  <div class="modal-dialog modal-lg" >
+    <div class="modal-content  modal-lg">
+      <div class="modal-header">
+        <h4 class="modal-title"><span id="titre2"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table id='mytable2' class='table table-bordered table-striped table-hover table-condensed wide-table' >
             <thead>
              <th>#</th>
             <th>DATE </th>
@@ -229,6 +252,8 @@ $('#nouveau').html(data.rapp );
 $('#container1').html("");             
 $('#nouveau1').html(data.rapp_absant );
 
+$('#container2').html("");             
+$('#nouveau2').html(data.rapp_conge );
 
 
 },            

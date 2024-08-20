@@ -402,8 +402,175 @@ language: {
     </script>
          ";
     
-    echo json_encode(array('rapp'=>$rapp, 'rapp_absant'=>$rapp_absant,'nbres'=>$nbre));
+
+
+$controlconges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%m') as mois, MONTHNAME(a.DATE_CONGE) AS day_of_week, COUNT(a.ID_UTILISATEUR) AS nombre_absents
+FROM conges a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
+WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() AND a.ID_UTILISATEUR= ".$this->session->userdata('ID_UTILISATEUR')." ".$critaire_avants."
+GROUP BY mois
+ORDER BY mois");
+
+  $retards=" ";
+ $ponctuels=" ";
+ $immacontrole_categorie=" ";
+ $immadeclare_categorie=" ";
+ $immadeclare_categoriev=" ";
+ $immadeclare_categoriet=" ";
+ $retard_traite=0;
+ $ponctuel_traite=0;
+ $presence_traite=0;
+ 
+  foreach ($controlconges as  $value) {
+       
+       $key_id1=($value['mois']>0) ? $value['mois'] : "0" ;
+       $sommeretards=($value['nombre_absents']>0) ? $value['nombre_absents'] : "0" ;
+       $sommeponctuals=($value['nombre_absents']>0) ? $value['nombre_absents'] : "0" ;
+     
+       $retards.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeretards.",key2:3,key:'". $key_id1."'},";
+       $ponctuels.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeponctuals.",key2:2,key:'". $key_id1."'},";
+       $immadeclare_categoriet.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeexpt.",key2:1,key:'". $key_id1."'},";
+ 
+       $retard_traite=$retard_traite+$value['nombre_absents'];
+       $ponctuel_traite=$ponctuel_traite+$value['nombre_absents'];
+       
+     
+ }
+
+      $rapp_conge="<script type=\"text/javascript\">
+     Highcharts.chart('container2', {
+    
+ chart: {
+         type: 'column'
+     },
+     title: {
+         text: '<b> Rapport de mes congés jusqu\'à le   ".$titre." </b>'
+     },
+     subtitle: {
+         text: ''
+     },
+     xAxis: {
+           type: 'category',
+         crosshair: true
+     },
+     yAxis: {
+         min: 0,
+         title: {
+             text: ''
+         }
+     },
+     tooltip: {
+         headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>',
+         pointFormat: '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' +
+             '<td style=\"padding:0\"><b>{point.y:.f} </b></td></tr>',
+         footerFormat: '</table>',
+         shared: true,
+         useHTML: true
+     },
+     plotOptions: {
+         column: {
+              pointPadding: 0.2,
+             borderWidth: 0,
+             depth: 40,
+              cursor:'pointer',
+              point:{
+                 events: {
+                   click: function()
+ {
+ $(\"#titre2\").html(\"Détail \");
+ $(\"#myModal2\").modal();
+ var row_count ='1000000';
+ $(\"#mytable2\").DataTable({
+ \"processing\":true,
+ \"serverSide\":true,
+ \"bDestroy\": true,
+ \"order\":[[1,'DESC']],
+ \"ajax\":{
+ url:\"".base_url('dashboard/Dashboard_hebdomadaires/detail_conge/' . $this->input->post('agence'))."\",
+ type:\"POST\",
+ data:{
+ key:this.key,
+ key2:this.key2,
+  mois:$('#mois').val(),
+ jour:$('#jour').val(),
+ heure:$('#heure').val(),
+ 
+ 
+ }
+ },
+ lengthMenu: [[10,50, 100, row_count], [10,50, 100, \"All\"]],
+ pageLength: 10,
+ \"columnDefs\":[{
+ \"targets\":[],
+ \"orderable\":true
+ }],
+ dom: 'Bfrtlip',
+ buttons: [
+ 'excel', 'print','pdf'
+ ],
+ language: {
+ \"sProcessing\":     \"Traitement en cours...\",
+ \"sSearch\":         \"Rechercher&nbsp;:\",
+ \"sLengthMenu\":     \"Afficher _MENU_ &eacute;l&eacute;ments\",
+ \"sInfo\":           \"Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments\",
+ \"sInfoEmpty\":      \"Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment\",
+ \"sInfoFiltered\":   \"(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)\",
+  \"sInfoPostFix\":    \"\",
+ \"sLoadingRecords\": \"Chargement en cours...\",
+ \"sZeroRecords\":    \"Aucun &eacute;l&eacute;ment &agrave; afficher\",
+ \"sEmptyTable\":     \"Aucune donn&eacute;e disponible dans le tableau\",
+ \"oPaginate\": {
+ \"sFirst\":      \"Premier\",
+ \"sPrevious\":   \"Pr&eacute;c&eacute;dent\",
+ \"sNext\":       \"Suivant\",
+ \"sLast\":       \"Dernier\"
+ },
+  \"oAria\": {
+ \"sSortAscending\":  \": activer pour trier la colonne par ordre croissant\",
+  \"sSortDescending\": \": activer pour trier la colonne par ordre d&eacute;croissant\"
+ }
+ }
+                               
+ });
+ 
+ 
+                            
+ 
+                    }
+                }
+            },
+            dataLabels: {
+              enabled: true,
+              format: '{point.y:f}'
+          },
+          showInLegend: true
+      }
+  }, 
+  credits: {
+   enabled: true,
+   href: \"\",
+   text: \"RECECA-INKINGI\"
+ },
+ 
+     series: [
+    
+     {
+         color: '#808000',
+         name:'EN CONGE : (".number_format($retard_traite,0,',',' ').")',
+         data: [".$retards."]
+     }
+     
+     ]
+ 
+ });
+ </script>
+      ";
+ 
+ echo json_encode(array('rapp'=>$rapp, 'rapp_absant'=>$rapp_absant, 'rapp_conge'=>$rapp_conge,'nbres'=>$nbre));
 }
+
+
+
+
     function presenter()
 	{
         date_default_timezone_set('Africa/Bujumbura');
@@ -611,6 +778,76 @@ language: {
 
                 echo json_encode($output);
         }
+
+        function detail_conge($agence=0)
+        {
+     
+         $mois=$this->input->post('mois');
+         $jour=$this->input->post('jour');
+         $KEY=$this->input->post('key');
+         //   $agence=$this->input->post('agence');
+         //  echo($agence);
+         $critaire_agence='';
+         if($agence!=0){
+             $critaire_agence.=" AND a.`ID_AGENCE`= ".$agence." ";
+         }
+         $KEY2=$this->input->post('key2');
+         $break=explode(".",$KEY2);
+         $ID=$KEY2;
+ 
+         $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+ 
+ 
+         $query_principal=" 
+             SELECT  e.*,a.DATE_CONGE,a.PERIODE
+                 FROM employes e LEFT JOIN  conges a ON e.ID_UTILISATEUR=a.id_utilisateur
+                 WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() and   a.id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."
+             ";
+         
+             $limit='LIMIT 0,10';
+             if($_POST['length'] != -1)
+             {
+                 $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+             }
+             $order_by='';
+             if($_POST['order']['0']['column']!=0)
+             {
+                 $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY DATE_CONGE ASC'; 
+             }
+ 
+             $search = !empty($_POST['search']['value']) ? ("AND (DATE_CONGE LIKE '%$var_search%'  ) ") : '';
+                 $critaire='';
+                 
+ 
+                 $critaire=" AND  date_format(a.DATE_CONGE,'%m') LIKE '%".$KEY."%'";
+ 
+                 
+             
+                 $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search.' '.$order_by.'   '.$limit;
+                 $query_filter=$query_principal.'  '.$critaire.' '.$critaire_agence.' '.$search;
+ 
+                 $fetch_data = $this->Model->datatable($query_secondaire);
+                 $u=0;
+                 $data = array();
+                 foreach ($fetch_data as $row) 
+                 {  
+                     $u++;
+                     $intrant=array();
+                     $intrant[] = $u;
+                     $intrant[] =$row->DATE_CONGE;
+                      $intrant[] =$row->PERIODE==0?'PM':'AM';
+                     $data[] = $intrant;
+                 }
+ 
+                 $output = array(
+                     "draw" => intval($_POST['draw']),
+                     "recordsTotal" =>$this->Model->all_data($query_principal),
+                     "recordsFiltered" => $this->Model->filtrer($query_filter),
+                     "data" => $data
+                 );
+ 
+                 echo json_encode($output);
+         }
 	}
     
 
