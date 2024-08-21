@@ -150,9 +150,9 @@
    ?>
 
   
-        <!-- <a href="#" class="d-block"><img src="<?= $image ?>" id="imageLogo"> <?= $assureur ?> </a> -->
-         <img height="13.5%" width="100%" src="<?= $logo?>" alt="" class="brand-image">
-      
+         <!-- <img height="13.5%" width="100%" src="<?= $logo?>" alt="" class="brand-image"> -->
+         <img src="<?= $logo ?>" alt="logo" class="brand-image" style="max-width: 100%; height: auto;">
+
  
   <!-- Sidebar -->
   <div class="sidebar">
