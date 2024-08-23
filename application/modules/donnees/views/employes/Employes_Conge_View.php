@@ -51,18 +51,18 @@
                   <div class="row">
                     
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                     <input type="hidden" class="form-control" name="ID_EMPLOYE" value="<?= $data['ID_UTILISATEUR'] ?>">
                       <label for="FName"> Date debut</label>
                       <input  type="date" name="DEBUT" autocomplete="off" id="DEBUT" value=""  class="form-control" >
                       <?php echo form_error('DEBUT', '<div class="text-danger">', '</div>'); ?>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                       <label for="FName"> Date fin</label>
                       <input  type="date" name="FIN" autocomplete="off" id="FIN" value=""  class="form-control" >
                       <?php echo form_error('FIN', '<div class="text-danger">', '</div>'); ?>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                       <label for="Ftype">Periode</label>
                       <select class="form-control" name="PERIODE" id="PERIODE">
                         <option value="2">---Sélectionner---</option>
@@ -71,6 +71,21 @@
                       </select>
                       <!-- <div><font color="red" id="error_province"></font></div>  -->
                       <?php echo form_error('PERIODE', '<div class="text-danger">', '</div>'); ?>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="Ftype">Motif</label>
+                      <select class="form-control" name="ID_MOTIF" id="ID_MOTIF" >
+                        <option value="">---Sélectionner---</option>
+                        <?php
+                        foreach ($motif as $value) {
+                        ?>
+                          <option value="<?= $value['ID_MOTIF'] ?>"><?= $value['MOTIF'] ?></option>
+                        <?php
+                        }
+                        ?>
+                      </select>
+                      <!-- <div><font color="red" id="error_province"></font></div>  -->
+                      <?php echo form_error('ID_MOTIF', '<div class="text-danger">', '</div>'); ?>
                     </div>
                    
                     <div class="col-md-12" style="margin-top:31px;">

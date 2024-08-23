@@ -399,38 +399,62 @@ language: {
     
 
 
-$controlconges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%m') as mois, MONTHNAME(a.DATE_CONGE) AS day_of_week, COUNT(a.ID_UTILISATEUR) AS nombre_absents
+$controlconges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%m') as mois, MONTHNAME(a.DATE_CONGE) AS day_of_week,
+ SUM(CASE WHEN (a.ID_MOTIF) =1 THEN 1 ELSE 0 END) AS conges,
+          SUM(CASE WHEN (a.ID_MOTIF) =2 THEN 1 ELSE 0 END) AS  permission, 
+          SUM(CASE WHEN (a.ID_MOTIF) =3 THEN 1 ELSE 0 END) AS  Surterrain,
+          SUM(CASE WHEN (a.ID_MOTIF) =4 THEN 1 ELSE 0 END) AS  Mission, 
+          SUM(CASE WHEN (a.ID_MOTIF) =5 THEN 1 ELSE 0 END) AS  Formation, COUNT(a.ID_UTILISATEUR) AS nombre_absents
 FROM conges a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
 WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() AND a.ID_UTILISATEUR= ".$this->session->userdata('ID_UTILISATEUR')." ".$critaire_avants."
 GROUP BY mois
 ORDER BY mois");
 
-  $retards=" ";
- $ponctuels=" ";
- $immacontrole_categorie=" ";
- $immadeclare_categorie=" ";
- $immadeclare_categoriev=" ";
- $immadeclare_categoriet=" ";
- $retard_traite=0;
- $ponctuel_traite=0;
- $presence_traite=0;
- 
-  foreach ($controlconges as  $value) {
-       
-       $key_id1=($value['mois']>0) ? $value['mois'] : "0" ;
-       $sommeretards=($value['nombre_absents']>0) ? $value['nombre_absents'] : "0" ;
-       $sommeponctuals=($value['nombre_absents']>0) ? $value['nombre_absents'] : "0" ;
-     
-       $retards.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeretards.",key2:3,key:'". $key_id1."'},";
-       $ponctuels.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeponctuals.",key2:2,key:'". $key_id1."'},";
-       $immadeclare_categoriet.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeexpt.",key2:1,key:'". $key_id1."'},";
- 
-       $retard_traite=$retard_traite+$value['nombre_absents'];
-       $ponctuel_traite=$ponctuel_traite+$value['nombre_absents'];
-       
-     
- }
+$nombre=0;
+$donne="";
 
+$conge_categories=" ";
+$conge_traites=0;
+
+$permission_categories=" ";
+$permission_traites=0;
+
+$terrain_categories=" ";
+$terrain_traites=0;
+
+$mission_categories=" ";
+$mission_traites=0;
+
+$formation_categories=" ";
+$formation_traites=0;
+
+foreach ($controlconges as $value) 
+{ 
+$key_id1=($value['mois']>0) ? $value['mois'] : "0" ;
+$sommeConges=($value['conges']>0) ? $value['conges'] : "0" ;;
+$conge_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeConges.",key2:1,key:'". $key_id1."'},";
+$conge_traites=$conge_traites+$value['conges'];
+
+
+$sommePermissions=($value['permission']>0) ? $value['permission'] : "0" ;
+$permission_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommePermissions.",key2:2,key:'". $key_id1."'},";
+$permission_traites=$permission_traites+$value['permission'];
+
+$sommeTerrains=($value['Surterrain']>0) ? $value['Surterrain'] : "0" ;
+$terrain_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeTerrains.",key2:3,key:'". $key_id1."'},";
+$terrain_traites=$terrain_traites+$value['Surterrain'];
+
+$sommeMissions=($value['Mission']>0) ? $value['Mission'] : "0" ;
+$mission_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeMissions.",key2:4,key:'". $key_id1."'},";
+$mission_traites=$mission_traites+$value['Mission'];
+
+$sommeFormations=($value['Formation']>0) ? $value['Formation'] : "0" ;
+$formation_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeFormations.",key2:5,key:'". $key_id1."'},";
+$formation_traites=$formation_traites+$value['Formation'];
+
+
+}
+  
       $rapp_conge="<script type=\"text/javascript\">
      Highcharts.chart('container2', {
     
@@ -469,9 +493,22 @@ ORDER BY mois");
               cursor:'pointer',
               point:{
                  events: {
-                   click: function()
+click: function()
  {
- $(\"#titre2\").html(\"Détail \");
+ if(this.key2==1){
+$(\"#titre2\").html(\" Détails de tous les jours où je suis en congé \");
+}else if(this.key2==2){
+$(\"#titre2\").html(\"  Détails de tous les jours où je suis en permission\");
+}
+else if(this.key2==3){
+$(\"#titre2\").html(\"Détails de tous les jours où je suis sur le terrain\");
+}
+else if(this.key2==4){
+$(\"#titre2\").html(\"Détails de tous les jours où je suis en mission\");
+}
+else{
+ $(\"#titre2\").html(\"Détails de tous les jours où je suis en formation \");   
+}
  $(\"#myModal2\").modal();
  var row_count ='1000000';
  $(\"#mytable2\").DataTable({
@@ -484,6 +521,7 @@ ORDER BY mois");
  type:\"POST\",
  data:{
  key:this.key,
+ key2:this.key2,
  avant:$('#avant').val(),
  
  
@@ -544,14 +582,36 @@ ORDER BY mois");
  },
  
      series: [
-    
-     {
-         color: '#808000',
-         name:'EN CONGE : (".number_format($retard_traite,0,',',' ').")',
-         data: [".$retards."]
-     }
-     
-     ]
+{
+ type: 'column',
+color: '#8FBC8F',
+ name:'En congé: (".number_format($conge_traites,0,',',' ').")',
+ data: [".$conge_categories."]
+} ,
+ {
+ type: 'column',
+color: '#A9A9A9',
+ name:'Permission: (".number_format($permission_traites,0,',',' ').")',
+ data: [".$permission_categories."]
+},{
+ type: 'column',
+color: '#FFA07A',
+ name:'Sur  terrain: (".number_format($terrain_traites,0,',',' ').")',
+ data: [".$terrain_categories."]
+},
+{
+ type: 'column',
+color: '#4682B4',
+ name:'En mission: (".number_format($mission_traites,0,',',' ').")',
+ data: [".$mission_categories."]
+},
+{
+ type: 'column',
+color: '#FFD700',
+ name:'Forimation: (".number_format($formation_traites,0,',',' ').")',
+ data: [".$formation_categories."]
+}
+]
  
  });
  </script>
@@ -815,8 +875,9 @@ ORDER BY mois");
              $search = !empty($_POST['search']['value']) ? ("AND (DATE_CONGE LIKE '%$var_search%'  ) ") : '';
                  $critaire='';
                  
- 
-                 $critaire=" AND  date_format(a.DATE_CONGE,'%m') LIKE '%".$KEY."%'";
+                 $ID_MOTIF=$this->input->post('key2');
+               
+                 $critaire= "AND a.ID_MOTIF=".$ID_MOTIF." AND  date_format(a.DATE_CONGE,'%m') LIKE '%".$KEY."%'";
  
                  
              

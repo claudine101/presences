@@ -72,7 +72,7 @@ class  Employes extends CI_Controller
 			$option .= "<li><a hre='#' data-toggle='modal'
 			data-target='#mydelete" . $row->ID_EMPLOYE   . "'><font color='red'>&nbsp;&nbsp;Supprimer</font></a></li>";
 			$option .= "<li><a class='btn-md' href='" . base_url('donnees/Employes/getOne/' . $row->ID_EMPLOYE  ) . "'><label class='text-info'>&nbsp;&nbsp;Modifier</label></a></li>
-			<li><a class='btn-md' href='" . base_url('donnees/Employes/declare/' . $row->ID_EMPLOYE  ) . "'><label class='text-warning'>&nbsp;&nbsp;Declarer</label></a></li>";
+			<li><a class='btn-md' href='" . base_url('donnees/Employes/declares/' . $row->ID_EMPLOYE  ) . "'><label class='text-warning'>&nbsp;&nbsp;Declarer</label></a></li>";
 			$option .= " </ul>
 			</div>
 			<div class='modal fade' id='mydelete" .  $row->ID_EMPLOYE   . "'>
@@ -270,9 +270,10 @@ class  Employes extends CI_Controller
 		$data['title'] = "Modification de l'employé ";
 		$this->load->view('employes/Employes_Update_View', $data);
 	}
-	function declare($id)
+	function declares($id)
 	{
 		$employes = $this->Modele->getOne('Employes', array('ID_EMPLOYE' => $id));
+		$data['motif'] = $this->Modele->getRequete('SELECT * FROM motif WHERE 1 order by ID_MOTIF ASC');
 		$data['data'] =$employes;
 		$data['title'] = "Conge de : ".$employes['NOM_EMPLOYE']."  ".$employes['PRENOM_EMPLOYE'];
 		$this->load->view('employes/Employes_Conge_View', $data);
@@ -281,9 +282,11 @@ class  Employes extends CI_Controller
 	{
 		$this->form_validation->set_rules('DEBUT', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
 		$this->form_validation->set_rules('FIN', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
+		$this->form_validation->set_rules('ID_MOTIF', '', 'trim|required|callback_validate_name', array('required' => '<font style="color:red;size:2px;">Le champ est Obligatoire</font>'));
+		
 		$id = $this->input->post('ID_EMPLOYE');
 		if ($this->form_validation->run() == FALSE) {
-			$this->declare($id);
+			$this->declares($id);
 		} 
 		else {
 			$periode = $this->input->post('PERIODE');
@@ -294,6 +297,7 @@ class  Employes extends CI_Controller
 					$data = array(
 						'ID_UTILISATEUR' => $id,
 				        'DATE_CONGE' => $this->input->post('DEBUT'),
+				        'ID_MOTIF' => $this->input->post('ID_MOTIF'),
 						'periode' =>$periode==0?'PM' :'AM'
 					);
 					$table = 'conges';
@@ -319,12 +323,16 @@ class  Employes extends CI_Controller
 							$data_am = array(
 								'ID_UTILISATEUR' => $id,
 								'DATE_CONGE' =>date('Y-m-d',$current_date),
-								'periode' =>'AM' 
+								'periode' =>'AM' ,
+								'ID_MOTIF' => $this->input->post('ID_MOTIF'),
+
 							);
 							$data_pm = array(
 								'ID_UTILISATEUR' => $id,
 								'DATE_CONGE' => date('Y-m-d',$current_date),
-								'periode' =>'PM'
+								'periode' =>'PM',
+								'ID_MOTIF' => $this->input->post('ID_MOTIF'),
+
 							);
 							$table = 'conges';
 							$this->Modele->create($table, $data_pm);

@@ -55,8 +55,8 @@ function detail_conges()
   
    }
   $critere = " ";
-
-  $critere = " AND DATE_FORMAT(a.DATE_CONGE, '%Y-%m-%d') = '".$KEY."'";
+  $ID_MOTIF=$this->input->post('key2');
+  $critere = "AND a.ID_MOTIF=".$ID_MOTIF." AND DATE_FORMAT(a.DATE_CONGE, '%Y-%m-%d') = '".$KEY."'";
 
 
 
@@ -555,7 +555,12 @@ series: [
 
 
 
-   $conges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%Y-%m-%d') as mois, DAYNAME(a.DATE_CONGE) AS day_of_week, COUNT(a.ID_UTILISATEUR) AS nombre_absents
+   $conges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%Y-%m-%d') as mois,
+   SUM(CASE WHEN (a.ID_MOTIF) =1 THEN 1 ELSE 0 END) AS conges,
+          SUM(CASE WHEN (a.ID_MOTIF) =2 THEN 1 ELSE 0 END) AS  permission, 
+          SUM(CASE WHEN (a.ID_MOTIF) =3 THEN 1 ELSE 0 END) AS  Surterrain,
+          SUM(CASE WHEN (a.ID_MOTIF) =4 THEN 1 ELSE 0 END) AS  Mission, 
+          SUM(CASE WHEN (a.ID_MOTIF) =5 THEN 1 ELSE 0 END) AS  Formation, DAYNAME(a.DATE_CONGE) AS day_of_week, COUNT(a.ID_UTILISATEUR) AS nombre_absents
    FROM conges a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
    WHERE 1  AND
      `DATE_CONGE` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
@@ -567,25 +572,51 @@ series: [
      DAYOFWEEK(`DATE_CONGE`);"
      );
    
-   $nombre=0;
+     $nombre=0;
      $donne="";
-   
-   $immatraite_categories=" ";
-   $immacat_traites=0;
-   
+     
+     $conge_categories=" ";
+     $conge_traites=0;
+     
+     $permission_categories=" ";
+     $permission_traites=0;
+     
+     $terrain_categories=" ";
+     $terrain_traites=0;
+     
+     $mission_categories=" ";
+     $mission_traites=0;
+     
+     $formation_categories=" ";
+     $formation_traites=0;
+     
      foreach ($conges as $value) 
-     {
-      
-   
-            
-   $key_id1=($value['mois']>0) ? $value['mois'] : "0" ;
-   $sommeAbsants=($value['nombre_absents']>0) ? $value['nombre_absents'] : "0" ;
-   ;
-   $immatraite_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeAbsants.",key2:1,key:'". $key_id1."'},";
-   
-   $immacat_traites=$immacat_traites+$value['nombre_absents'];
-   
+     { 
+     $key_id1=($value['mois']>0) ? $value['mois'] : "0" ;
+     $sommeConges=($value['conges']>0) ? $value['conges'] : "0" ;;
+     $conge_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeConges.",key2:1,key:'". $key_id1."'},";
+     $conge_traites=$conge_traites+$value['conges'];
+     
+     
+     $sommePermissions=($value['permission']>0) ? $value['permission'] : "0" ;
+     $permission_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommePermissions.",key2:2,key:'". $key_id1."'},";
+     $permission_traites=$permission_traites+$value['permission'];
+     
+     $sommeTerrains=($value['Surterrain']>0) ? $value['Surterrain'] : "0" ;
+     $terrain_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeTerrains.",key2:3,key:'". $key_id1."'},";
+     $terrain_traites=$terrain_traites+$value['Surterrain'];
+     
+     $sommeMissions=($value['Mission']>0) ? $value['Mission'] : "0" ;
+     $mission_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeMissions.",key2:4,key:'". $key_id1."'},";
+     $mission_traites=$mission_traites+$value['Mission'];
+     
+     $sommeFormations=($value['Formation']>0) ? $value['Formation'] : "0" ;
+     $formation_categories.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeFormations.",key2:5,key:'". $key_id1."'},";
+     $formation_traites=$formation_traites+$value['Formation'];
+     
+     
      }
+       
           
    
      $rapp_conge="<script type=\"text/javascript\">
@@ -612,7 +643,20 @@ series: [
    
    click: function()
    {
-   $(\"#titreb\").html(\"Les employés en congé\");
+        if(this.key2==1){
+        $(\"#titreb\").html(\" Détails de tous les employés en congé \");
+        }else if(this.key2==2){
+        $(\"#titreb\").html(\" Détails de tous les employés en permission\");
+        }
+        else if(this.key2==3){
+        $(\"#titreb\").html(\" Détails de tous les employés sur le terrain\");
+        }
+        else if(this.key2==4){
+        $(\"#titreb\").html(\"Détails de tous les employés en mission\");
+        }
+        else{
+        $(\"#titreb\").html(\"Détails de tous les employés en formation \");   
+        }
    $(\"#myModalb\").modal();
    var row_count ='1000000';
    $(\"#mytableb\").DataTable({
@@ -697,13 +741,36 @@ series: [
          }]
      },
    series: [
-   
-     {
-         type: 'column',
-          color: '#808000',
-         name:'En congé: (".number_format($immacat_traites,0,',',' ').")',
-         data: [".$immatraite_categories."]
-     } ]
+{
+ type: 'column',
+color: '#8FBC8F',
+ name:'En congé: (".number_format($conge_traites,0,',',' ').")',
+ data: [".$conge_categories."]
+} ,
+ {
+ type: 'column',
+color: '#A9A9A9',
+ name:'Permission: (".number_format($permission_traites,0,',',' ').")',
+ data: [".$permission_categories."]
+},{
+ type: 'column',
+color: '#FFA07A',
+ name:'Sur  terrain: (".number_format($terrain_traites,0,',',' ').")',
+ data: [".$terrain_categories."]
+},
+{
+ type: 'column',
+color: '#4682B4',
+ name:'En mission: (".number_format($mission_traites,0,',',' ').")',
+ data: [".$mission_categories."]
+},
+{
+ type: 'column',
+color: '#FFD700',
+ name:'Forimation: (".number_format($formation_traites,0,',',' ').")',
+ data: [".$formation_categories."]
+}
+]
    });
    </script>
       ";
