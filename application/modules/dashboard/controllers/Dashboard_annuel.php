@@ -135,7 +135,7 @@ $immacat_traites=$immacat_traites+$value['nombre_absents'];
   Highcharts.chart('container1', {
  
 title: {
-      text: '<b> Rapport  des absances jusqu\'à le   ".$titre."  </b> '
+      text: '<b> Rapport  des absences jusqu\'à le   ".$titre."  </b> '
   },
   subtitle: {
       text: ''
@@ -317,7 +317,7 @@ $rapp_conge="<script type=\"text/javascript\">
 Highcharts.chart('container2', {
 
 title: {
- text: '<b> Rapport  des congés jusqu\'à le   ".$titre."  </b> '
+ text: '<b> Rapport des absences justifiées jusqu\'à le   ".$titre."  </b> '
 },
 subtitle: {
  text: ''

@@ -278,7 +278,7 @@ language: {
             type: 'column'
         },
         title: {
-            text: '<b> Rapport de mes absances jusqu\'à le   ".$titre." </b>'
+            text: '<b> Rapport de mes absences jusqu\'à le   ".$titre." </b>'
         },
         subtitle: {
             text: ''
@@ -462,7 +462,7 @@ $formation_traites=$formation_traites+$value['Formation'];
          type: 'column'
      },
      title: {
-         text: '<b> Rapport de mes congés jusqu\'à le   ".$titre." </b>'
+         text: '<b> Rapport de mes absences justifiées jusqu\'à le   ".$titre." </b>'
      },
      subtitle: {
          text: ''
