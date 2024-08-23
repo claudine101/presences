@@ -608,7 +608,7 @@ color: '#4682B4',
 {
  type: 'column',
 color: '#FFD700',
- name:'Forimation: (".number_format($formation_traites,0,',',' ').")',
+ name:'Formation: (".number_format($formation_traites,0,',',' ').")',
  data: [".$formation_categories."]
 }
 ]
