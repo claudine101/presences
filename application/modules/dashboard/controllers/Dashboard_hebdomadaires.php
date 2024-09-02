@@ -498,7 +498,7 @@ click: function()
  if(this.key2==1){
 $(\"#titre2\").html(\" Détails de tous les jours où je suis en congé \");
 }else if(this.key2==2){
-$(\"#titre2\").html(\"  Détails de tous les jours où je suis en permission\");
+$(\"#titre2\").html(\"  Détails de tous les jours où je suis malade\");
 }
 else if(this.key2==3){
 $(\"#titre2\").html(\"Détails de tous les jours où je suis sur le terrain\");
@@ -591,7 +591,7 @@ color: '#8FBC8F',
  {
  type: 'column',
 color: '#A9A9A9',
- name:'Permission: (".number_format($permission_traites,0,',',' ').")',
+ name:'Malade: (".number_format($permission_traites,0,',',' ').")',
  data: [".$permission_categories."]
 },{
  type: 'column',

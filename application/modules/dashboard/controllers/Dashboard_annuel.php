@@ -36,6 +36,7 @@ class Dashboard_annuel extends CI_Controller
         $criteres4="";
         $criteres5="";
         
+        
         $categorie="";
         $titre=" ".strftime('%d-%m-%Y',strtotime(date('Y-m-d')));
         
@@ -60,6 +61,17 @@ class Dashboard_annuel extends CI_Controller
                     }
         
                  }
+                 
+        $dates=$this->input->post('DATE_PRESENCE');
+        $criteres_date1="";
+        $criteres_date2="";
+        $criteres_date3="";
+
+                 if(!empty($dates)){
+                    $criteres_date1.=" AND date_format(presences.`DATE_PRESENCE`,'%Y-%m-%d')= '".$dates."'  ";
+                    $criteres_date2.=" AND date_format(a.date_absence,'%Y-%m-%d')= '".$dates."'  ";
+                    $criteres_date3.=" AND date_format(a.DATE_CONGE,'%Y-%m-%d')= '".$dates."'  ";
+                  }
     
           $control=$this->Model->getRequete("SELECT
              MONTHNAME(`DATE_PRESENCE`) AS day_of_week,
@@ -69,7 +81,7 @@ class Dashboard_annuel extends CI_Controller
           SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates
           FROM
               presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
-          WHERE 1".$criteres1."  ".$criteres3." 
+          WHERE 1".$criteres1."  ".$criteres3."  ".$criteres_date1."
           GROUP BY
               MONTH(`DATE_PRESENCE`)
           ORDER BY
@@ -105,7 +117,7 @@ class Dashboard_annuel extends CI_Controller
 
     $absants=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%m') as mois, MONTHNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
         FROM absences a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.id_utilisateur
-        WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$criteres4."  ".$criteres5." 
+        WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$criteres4."  ".$criteres5." " .$criteres_date2."
         GROUP BY mois
         ORDER BY mois"
   );
@@ -171,8 +183,7 @@ key:this.key,
 key2:this.key2,
 agance:$('#ID_AGENCE').val(),
 avant:$('#avant').val(),
-
-
+DATE_PRESENCE:$('#DATE_PRESENCE').val()
 }
 },
 lengthMenu: [[10,50, 100, row_count], [10,50, 100, \"All\"]],
@@ -262,7 +273,7 @@ $conges=$this->Model->getRequete("SELECT DATE_FORMAT(a.DATE_CONGE, '%m') as mois
           SUM(CASE WHEN (a.ID_MOTIF) =4 THEN 1 ELSE 0 END) AS  Mission, 
           SUM(CASE WHEN (a.ID_MOTIF) =5 THEN 1 ELSE 0 END) AS  Formation
    FROM conges a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
-   WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$criteres4."  ".$criteres5." 
+   WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$criteres4."  ".$criteres5." ".$criteres_date3."
    GROUP BY mois
    ORDER BY mois"
 );
@@ -367,6 +378,7 @@ key:this.key,
 key2:this.key2,
 agance:$('#ID_AGENCE').val(),
 avant:$('#avant').val(),
+DATE_PRESENCE:$('#DATE_PRESENCE').val()
 
 
 }
@@ -447,7 +459,7 @@ color: '#8FBC8F',
  {
  type: 'column',
 color: '#A9A9A9',
- name:'Permission: (".number_format($permission_traites,0,',',' ').")',
+ name:'Malade: (".number_format($permission_traites,0,',',' ').")',
  data: [".$permission_categories."]
 },{
  type: 'column',
@@ -529,6 +541,8 @@ color: '#FFD700',
     key2:this.key2,
     agance:$('#ID_AGENCE').val(),
     avant:$('#avant').val(),
+    DATE_PRESENCE:$('#DATE_PRESENCE').val()
+
     }
     },
     lengthMenu: [[10,50, 100, row_count], [10,50, 100, \"All\"]],
@@ -628,9 +642,11 @@ color: '#FFD700',
    }
  }
 
-
-
-
+ $dates=$this->input->post('DATE_PRESENCE');
+        $criteres_date2="";
+        if(!empty($dates)){
+        $criteres_date2.=" AND date_format(a.date_absence,'%Y-%m-%d')= '".$dates."'  ";
+        }
 
   $critere = " ";
 
@@ -645,7 +661,7 @@ $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : nu
 $query_principal="
 SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
     FROM employes e LEFT JOIN  agences  ag on ag.ID_AGENCE=e.ID_AGENCE LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
-      WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$criteres1." ".$criteres3."
+      WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$criteres1." ".$criteres3." ".$criteres_date2."
 ";
 
         $limit='LIMIT 0,10';
@@ -720,7 +736,12 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
   }
  
  
- 
+  $dates=$this->input->post('DATE_PRESENCE');
+  $criteres_date3="";
+
+    if(!empty($dates)){
+        $criteres_date3.=" AND date_format(a.DATE_CONGE,'%Y-%m-%d')= '".$dates."'  ";
+    }
  
  
    $critere = " ";
@@ -736,7 +757,7 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
  $query_principal="
  SELECT  e.*,a.DATE_CONGE,ag.DESCRIPTION,a.periode
      FROM employes e LEFT JOIN  agences  ag on ag.ID_AGENCE=e.ID_AGENCE LEFT JOIN  conges a ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
-       WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$criteres1." ".$criteres3."
+       WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() ".$critere." ".$criteres1." ".$criteres3." ".$criteres_date3."
  ";
  
          $limit='LIMIT 0,10';
@@ -809,6 +830,13 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
             $criteres3.=" AND TIME(`DATE_PRESENCE`)>='12:00:00' ";
         }
       }
+      $dates=$this->input->post('DATE_PRESENCE');
+      $criteres_date1="";
+    
+        if(!empty($dates)){
+            $criteres_date1.=" AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d')= '".$dates."'  ";
+        }
+     
       $KEY2=$this->input->post('key2');
         $break=explode(".",$KEY2);
         $ID=$KEY2;
@@ -853,8 +881,8 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
 
         }
                
-                $query_secondaire=$query_principal.'  '.$critaire.' '.$criteres3.' '.$criteres1.' '.$search.' '.$order_by.'   '.$limit;
-                $query_filter=$query_principal.'  '.$critaire.' '.$criteres1.' '.$criteres3.' '.$search;
+                $query_secondaire=$query_principal.'  '.$critaire.' '.$criteres3.' '.$criteres1.' '.$criteres_date1.' '.$search.' '.$order_by.'   '.$limit;
+                $query_filter=$query_principal.'  '.$critaire.' '.$criteres1.' '.$criteres3.' '.$criteres_date1.' '.$search;
         
                 $fetch_data = $this->Model->datatable($query_secondaire);
                 $u=0;

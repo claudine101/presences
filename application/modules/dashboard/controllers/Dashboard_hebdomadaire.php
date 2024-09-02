@@ -646,7 +646,7 @@ series: [
         if(this.key2==1){
         $(\"#titreb\").html(\" Détails de tous les employés en congé \");
         }else if(this.key2==2){
-        $(\"#titreb\").html(\" Détails de tous les employés en permission\");
+        $(\"#titreb\").html(\" Détails de tous les employés malades\");
         }
         else if(this.key2==3){
         $(\"#titreb\").html(\" Détails de tous les employés sur le terrain\");
@@ -750,7 +750,7 @@ color: '#8FBC8F',
  {
  type: 'column',
 color: '#A9A9A9',
- name:'Permission: (".number_format($permission_traites,0,',',' ').")',
+ name:'Malades: (".number_format($permission_traites,0,',',' ').")',
  data: [".$permission_categories."]
 },{
  type: 'column',

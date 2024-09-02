@@ -63,7 +63,7 @@
                     
                     </div>
             </div><!-- /.col -->
-            <div class="form-group col-md-6"><h4 style='color:blue'>Rapport annuel</h4></div>
+            <div class="form-group col-md-3"><h4 style='color:blue'>Rapport annuel</h4></div>
             <div class="form-group col-md-3">
                     <label  style='color:blue'>agences</label>
                     <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='get_rapport()'>
@@ -73,7 +73,11 @@
                       <?php } ?>
                     </select>
                 </div>
-               
+                <div class="form-group col-md-3">
+                        <label style='color:blue'>Date</label>
+                        <input onchange='get_rapport()' type="date" name="DATE_PRESENCE" autocomplete="off" id="DATE_PRESENCE" value="<?= set_value('DATE_PRESENCE') ?>" class="form-control">
+
+                    </div>
             <div class="form-group col-md-3">
                   <label  style='color:blue'>Avant  ou  après midi</label>
                   <select class="form-control input-sm" name="avant" id="avant" onchange='get_rapport()'>
@@ -231,6 +235,7 @@ get_rapport();
 function get_rapport(){
 var agence=$('#ID_AGENCE').val()
 var avant=$('#avant').val();
+var DATE_PRESENCE=$('#DATE_PRESENCE').val();
 $.ajax({
 url : "<?=base_url()?>dashboard/Dashboard_annuel/get_rapport_user",
 type : "POST",
@@ -238,7 +243,8 @@ dataType: "JSON",
 cache:false,
 data:{
 agence:agence,
-avant:avant
+avant:avant,
+DATE_PRESENCE:DATE_PRESENCE
 },
 success:function(data){   
   $('#container').html("");             
