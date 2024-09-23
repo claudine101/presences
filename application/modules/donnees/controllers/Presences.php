@@ -302,7 +302,7 @@ class  Presences extends CI_Controller
 			$date_presence = $date_presence_date . ' ' . $date_presence_time. ':00';// Combine date et heure
 
 			$data = array(
-				'DATE_PRESENCE' => $date_presence,
+				//'DATE_PRESENCE' => $date_presence,
 				'STATUT'=>1
 			);
 			
