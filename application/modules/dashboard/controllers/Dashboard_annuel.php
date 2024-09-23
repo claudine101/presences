@@ -910,6 +910,97 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
         
                 echo json_encode($output);
             }
+            function listing()
+	{
+
+		$i = 1;
+
+		$query_principal = '
+        SELECT 
+     e.*, 
+    (SELECT COUNT(p.ID_PRESENCE) 
+     FROM presences p 
+     WHERE p.STATUT = 1 AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS presences, 
+    (SELECT COUNT(p.ID_PRESENCE) 
+     FROM presences p 
+     WHERE p.STATUT = 0 AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retards ,
+     (SELECT COUNT(a.id_utilisateur) 
+     FROM absences a
+     WHERE 1 AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
+     (SELECT COUNT(c.ID_UTILISATEUR) 
+     FROM conges c
+     WHERE c.ID_MOTIF=1 AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
+     
+     (SELECT COUNT(c.ID_UTILISATEUR) 
+     FROM conges c
+     WHERE c.ID_MOTIF=2 AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
+     (SELECT COUNT(c.ID_UTILISATEUR) 
+     FROM conges c
+     WHERE c.ID_MOTIF=3 AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
+     (SELECT COUNT(c.ID_UTILISATEUR) 
+     FROM conges c
+     WHERE c.ID_MOTIF=4 AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
+     (SELECT COUNT(c.ID_UTILISATEUR) 
+     FROM conges c
+     WHERE c.ID_MOTIF=5 AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
+FROM 
+    employes e  WHERE e.s
+    
+        ';
+		$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;
+		$var_search=str_replace("'", "\'", $var_search);
+		$limit = 'LIMIT 0,100';
+
+		// if ($_POST['length'] != -1) {
+		// 	$limit = 'LIMIT ' . $_POST["start"] . ',' . $_POST["length"];
+		// }
+
+		$order_by = '';
+		
+		// $order_column = array('ID_EMPLOYE','NOM_EMPLOYE', 'presences','retards','conges', 'IS_ACTIVE_EMPLOYE','DESCRIPTION','COLLINE_NAME');
+		$order_column = array('ID_EMPLOYE','NOM_EMPLOYE', 'presences','retards','conges', 'malades','surTerrains','enMissions','enFormations');
+
+
+		$order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY NOM_EMPLOYE DESC';
+
+		$search = !empty($_POST['search']['value']) ? ("AND NOM_EMPLOYE LIKE '%$var_search%'") : '';
+
+		$critaire = '';
+
+		$query_secondaire = $query_principal . ' ' . $critaire . ' ' . $search . ' ' . $order_by . ' LIMIT 0,100 ';
+		$query_filter = $query_principal . ' ' . $critaire . ' ' . $search;
+
+		$fetch_infraction = $this->Modele->datatable($query_secondaire);
+		$data = array();
+		$u=0;
+		foreach ($fetch_infraction as $row) {
+		
+			$sub_array = array();
+			$u=++$u;
+			$source = !empty($row->PHOTO_EMPLOYE) ? $row->PHOTO_EMPLOYE : "https://app.mediabox.bi/wasiliEate/uploads/personne.png";
+			
+			$sub_array[]=$u;
+			$sub_array[] = '<table> <tbody><tr><td><a href="' . $source . '" target="_blank" ><img alt="Avtar" style="border-radius:50%;width:30px;height:30px" src="' . $source . '"></a></td><td>' . $row->NOM_EMPLOYE . ' ' . $row->PRENOM_EMPLOYE . '</td></tr></tbody></table></a>';
+			$sub_array[] = $row->presences;
+            $sub_array[] = $row->retards;
+			$sub_array[] = $row->conges;
+            $sub_array[] = $row->malades;
+            $sub_array[] = $row->surTerrains;
+			$sub_array[] = $row->enMissions;
+			$sub_array[] = $row->enFormations;
+			$sub_array[] = '<strong style="color: red;">'.($row->presences+$row->retards+$row->conges+$row->malades+$row->surTerrains+ $row->enMissions+$row->enFormations).'</strong>';
+
+
+			$data[] = $sub_array;
+		}
+		$output = array(
+			"draw" => intval($_POST['draw']),
+			"recordsTotal" => $this->Modele->all_data($query_principal),
+			"recordsFiltered" => $this->Modele->filtrer($query_filter),
+			"data" => $data
+		);
+		echo json_encode($output);
+	}
         }
         
     
