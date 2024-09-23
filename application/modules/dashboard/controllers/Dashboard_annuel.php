@@ -944,8 +944,8 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
      FROM conges c
      WHERE c.ID_MOTIF=5 AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
 FROM 
-    employes e  WHERE e.s
-    
+    employes e 
+
         ';
 		$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;
 		$var_search=str_replace("'", "\'", $var_search);
