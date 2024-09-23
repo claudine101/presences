@@ -96,6 +96,7 @@
 
         
         <div class="card-body">
+        
             <div class="row">
               <div id="container"  class="col-md-12" ></div>
               <div class="col-md-12" style="margin-bottom: 20px"></div>
@@ -104,6 +105,33 @@
               <div class="col-md-12" style="margin-bottom: 20px"></div>
               <div id="container3"  class="col-md-12" >
               <div class="card">
+              <div class="col-sm-4 text-right">
+
+
+            <span style="margin-right: 15px" class="col-md-12 row">
+                <div class="col-md-6">
+                            <label for="mois"></label>
+                            <select class="form-control input-sm" id="mois" name="mois" onchange='liste()'>
+                              <option value="00">Choisissez un mois</option>
+                              <option value="01">Janvier</option>
+                              <option value="02">Février</option>
+                              <option value="03">Mars</option>
+                              <option value="04">Avril</option>
+                              <option value="05">Mai</option>
+                              <option value="06">Juin</option>
+                              <option value="07">Juillet</option>
+                              <option value="08">Août</option>
+                              <option value="09">Septembre</option>
+                              <option value="10">Octobre</option>
+                              <option value="11">Novembre</option>
+                              <option value="12">Décembre</option>
+                            </select>
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+            </span>
+
+            </div><!-- /.col -->
               <div class="card-body">
                 <div class="col-md-12">
                   <?= $this->session->flashdata('message'); ?>
@@ -270,12 +298,8 @@ function liste()
   url: "<?php echo base_url('dashboard/Dashboard_annuel/listing/'); ?>",
   type:"POST",
   data : {
-    /* PROVINCE_ID: $('#PROVINCE_ID').val(),
-    COMMUNE_ID: $('#COMMUNE_ID').val(),
-    ZONE_ID: $('#ZONE_ID').val(), */
     
-    ID_POSTE: $('#ID_POSTE').val(),
-    ID_PARTIE_POLITIQUE: $('#ID_PARTIE_POLITIQUE').val()
+    mois: $('#mois').val(),
   },
   beforeSend : function() {
   }
