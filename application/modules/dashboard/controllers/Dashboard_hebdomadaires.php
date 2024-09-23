@@ -893,7 +893,7 @@ color: '#FFD700',
                      $intrant=array();
                      $intrant[] = $u;
                      $intrant[] =$row->DATE_CONGE;
-                      $intrant[] =$row->PERIODE==0?'PM':'AM';
+                      $intrant[] =$row->PERIODE;
                      $data[] = $intrant;
                  }
  
