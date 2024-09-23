@@ -112,7 +112,7 @@
                 <div class="col-md-6">
                             <label for="mois"></label>
                             <select class="form-control input-sm" id="mois" name="mois" onchange='liste()'>
-                              <option value="00">Choisissez un mois</option>
+                              <option value="">Choisissez un mois</option>
                               <option value="01">Janvier</option>
                               <option value="02">Février</option>
                               <option value="03">Mars</option>

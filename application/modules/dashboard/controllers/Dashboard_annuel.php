@@ -917,19 +917,6 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
         $condition = '';
         $condition2 = '';
         $condition3 = '';
-        $condition = '';
-        $condition = '';
-        $condition = '';
-
-        $mois = $this->input->post('mois');
-        if (!empty($mois)) {
-          $condition = " AND DATE_FORMAT(p.DATE_PRESENCE, '%m') = '".$mois."'";
-          $condition2 = " AND DATE_FORMAT(a.date_absence, '%m') = '".$mois."'";
-          $condition3 = " AND DATE_FORMAT(c.DATE_CONGE, '%m') = '".$mois."'";
-
-
-
-        }
 		$query_principal = '
         SELECT 
      e.*, 
