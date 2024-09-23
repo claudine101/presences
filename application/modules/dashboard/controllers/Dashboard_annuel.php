@@ -958,7 +958,7 @@ FROM
 		$order_by = '';
 		
 		// $order_column = array('ID_EMPLOYE','NOM_EMPLOYE', 'presences','retards','conges', 'IS_ACTIVE_EMPLOYE','DESCRIPTION','COLLINE_NAME');
-		$order_column = array('ID_EMPLOYE','NOM_EMPLOYE', 'presences','retards','conges', 'malades','surTerrains','enMissions','enFormations');
+		$order_column = array('ID_EMPLOYE','NOM_EMPLOYE', 'presences','retards','conges','absences', 'malades','surTerrains','enMissions','enFormations');
 
 
 		$order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY NOM_EMPLOYE DESC';
@@ -984,11 +984,12 @@ FROM
 			$sub_array[] = $row->presences;
             $sub_array[] = $row->retards;
 			$sub_array[] = $row->conges;
+            $sub_array[] = $row->absences;
             $sub_array[] = $row->malades;
             $sub_array[] = $row->surTerrains;
 			$sub_array[] = $row->enMissions;
 			$sub_array[] = $row->enFormations;
-			$sub_array[] = '<strong style="color: red;">'.($row->presences+$row->retards+$row->conges+$row->malades+$row->surTerrains+ $row->enMissions+$row->enFormations).'</strong>';
+			$sub_array[] = '<strong style="color: red;">'.($row->absences+$row->presences+$row->retards+$row->conges+$row->malades+$row->surTerrains+ $row->enMissions+$row->enFormations).'</strong>';
 
 
 			$data[] = $sub_array;

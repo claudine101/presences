@@ -117,6 +117,7 @@
                         <th>Présences</th>
                         <th>Retards</th>
                         <th>Congés</th>
+                        <th>Absences</th>
                         <th>Malades</th>
                         <th>sur Terrains</th>
                         <th>en Missions</th>
