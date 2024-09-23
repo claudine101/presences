@@ -101,6 +101,45 @@
               <div class="col-md-12" style="margin-bottom: 20px"></div>
               <div id="container1"  class="col-md-6" ></div>
               <div id="container2"  class="col-md-6" ></div>
+              <div class="col-md-12" style="margin-bottom: 20px"></div>
+              <div id="container3"  class="col-md-12" >
+              <div class="card">
+              <div class="card-body">
+                <div class="col-md-12">
+                  <?= $this->session->flashdata('message'); ?>
+                  <div class="table-responsive">
+                   
+                  <table id='reponse1' class="table table-bordered table-striped table-hover table-condensed " style="width: 100%;">
+                    <thead>
+                      <tr>
+                      <th data-orderable="false">NO</th>
+                        <th>Employes</th>
+                        <th>Présences</th>
+                        <th>Retards</th>
+                        <th>Congés</th>
+                        <th>Malades</th>
+                        <th>sur Terrains</th>
+                        <th>en Missions</th>
+                        <th>en Formations</th>
+                        <th data-orderable="false">TOTAL</th>
+                      </tr>
+                    </thead>
+                  </table>
+
+                  </div>
+
+                </div>
+
+
+                <!--  VOS CODE ICI  -->
+
+
+
+              </div>
+            </div>
+                  </div>
+
+
             </div>
        </div>
 </div>
@@ -215,8 +254,63 @@
 <script type="text/javascript">
 $( document ).ready(function() {
 get_rapport();
+liste();
 });   
-
+function liste()
+  {
+  $('#message').delay('slow').fadeOut(3000);
+  $("#reponse1").DataTable({
+  "destroy" : true,
+  "processing":true,
+  "serverSide":true,
+  /* "oreder":[], */
+  "order":[[1,'ASC']],
+  "ajax":{
+  url: "<?php echo base_url('dashboard/Dashboard_annuel/listing/'); ?>",
+  type:"POST",
+  data : {
+    /* PROVINCE_ID: $('#PROVINCE_ID').val(),
+    COMMUNE_ID: $('#COMMUNE_ID').val(),
+    ZONE_ID: $('#ZONE_ID').val(), */
+    
+    ID_POSTE: $('#ID_POSTE').val(),
+    ID_PARTIE_POLITIQUE: $('#ID_PARTIE_POLITIQUE').val()
+  },
+  beforeSend : function() {
+  }
+  },
+  lengthMenu: [[10,50, 100, -1], [10,50, 100, "All"]],
+  pageLength: 10,
+  "columnDefs":[{
+  "targets":[],
+  "orderable":false
+  }],
+  dom: 'Bfrtlip',
+  buttons: [ 'copy', 'csv', 'excel', 'pdf', 'print' ],
+  language: {
+  "sProcessing": "Traitement en cours...",
+  "sSearch": "Rechercher&nbsp;:",
+  "sLengthMenu": "Afficher _MENU_ &eacute;l&eacute;ments",
+  "sInfo": "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+  "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+  "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+  "sInfoPostFix": "",
+  "sLoadingRecords": "Chargement en cours...",
+  "sZeroRecords": "Aucun &eacute;l&eacute;ment &agrave; afficher",
+  "sEmptyTable": "Aucune donn&eacute;e disponible dans le tableau",
+  "oPaginate": {
+  "sFirst": "Premier",
+  "sPrevious": "Pr&eacute;c&eacute;dent",
+  "sNext": "Suivant",
+  "sLast": "Dernier"
+  },
+  "oAria": {
+  "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+  "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+  }
+  }
+  });
+  }
 function get_i() {
 
 $('#jour').html('');
