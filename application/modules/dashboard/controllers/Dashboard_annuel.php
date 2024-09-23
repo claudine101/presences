@@ -932,29 +932,29 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
      e.*, 
     (SELECT COUNT(p.ID_PRESENCE) 
      FROM presences p 
-     WHERE p.STATUT = 1'.$condition .' AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS presences, 
+     WHERE p.STATUT = 1'.$condition .' AND p.DATE_PRESENCE <= CURDATE() AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS presences, 
     (SELECT COUNT(p.ID_PRESENCE) 
      FROM presences p 
-     WHERE p.STATUT = 0'.$condition .' AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retards ,
+     WHERE p.STATUT = 0'.$condition .' AND p.DATE_PRESENCE <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retards ,
      (SELECT COUNT(a.id_utilisateur) 
      FROM absences a
-     WHERE 1 '.$condition2.'AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
+     WHERE 1 '.$condition2.'AND a.date_absence <= CURDATE() AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=1 '.$condition3.'AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
+     WHERE c.ID_MOTIF=1 '.$condition3.' AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
      
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=2 '.$condition3.' AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
+     WHERE c.ID_MOTIF=2 '.$condition3.'  AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=3 '.$condition3.'AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
+     WHERE c.ID_MOTIF=3 '.$condition3.' AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=4  '.$condition3.' AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
+     WHERE c.ID_MOTIF=4  '.$condition3.' AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=5 '.$condition3.' AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
+     WHERE c.ID_MOTIF=5 '.$condition3.' AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
 FROM 
     employes e 
 
