@@ -917,6 +917,16 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
         $condition = '';
         $condition2 = '';
         $condition3 = '';
+        $condition = '';
+        $condition = '';
+        $condition = '';
+
+        $mois = $this->input->post('mois');
+        if (!empty($mois)) {
+          $condition = " AND DATE_FORMAT(p.DATE_PRESENCE, '%m') = '".$mois."'";
+          $condition2 = " AND DATE_FORMAT(a.date_absence, '%m') = '".$mois."'";
+          $condition3 = " AND DATE_FORMAT(c.DATE_CONGE, '%m') = '".$mois."'";
+        }
 		$query_principal = '
         SELECT 
      e.*, 
@@ -931,14 +941,14 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
      WHERE 1 '.$condition2.'AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=1 AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
+     WHERE c.ID_MOTIF=1 '.$condition3.'AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
      
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
      WHERE c.ID_MOTIF=2 '.$condition3.' AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=3 '.$condition3.' AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
+     WHERE c.ID_MOTIF=3 '.$condition3.'AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
      WHERE c.ID_MOTIF=4  '.$condition3.' AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
