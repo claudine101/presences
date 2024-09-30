@@ -102,6 +102,8 @@
                   <th>CONTACT</th>
                   <th>AGENCE</th>
                   <th>DATE DE PRESENCE</th>
+                  <th>STATUT/JUSTIFICATION</th>
+
                   </thead>
                 </table>
               </div>

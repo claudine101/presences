@@ -66,7 +66,8 @@
                     
                     </div>
             </div><!-- /.col -->
-            <div class="form-group col-md-6"><h4 style='color:blue'>Mes Ponctualités</h4></div>
+            <div class="form-group col-md-3"><h4 style='color:blue'>Mes Ponctualités</h4></div>
+          
             <div class="form-group col-md-3">
                   <label  style='color:blue'>Avant  ou  après midi</label>
                   <select class="form-control input-sm" name="avant" id="avant" onchange='get_rapport()'>
@@ -77,6 +78,20 @@
                     </select>
 
             </div>
+            <div class="col-sm-3 text-right">
+              <span style="margin-right: 15px">
+                <div  style="float:right;">
+               <a  class='btn btn-warning btn-sm float-right' id='<?= $data['ID_UTILISATEUR'] ?>'  title='<?= $data['NOM_EMPLOYE'] ?>'  onclick='declarer("<?= $data['ID_UTILISATEUR'] ?>",this.title,this.id)' style='float:right'>
+               <i class="nav-icon fas fa-plus"></i>
+                    Déclarer Mon Statut
+                  </a>
+                
+                </div>
+               
+              </span>
+
+            </div><!-- /.col -->
+            
             <div class="col-sm-3 text-right">
               <span style="margin-right: 15px">
                 <div  style="float:right;" id="presenterButton"  class="hidden">
@@ -91,6 +106,7 @@
               </span>
 
             </div><!-- /.col -->
+            
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
 
@@ -120,7 +136,7 @@
             <thead>
              <th>#</th>
             <th>DATE </th>
-            <th> STATUT</th>
+            <th>STATUT/JUSTIFICATION</th>
             </thead>
           </table>
         </div>
@@ -221,10 +237,12 @@ type : "POST",
 dataType: "JSON",
 cache:false,
 success:function(data){   
-  var nbres = data.nbres;
-  /* alert(nbres) */
+  var nbresPM = data.nbrePM;
+  var nbresAM = data.nbreAM;
+
+  /* alert(nbresAM) */
             var currentHour = new Date().getHours();
-            if ((currentHour >= 12 && nbres == 1) || nbres == 0) {
+            if ((currentHour >= 12 && nbresPM == 0) || (currentHour <= 12 && nbresAM == 0)) {
                 $('#presenterButton').removeClass('hidden'); // Afficher le conteneur du bouton
             } else {
                 $('#presenterButton').addClass('hidden'); // Masquer le bouton si la condition n'est pas remplie
@@ -262,44 +280,142 @@ $('#nouveau2').html(data.rapp_conge );
 }
 
 
+function declarer(id,nom=null,prenom=null){
+Swal.fire({
+title: nom+' Souhaitez-vous déclarer ton statut?  ',
+html: `
+      <form id="declarationForm">
+        <div class="row">
+          <div class="col-md-6">
+            <input type="hidden" class="form-control" name="ID_EMPLOYE" value="${id}">
+            <label for="DEBUT">Date début</label>
+            <input type="date" name="DEBUT" autocomplete="off" id="DEBUT" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="FIN">Date fin</label>
+            <input type="date" name="FIN" autocomplete="off" id="FIN" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="PERIODE">Période</label>
+            <select class="form-control" name="PERIODE" id="PERIODE">
+              <option value="">---Sélectionner---</option>
+              <option value="1">AM</option>
+              <option value="2">PM</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="ID_MOTIF">Motif</label>
+            <select class="form-control" name="ID_MOTIF" id="ID_MOTIF">
+              <option value="">---Sélectionner---</option>
+              <option value="1">Congé</option>
+              <option value="3">Travailler  sur  terrain </option>
+              <option value="4">En mission</option>
+              <option value="5">En formation</option>
+
+            </select>
+          </div>
+        </div>
+      </form>
+    `,
+    showDenyButton: true,
+    confirmButtonText: 'Enregistrer',
+    denyButtonText: `Annuler`,
+    preConfirm: () => {
+      const debut = document.getElementById('DEBUT').value;
+      const fin = document.getElementById('FIN').value;
+      const periode = document.getElementById('PERIODE').value;
+      const motif = document.getElementById('ID_MOTIF').value;
+
+      if (!debut || !fin || !motif) {
+        Swal.showValidationMessage('Veuillez remplir tous les champs');
+        return false;
+      }
+
+      return {
+        ID_UTILISATEUR:id,
+        DEBUT: debut,
+        FIN: fin,
+        PERIODE: periode,
+        ID_MOTIF: motif
+      };
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = result.value;
+      $.ajax({
+        url: "<?=base_url()?>dashboard/Dashboard_hebdomadaires/declarer/",
+        type: "POST",
+        dataType: "JSON",
+        cache: false,
+        data: formData,
+        success: function(data) {
+          console.log(data);
+          get_rapport();
+          checkNbre();
+          Swal.fire('Enregistré!', '', 'success');
+        },
+        error: function() {
+          Swal.fire('Erreur de la connexion', '', 'info');
+        }
+      });
+    }
+  });
+}
+
+
 function presenter(id,nom=null,prenom=null){
 Swal.fire({
-title: 'Souhaitez-vous presenter  '+nom,
-showDenyButton: true,
-confirmButtonText: 'Maintenant',
-denyButtonText: `Pas maintenant`,
-}).then((result) => {
-/* Read more about isConfirmed, isDenied below */
-if (result.isConfirmed) {
-/* Debut ajax*/
-   $.ajax({
-    url : "<?=base_url()?>dashboard/Dashboard_hebdomadaires/presenter/"+id,
-    type : "PUT",
-    dataType: "JSON",
-    cache:false,
-    data: {},
-    beforeSend:function () { 
-    },
-    success:function(data) {
-      console.log(data);
-      get_rapport()
-      checkNbre()
-      Swal.fire('Confirmé!', '', 'success')
-    },
-    error:function() {
-      Swal.fire('Erreur de la connexion', '', 'info')
+title: nom+' Souhaitez-vous  vous présenter?  ',
+html: `
+      <form id="declarationForm">
+      <input type="checkbox" id="present_checkbox">
+          <label for="present_checkbox">Je me présente avec un motif</label><br>
+          <textarea id="motif" placeholder="Tapez votre motif ici..." style="display:none; margin-top:10px;" class="form-control" rows="4"></textarea>
+      </form>
+    `,
+    showDenyButton: true,
+    confirmButtonText: 'Oui',
+    denyButtonText: `Non`,
+    
+    didOpen: () => {
+            $('#present_checkbox').on('change', function () {
+                $('#motif').toggle(this.checked);
+            });
+        },
+    preConfirm: () => {
+      const checkbox = document.getElementById('present_checkbox').value;
+      const motif = document.getElementById('motif').value;
+      
+            if (checkbox.checked && motif === "") {
+                Swal.showValidationMessage('Veuillez entrer un motif');
+                return false; // Empêche la fermeture de la boîte de dialogue
+            }
+
+            return {
+                isChecked: checkbox.checked,
+                motif: motif // Retourne la valeur du motif
+            };
     }
-});
-
-  
-} else if (result.isDenied) {
-  Swal.fire('Non Confirmé', '', 'info')
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = result.value;
+      $.ajax({
+        url: "<?=base_url()?>dashboard/Dashboard_hebdomadaires/presenter/",
+        type: "POST",
+        dataType: "JSON",
+        cache: false,
+        data: formData,
+        success: function(data) {
+          console.log(data);
+          get_rapport();
+          checkNbre();
+          Swal.fire('Enregistré!', '', 'success');
+        },
+        error: function() {
+          Swal.fire('Erreur de la connexion', '', 'info');
+        }
+      });
+    }
+  });
 }
-})
-
-
-//Fin ajax
-
-}
-
 </script> 

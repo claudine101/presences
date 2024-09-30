@@ -78,7 +78,9 @@ class Dashboard_annuel extends CI_Controller
               DATE_FORMAT(`DATE_PRESENCE`, '%m') as annees,
               (SELECT COUNT(`ID_UTILISATEUR`) FROM employes WHERE ID_UTILISATEUR NOT IN (SELECT (`ID_UTILISATEUR`) FROM presences) ) as absant,
              SUM(CASE WHEN (`STATUT`) =1 THEN 1 ELSE 0 END) AS number_of_punctuals,
-          SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates
+          SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates,
+          SUM(CASE WHEN (`STATUT`) =2 THEN 1 ELSE 0 END) AS  number_of_just
+
           FROM
               presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
           WHERE 1".$criteres1."  ".$criteres3."  ".$criteres_date1."
@@ -89,27 +91,34 @@ class Dashboard_annuel extends CI_Controller
           ");
     
     
-    $retards=" ";
-    $ponctuels=" ";
-    $immacontrole_categorie=" ";
-    $immadeclare_categorie=" ";
-    $immadeclare_categoriev=" ";
-    $immadeclare_categoriet=" ";
-    $retard_traite=0;
-    $ponctuel_traite=0;
-    $presence_traite=0;
+          $retards=" ";
+          $ponctuels=" ";
+          $justifies=" ";
+      
+          $immacontrole_categorie=" ";
+          $immadeclare_categorie=" ";
+          $immadeclare_categoriev=" ";
+          $immadeclare_categoriet=" ";
+          
+          $retard_traite=0;
+          $ponctuel_traite=0;
+          $presence_traite=0;
+          $justifies_traite=0;
     
      foreach ($control as  $value) {
           
           $key_id1=($value['annees']>0) ? $value['annees'] : "0" ;
           $sommeretards=($value['number_of_lates']>0) ? $value['number_of_lates'] : "0" ;
           $sommeponctuals=($value['number_of_punctuals']>0) ? $value['number_of_punctuals'] : "0" ;
+          $sommejust=($value['number_of_just']>0) ? $value['number_of_just'] : "0" ;
           
           $retards.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeretards.",key2:3,key:'". $key_id1."'},";
           $ponctuels.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeponctuals.",key2:2,key:'". $key_id1."'},";
+          $justifies.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommejust.",key2:4,key:'". $key_id1."'},";
     
           $retard_traite=$retard_traite+$value['number_of_lates'];
           $ponctuel_traite=$ponctuel_traite+$value['number_of_punctuals'];
+          $justifies_traite=$justifies_traite+$value['number_of_just'];
         
     }
     $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
@@ -610,7 +619,12 @@ color: '#FFD700',
             color: 'green',
              name:'Ponctuels: (".number_format($ponctuel_traite,0,',',' ').")', 
             data: [".$ponctuels."]
-        }
+        },
+     {
+        color: '#9ACD32',
+         name:'Retard justifies: (".number_format($justifies_traite,0,',',' ').")', 
+        data: [".$justifies."]
+    }
         
         ]
     
@@ -844,7 +858,7 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
         $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
         
         
-        $query_principal=" SELECT a.DESCRIPTION,e.PHOTO_EMPLOYE, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE, p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE FROM presences 
+        $query_principal=" SELECT p.STATUT,p.MOTIF,a.DESCRIPTION,e.PHOTO_EMPLOYE, e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE, p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE FROM presences 
         p JOIN employes e ON e.ID_UTILISATEUR=p.ID_UTILISATEUR  JOIN agences a ON a.ID_AGENCE=e.ID_AGENCE WHERE 1 ";
         
                 $limit='LIMIT 0,10';
@@ -880,6 +894,11 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
           $critaire=" AND  `STATUT`=0 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
 
         }
+        elseif ($ID==4) { 
+
+            $critaire=" AND  `STATUT`=2 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
+
+            }
                
                 $query_secondaire=$query_principal.'  '.$critaire.' '.$criteres3.' '.$criteres1.' '.$criteres_date1.' '.$search.' '.$order_by.'   '.$limit;
                 $query_filter=$query_principal.'  '.$critaire.' '.$criteres1.' '.$criteres3.' '.$criteres_date1.' '.$search;
@@ -889,6 +908,16 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
                 $data = array();
                 foreach ($fetch_data as $row) 
                 {  
+                    $statut='';
+                    if($row->STATUT==2){
+                        $statut=$row->MOTIF;
+                    }
+                    elseif($row->STATUT==0){
+                      $statut='retard';
+                    }
+                    else{
+                        $statut='Ponctuel';
+                    }
                     $u++;
                     $intrant=array();
                     $intrant[] = $u;
@@ -898,6 +927,7 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
 			$intrant[] = '<table> <tbody><tr><td>' . $row->TELEPHONE_EMPLOYE . ' ' . $row->EMAIL_EMPLOYE . '</td></tr></tbody></table></a>';
             $intrant[] =$row->DESCRIPTION;
                     $intrant[] =$row->DATE_PRESENCE;
+                    $intrant[] =$statut;
                     $data[] = $intrant;
                 }
         
@@ -910,7 +940,7 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
         
                 echo json_encode($output);
             }
-            function listing()
+    function listing()
 	{
 
 		$i = 1;
@@ -927,38 +957,39 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
           $condition2 = " AND DATE_FORMAT(a.date_absence, '%m') = '".$mois."'";
           $condition3 = " AND DATE_FORMAT(c.DATE_CONGE, '%m') = '".$mois."'";
         }
-		$query_principal = '
+		$query_principal = " 
         SELECT 
-     e.*, 
+     e.*,
     (SELECT COUNT(p.ID_PRESENCE) 
      FROM presences p 
-     WHERE p.STATUT = 1'.$condition .' AND p.DATE_PRESENCE <= CURDATE() AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS presences, 
+     WHERE p.STATUT = 1 ".$condition ." AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE() AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS presences, 
     (SELECT COUNT(p.ID_PRESENCE) 
      FROM presences p 
-     WHERE p.STATUT = 0'.$condition .' AND p.DATE_PRESENCE <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retards ,
+     WHERE p.STATUT = 0 ".$condition ."  AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retards ,
+      (SELECT COUNT(p.ID_PRESENCE) 
+     FROM presences p 
+     WHERE p.STATUT =2 ".$condition ." AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retardsJust ,
      (SELECT COUNT(a.id_utilisateur) 
      FROM absences a
-     WHERE 1 '.$condition2.'AND a.date_absence <= CURDATE() AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
+     WHERE 1 ".$condition2." AND a.date_absence <= CURDATE() AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=1 '.$condition3.' AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
+     WHERE c.ID_MOTIF=1 ".$condition3." AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
      
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=2 '.$condition3.'  AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
+     WHERE c.ID_MOTIF=2  ".$condition3."   AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=3 '.$condition3.' AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
+     WHERE c.ID_MOTIF=3  ".$condition3."  AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=4  '.$condition3.' AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
+     WHERE c.ID_MOTIF=4   ".$condition3."  AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=5 '.$condition3.' AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
+     WHERE c.ID_MOTIF=5  ".$condition3."  AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
 FROM 
-    employes e 
-
-        ';
+    employes e  WHERE 1 ";
 		$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;
 		$var_search=str_replace("'", "\'", $var_search);
 		$limit = 'LIMIT 0,100';
@@ -993,14 +1024,15 @@ FROM
 			
 			$sub_array[]=$u;
 			$sub_array[] = '<table> <tbody><tr><td><a href="' . $source . '" target="_blank" ><img alt="Avtar" style="border-radius:50%;width:30px;height:30px" src="' . $source . '"></a></td><td>' . $row->NOM_EMPLOYE . ' ' . $row->PRENOM_EMPLOYE . '</td></tr></tbody></table></a>';
-			$sub_array[] = $row->presences;
-            $sub_array[] = $row->retards;
-			$sub_array[] = $row->conges;
-            $sub_array[] = $row->absences;
-            $sub_array[] = $row->malades;
-            $sub_array[] = $row->surTerrains;
-			$sub_array[] = $row->enMissions;
-			$sub_array[] = $row->enFormations;
+			$sub_array[] = $this->get_presence($row);
+            $sub_array[] = $this->get_retards($row);
+            $sub_array[] = $this->get_retardsjust($row);
+			$sub_array[] = $this->get_conges($row);
+            $sub_array[] = $this->get_absances($row);
+            $sub_array[] = $this->get_malades($row);
+            $sub_array[] = $this->get_terrains($row);
+			$sub_array[] =$this->get_missions($row);
+			$sub_array[] = $this->get_formations($row);
 			$sub_array[] = '<strong style="color: red;">'.($row->absences+$row->presences+$row->retards+$row->conges+$row->malades+$row->surTerrains+ $row->enMissions+$row->enFormations).'</strong>';
 
 
@@ -1014,7 +1046,288 @@ FROM
 		);
 		echo json_encode($output);
 	}
+
+    function get_presence($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->PRENOM_EMPLOYE."'  onclick='afficherPresences(".$row->ID_UTILISATEUR.",1 ,this.title,this.id)' style='float:right' >".$row->presences."</span></a>";
+	  return $html;
+	}
+    function get_retards($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherPresences(".$row->ID_UTILISATEUR.",0,this.title,this.id)' style='float:right' >".$row->retards."</span></a>";
+	  return $html;
+	}
+    function get_retardsjust($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherPresences(".$row->ID_UTILISATEUR.",2,this.title,this.id)' style='float:right' >".$row->retardsJust."</span></a>";
+	  return $html;
+	}
+    function get_absances($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherAbsences(".$row->ID_UTILISATEUR.",2,this.title,this.id)' style='float:right' >".$row->absences."</span></a>";
+	  return $html;
+	}
+    function get_conges($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherConges(".$row->ID_UTILISATEUR.",1,this.title,this.id)' style='float:right' >".$row->conges."</span></a>";
+	  return $html;
+	}
+    function get_malades($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherConges(".$row->ID_UTILISATEUR.",2,this.title,this.id)' style='float:right' >".$row->malades."</span></a>";
+	  return $html;
+	}
+    function get_terrains($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherConges(".$row->ID_UTILISATEUR.",3,this.title,this.id)' style='float:right' >".$row->surTerrains."</span></a>";
+	  return $html;
+	}
+    function get_missions($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherConges(".$row->ID_UTILISATEUR.",4,this.title,this.id)' style='float:right' >".$row->enMissions."</span></a>";
+	  return $html;
+	}
+    function get_formations($row)
+	{
+	  $html =  "<a class='btn btn-success btn-sm' id='".$row->NOM_EMPLOYE."' 
+       title='".$row->NOM_EMPLOYE."'  onclick='afficherConges(".$row->ID_UTILISATEUR.",5,this.title,this.id)' style='float:right' >".$row->enFormations."</span></a>";
+	  return $html;
+	}
+
+    function detail_pres()
+   {
+    
+    $critaire_avant="";
+    $avant=$this->input->post('avant');
+    $KEY=$this->input->post('key');
+
+    $user=$this->input->post('user');
+    $keys=$this->input->post('keys');
+
+   if(!empty($avant)){
+    if($avant=='AM'){
+        $critaire_avant.=" AND TIME(`DATE_PRESENCE`)<='12:00:00' ";
+    }
+    else{
+    $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
+    }
+   }
+       
+        $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+
+
+        $query_principal=" SELECT `ID_PRESENCE`, `ID_UTILISATEUR`, `QR_CODE_PRES_ID`, `STATUT`,`MOTIF`, `DATE_PRESENCE` FROM `presences` WHERE  ID_UTILISATEUR= ".$user."";
+
+                $order_column = array('ID_PRESENCE','DATE_PRESENCE', 'STATUT');
+
+                $limit='LIMIT 0,10';
+                if($_POST['length'] != -1)
+                {
+                    $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+                }
+               
+
+		        $order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY DATE_PRESENCE DESC';
+
+                $search = !empty($_POST['search']['value']) ? ("AND (DATE_PRESENCE LIKE '%$var_search%'  OR STATUT LIKE '%$var_search%' ) ") : '';
+
+
+                $critaire='';
+               
+                $critaire=" AND  `STATUT`=".$keys;
+
+                
+            
+                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
+                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search;
+
+                $fetch_data = $this->Model->datatable($query_secondaire);
+                $u=0;
+                $data = array();
+                foreach ($fetch_data as $row) 
+                {  
+                    $statut='';
+                    if($row->STATUT==2){
+                        $statut=$row->MOTIF;
+                    }
+                    elseif($row->STATUT==0){
+                      $statut='retard';
+                    }
+                    else{
+                        $statut='Ponctuel';
+                    }
+                    $u++;
+                    $intrant=array();
+                    $intrant[] = $u;
+                    $intrant[] =$row->DATE_PRESENCE;
+                    $intrant[] =$statut;
+                    $data[] = $intrant;
+                }
+
+                $output = array(
+                    "draw" => intval($_POST['draw']),
+                    "recordsTotal" =>$this->Model->all_data($query_principal),
+                    "recordsFiltered" => $this->Model->filtrer($query_filter),
+                    "data" => $data
+                );
+
+                echo json_encode($output);
         }
+
+        function detail_abs($agence=0)
+        {
+         $critaire_avant="";
+         $avant=$this->input->post('avant');
+         $KEY=$this->input->post('key');
+
+         $user=$this->input->post('user');
+        $keys=$this->input->post('keys');
+        if(!empty($avant)){
+            if($avant=='AM'){
+                $critaire_avant.=" AND periode LIKE  '%AM%'";
+        
+            }
+            else{
+            $critaire_avant.=" AND periode LIKE  '%PM%'";
+        
+            }
+        }
+        $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+
+        $order_column = array('id','date_absence', 'periode');
+
+        $query_principal=" 
+            SELECT  e.*,a.date_absence,a.periode
+                FROM employes e LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
+                WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() and   a.id_utilisateur=".$user."
+            ";
+        
+            $limit='LIMIT 0,10';
+            if($_POST['length'] != -1)
+            {
+                $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+            }
+            $order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY date_absence DESC';
+
+
+            $search = !empty($_POST['search']['value']) ? ("AND (date_absence LIKE '%$var_search%'  ) ") : '';
+                $critaire='';
+                
+
+                // $critaire=" AND  date_format(a.date_absence,'%m') LIKE '%".$KEY."%'";
+
+                
+            
+                $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
+                $query_filter=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search;
+
+                $fetch_data = $this->Model->datatable($query_secondaire);
+                $u=0;
+                $data = array();
+                foreach ($fetch_data as $row) 
+                {  
+                    $u++;
+                    $intrant=array();
+                    $intrant[] = $u;
+                    $intrant[] =$row->date_absence;
+                     $intrant[] =$row->periode;
+                    $data[] = $intrant;
+                }
+
+                $output = array(
+                    "draw" => intval($_POST['draw']),
+                    "recordsTotal" =>$this->Model->all_data($query_principal),
+                    "recordsFiltered" => $this->Model->filtrer($query_filter),
+                    "data" => $data
+                );
+
+                echo json_encode($output);
+        }
+
+
+        function detail_cong($agence=0)
+        {
+     
+            $critaire_avant="";
+            $avant=$this->input->post('avant');
+            $KEY=$this->input->post('key');
+     
+             $user=$this->input->post('user');
+             $keys=$this->input->post('keys');
+           if(!empty($avant)){
+               if($avant=='AM'){
+                   $critaire_avant.=" AND periode LIKE  '%AM%'";
+           
+               }
+               else{
+               $critaire_avant.=" AND periode LIKE  '%PM%'";
+           
+               }
+           }
+ 
+         $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
+ 
+ 
+         $query_principal=" 
+             SELECT  e.*,a.DATE_CONGE,a.PERIODE
+                 FROM employes e LEFT JOIN  conges a ON e.ID_UTILISATEUR=a.id_utilisateur
+                 WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() and   a.id_utilisateur=".$user." AND a.ID_MOTIF=".$keys."
+             ";
+         
+             $limit='LIMIT 0,10';
+             if($_POST['length'] != -1)
+             {
+                 $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+             }
+             $order_by='';
+             $order_column = array('ID_CONGE','DATE_CONGE', 'periode');
+             $order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY DATE_CONGE DESC';
+
+ 
+             $search = !empty($_POST['search']['value']) ? ("AND (DATE_CONGE LIKE '%$var_search%'  ) ") : '';
+                 $critaire='';
+                 
+                 $ID_MOTIF=$this->input->post('key2');
+               
+                //  $critaire= "AND a.ID_MOTIF=".$ID_MOTIF." AND  date_format(a.DATE_CONGE,'%m') LIKE '%".$KEY."%'";
+ 
+                 
+             
+                 $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
+                 $query_filter=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search;
+ 
+                 $fetch_data = $this->Model->datatable($query_secondaire);
+                 $u=0;
+                 $data = array();
+                 foreach ($fetch_data as $row) 
+                 {  
+                     $u++;
+                     $intrant=array();
+                     $intrant[] = $u;
+                     $intrant[] =$row->DATE_CONGE;
+                      $intrant[] =$row->PERIODE;
+                     $data[] = $intrant;
+                 }
+ 
+                 $output = array(
+                     "draw" => intval($_POST['draw']),
+                     "recordsTotal" =>$this->Model->all_data($query_principal),
+                     "recordsFiltered" => $this->Model->filtrer($query_filter),
+                     "data" => $data
+                 );
+ 
+                 echo json_encode($output);
+         }
+
+}
         
     
 

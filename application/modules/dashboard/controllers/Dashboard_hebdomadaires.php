@@ -17,12 +17,13 @@ class Dashboard_hebdomadaires extends CI_Controller
         function index(){
 
                 $dattes=$this->Model->getRequeteOne("SELECT * FROM utilisateurs u JOIN employes e ON e.ID_UTILISATEUR=u.ID_UTILISATEUR WHERE  u.ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
-                
+		        $data['motif'] = $this->Modele->getRequete('SELECT * FROM motif WHERE 1 order by ID_MOTIF ASC');
                 $absants=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM absences WHERE  DATE_FORMAT(date_absence, '%Y-%m-%d') = CURDATE() AND  id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."");
                 
                 $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
                 $data['nbre']=$nbres['Nbre'];
                 $data['data']=$dattes;
+                
                 $data['nbre']=( $absants['Nbre']+$nbres['Nbre']);
 
                 $this->load->view('Profil_View',$data);
@@ -60,7 +61,9 @@ class Dashboard_hebdomadaires extends CI_Controller
               DATE_FORMAT(`DATE_PRESENCE`, '%m') as annees,
               (SELECT COUNT(`ID_UTILISATEUR`) FROM employes WHERE ID_UTILISATEUR NOT IN (SELECT (`ID_UTILISATEUR`) FROM presences) ) as absant,
              SUM(CASE WHEN (`STATUT`) =1 THEN 1 ELSE 0 END) AS number_of_punctuals,
-          SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates
+          SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates,
+          SUM(CASE WHEN (`STATUT`) =2 THEN 1 ELSE 0 END) AS  number_of_just
+
           FROM
               presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
           WHERE presences.ID_UTILISATEUR= ".$this->session->userdata('ID_UTILISATEUR')." ". $critaire_avant."
@@ -75,27 +78,42 @@ class Dashboard_hebdomadaires extends CI_Controller
     
     $retards=" ";
     $ponctuels=" ";
+    $justifies=" ";
+
     $immacontrole_categorie=" ";
     $immadeclare_categorie=" ";
     $immadeclare_categoriev=" ";
     $immadeclare_categoriet=" ";
+
     $retard_traite=0;
     $ponctuel_traite=0;
     $presence_traite=0;
+    $justifies_traite=0;
+
     
      foreach ($control as  $value) {
           
           $key_id1=($value['annees']>0) ? $value['annees'] : "0" ;
+
           $sommeretards=($value['number_of_lates']>0) ? $value['number_of_lates'] : "0" ;
           $sommeponctuals=($value['number_of_punctuals']>0) ? $value['number_of_punctuals'] : "0" ;
+          $sommejust=($value['number_of_just']>0) ? $value['number_of_just'] : "0" ;
+
+
           $sommeexpt=($value['tout']>0) ? $value['tout'] : "0" ;
+
           $retards.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeretards.",key2:3,key:'". $key_id1."'},";
           $ponctuels.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeponctuals.",key2:2,key:'". $key_id1."'},";
+          $justifies.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommejust.",key2:4,key:'". $key_id1."'},";
+
           $immadeclare_categoriet.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeexpt.",key2:1,key:'". $key_id1."'},";
     
           $retard_traite=$retard_traite+$value['number_of_lates'];
           $ponctuel_traite=$ponctuel_traite+$value['number_of_punctuals'];
+          $justifies_traite=$justifies_traite+$value['number_of_just'];
+
           $presence_traite=$presence_traite+$value['tout'];
+          
         
     }
     $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
@@ -225,8 +243,14 @@ language: {
         color: 'green',
          name:'Ponctuels: (".number_format($ponctuel_traite,0,',',' ').")', 
         data: [".$ponctuels."]
+    },
+     {
+        color: '#9ACD32',
+         name:'Retard justifies: (".number_format($justifies_traite,0,',',' ').")', 
+        data: [".$justifies."]
     }
     
+          
     ]
 
 });
@@ -659,27 +683,94 @@ color: '#FFD700',
             $statu=0;
         }
 
-        
        
 			$data_insert = array(
 				'ID_UTILISATEUR' => $this->session->userdata('ID_UTILISATEUR'),
                 'QR_CODE_PRES_ID'=>$data['QR_CODE_PRES_ID'],
-                'STATUT'=>$statu
+                'STATUT'=>(!empty($this->input->post('motif')))?2:$statu,
+                'MOTIF'=>$this->input->post('motif'),
+
 			);
-			$table = 'presences';
-			$this->Modele->create($table, $data_insert);
-            
+        $nbrespr=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM presences 
+                WHERE DATE(DATE_PRESENCE) = CURDATE() 
+                AND DATE_FORMAT(DATE_PRESENCE, '%p') = '".$formattedDate."'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+
+        $nbrescon=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM conges 
+                WHERE DATE(DATE_CONGE) = CURDATE() 
+                AND periode = '".$formattedDate."'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+                
+         $nbresab=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM absences 
+                WHERE DATE(date_absence) = CURDATE() 
+                AND periode = '".$formattedDate."'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+
+            $nbre=$nbrespr['Nbre']+$nbrescon['Nbre']+$nbresab['Nbre'];
+			 if($nbre==0){
+                $table = 'presences';
+                $this->Modele->create($table, $data_insert);
             echo json_encode(1);
+
+            }
 
 		}
 
     function getNbre()
     {
-        $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+        // $nbres=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM presences WHERE  DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+        // $conges=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM conges WHERE  DATE_FORMAT(DATE_CONGE, '%Y-%m-%d') = CURDATE() AND  ID_UTILISATEUR=".$this->session->userdata('ID_UTILISATEUR')."");
+        // $absants=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM absences WHERE  DATE_FORMAT(date_absence, '%Y-%m-%d') = CURDATE() AND  id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."");
         
-        $absants=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre FROM absences WHERE  DATE_FORMAT(date_absence, '%Y-%m-%d') = CURDATE() AND  id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."");
-        $nbre=( $absants['Nbre']+$nbres['Nbre']);
-        echo json_encode(array('nbres'=>$nbre));
+        // $nbre=( $absants['Nbre']+$nbres['Nbre']+$conges['Nbre']);
+        
+        // echo json_encode(array('nbres'=>$nbre));
+
+        
+
+        $nbrespr=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM presences 
+                WHERE DATE(DATE_PRESENCE) = CURDATE() 
+                AND DATE_FORMAT(DATE_PRESENCE, '%p') = 'AM'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+
+        $nbrescon=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM conges 
+                WHERE DATE(DATE_CONGE) = CURDATE() 
+                AND periode = 'AM'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+                
+        $nbresab=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM absences 
+                WHERE DATE(date_absence) = CURDATE() 
+                AND periode = 'AM'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+
+
+        $nbresprPM=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM presences 
+                WHERE DATE(DATE_PRESENCE) = CURDATE() 
+                AND DATE_FORMAT(DATE_PRESENCE, '%p') = 'PM'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+
+        $nbresconPM=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM conges 
+                WHERE DATE(DATE_CONGE) = CURDATE() 
+                AND periode = 'PM'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+                
+        $nbresabPM=$this->Model->getRequeteOne("SELECT COUNT(*) as Nbre 
+                FROM absences 
+                WHERE DATE(date_absence) = CURDATE() 
+                AND periode = 'PM'
+                AND ID_UTILISATEUR = ".$this->session->userdata('ID_UTILISATEUR')."");
+
+    $nbreAM=$nbrespr['Nbre']+$nbrescon['Nbre']+$nbresab['Nbre'];
+    $nbrePM=$nbresprPM['Nbre']+$nbresconPM['Nbre']+$nbresabPM['Nbre'];
+    echo json_encode(array('nbreAM'=>$nbreAM,'nbrePM'=>$nbrePM));
     }        
 
  function detail($agence=0)
@@ -704,18 +795,18 @@ color: '#FFD700',
         $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
 
 
-        $query_principal=" SELECT `ID_PRESENCE`, `ID_UTILISATEUR`, `QR_CODE_PRES_ID`, `STATUT`, `DATE_PRESENCE` FROM `presences` WHERE  ID_UTILISATEUR= ".$this->session->userdata('ID_UTILISATEUR')."";
+        $query_principal=" SELECT `ID_PRESENCE`, `ID_UTILISATEUR`, `QR_CODE_PRES_ID`, `STATUT`,`MOTIF`, `DATE_PRESENCE` FROM `presences` WHERE  ID_UTILISATEUR= ".$this->session->userdata('ID_UTILISATEUR')."";
+
+                $order_column = array('ID_PRESENCE','DATE_PRESENCE', 'STATUT');
 
                 $limit='LIMIT 0,10';
                 if($_POST['length'] != -1)
                 {
                     $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
                 }
-                $order_by='';
-                if($_POST['order']['0']['column']!=0)
-                {
-                    $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY DATE_PRESENCE  ASC'; 
-                }
+               
+
+		        $order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY DATE_PRESENCE DESC';
 
                 $search = !empty($_POST['search']['value']) ? ("AND (DATE_PRESENCE LIKE '%$var_search%'  OR STATUT LIKE '%$var_search%' ) ") : '';
 
@@ -735,6 +826,11 @@ color: '#FFD700',
                 $critaire=" AND  `STATUT`=0 AND date_format(`DATE_PRESENCE`,'%m') LIKE '%".$KEY."%'";
 
                 }
+                elseif ($ID==4) { 
+
+                    $critaire=" AND  `STATUT`=2 AND date_format(`DATE_PRESENCE`,'%m') LIKE '%".$KEY."%'";
+    
+                    }
             
                 $query_secondaire=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search.' '.$order_by.'   '.$limit;
                 $query_filter=$query_principal.'  '.$critaire.' '.$critaire_avant.' '.$search;
@@ -744,11 +840,21 @@ color: '#FFD700',
                 $data = array();
                 foreach ($fetch_data as $row) 
                 {  
+                    $statut='';
+                    if($row->STATUT==2){
+                        $statut=$row->MOTIF;
+                    }
+                    elseif($row->STATUT==0){
+                      $statut='retard';
+                    }
+                    else{
+                        $statut='Ponctuel';
+                    }
                     $u++;
                     $intrant=array();
                     $intrant[] = $u;
                     $intrant[] =$row->DATE_PRESENCE;
-                    $intrant[] =$row->STATUT==0 ? 'retard':'Ponctuel';
+                    $intrant[] =$statut;
                     $data[] = $intrant;
                 }
 
@@ -833,7 +939,71 @@ color: '#FFD700',
 
                 echo json_encode($output);
         }
+        function declarer()
+        {
+            
+                $periode = $this->input->post('PERIODE');
+                
+                   if(!empty($periode)){
+                        // Prepare data for 22/08/2024 PM OU AM
+                        $data = array(
+                            'ID_UTILISATEUR' => $this->input->post('ID_UTILISATEUR'),
+                            'DATE_CONGE' => $this->input->post('DEBUT'),
+                            'ID_MOTIF' => $this->input->post('ID_MOTIF'),
+                            'periode' =>$periode==2?'PM' :'AM'
+                        );
+                        $table = 'conges';
 
+                        $criteres['DATE_CONGE'] = $this->input->post('DEBUT');
+		                $this->Modele->delete($table, $criteres);
+
+                        $this->Modele->create($table, $data);
+                        echo json_encode(1);
+                   }
+                   else {
+                    // Insert FULL days from 23/08/2024 to 25/08/2024
+                    $start_date=$this->input->post('DEBUT');
+                    $end_date=$this->input->post('FIN');
+    
+                    $current_date = strtotime($start_date);
+                    $end_date = strtotime($end_date);
+                    
+    
+                    while ($current_date <= $end_date) {
+    
+                        $day_of_week = date('N', $current_date); // 'N' renvoie 1 (lundi) à 7 (dimanche)
+                        if ($day_of_week != 7 && $day_of_week != 6)
+                        {
+                                $data_am = array(
+                                    'ID_UTILISATEUR' => $this->input->post('ID_UTILISATEUR'),
+                                    'DATE_CONGE' =>date('Y-m-d',$current_date),
+                                    'periode' =>'AM' ,
+                                    'ID_MOTIF' => $this->input->post('ID_MOTIF'),
+    
+                                );
+                                $data_pm = array(
+                                    'ID_UTILISATEUR' => $this->input->post('ID_UTILISATEUR'),
+                                    'DATE_CONGE' => date('Y-m-d',$current_date),
+                                    'periode' =>'PM',
+                                    'ID_MOTIF' => $this->input->post('ID_MOTIF'),
+    
+                                );
+                                $table = 'conges';
+                                $criteres['DATE_CONGE'] = date('Y-m-d',$current_date);
+                                $this->Modele->delete($table, $criteres);
+
+                                $this->Modele->create($table, $data_pm);
+                                $this->Modele->create($table, $data_am);
+                      }
+                     
+                        $current_date = strtotime('+1 day', $current_date);
+                        
+                    }
+                        echo json_encode(1);
+                   }
+              
+        }
+        
         function detail_conge($agence=0)
         {
      

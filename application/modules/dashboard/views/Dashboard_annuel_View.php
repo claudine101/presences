@@ -144,6 +144,7 @@
                         <th>Employes</th>
                         <th>Présences</th>
                         <th>Retards</th>
+                        <th>Retards justifiés</th>
                         <th>Congés</th>
                         <th>Absences</th>
                         <th>Malades</th>
@@ -190,6 +191,7 @@
                   <th>CONTACT</th>
                   <th>AGENCE</th>
                   <th>DATE PRESENCE</th>
+                  <th>STATUT/JUSTIFICATION</th>
                   </thead>
           </table>
         </div>
@@ -375,6 +377,258 @@ $('#nouveau2').html(data.rapp_conge);
 },            
 
 });  
+}
+
+
+function afficherPresences(user=null,id=null,nom=null,prenom=null) {
+  // Affiche la fenêtre modale avec Swal et injecte le tableau HTML
+  var titre = "";
+
+if (id == 1) {
+    titre = "presences";
+} else if (id == 2) {  // Correction ici (changement de 'elseif' à 'else if' et 'id==1' à 'id==2')
+    titre = "retards justifiés";
+} else {
+    titre = "retards";
+}
+
+  Swal.fire({
+    
+    title: 'Les '+titre +' de '+prenom+' '+' '+nom,
+    html: `<div id="sms"></div>
+    <div class="table-responsive">
+          <table id='presences' class='table table-bordered table-striped table-hover table-condensed' >
+            <thead>
+             <th>#</th>
+            <th>DATE </th>
+            <th>STATUT/JUSTIFICATION</th>
+            </thead>
+          </table>
+        </div>`,
+    width: '80%',
+    showCloseButton: true,
+    showCancelButton: false,
+    focusConfirm: false
+  });
+
+  // Délai pour cacher un éventuel message après affichage
+  $('#sms').delay('slow').fadeOut(3000);
+
+  // Initialisation du DataTable après l'affichage du tableau dans Swal
+  $("#presences").DataTable({
+    "destroy": true,
+    "processing": true,
+    "serverSide": true,
+    "order": [[1, 'DESC']],
+    
+    "ajax": {
+      url: "<?php echo base_url('dashboard/Dashboard_annuel/detail_pres/'); ?>",
+      type: "POST",
+      data: {
+        user: user,
+        keys: id
+      },
+      beforeSend: function() {
+        // Vous pouvez gérer un message de chargement ici si nécessaire
+      }
+    },
+    lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
+    pageLength: 10,
+    "columnDefs": [{
+      "targets": [],
+      "orderable": false
+    }],
+    dom: 'Bfrtlip',
+    buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+    language: {
+      "sProcessing": "Traitement en cours...",
+      "sSearch": "Rechercher&nbsp;:",
+      "sLengthMenu": "Afficher _MENU_ &eacute;l&eacute;ments",
+      "sInfo": "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+      "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+      "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+      "sLoadingRecords": "Chargement en cours...",
+      "sZeroRecords": "Aucun &eacute;l&eacute;ment &agrave; afficher",
+      "sEmptyTable": "Aucune donn&eacute;e disponible dans le tableau",
+      "oPaginate": {
+        "sFirst": "Premier",
+        "sPrevious": "Pr&eacute;c&eacute;dent",
+        "sNext": "Suivant",
+        "sLast": "Dernier"
+      },
+      "oAria": {
+        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+        "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+      }
+    }
+  });
+}
+
+
+
+function afficherAbsences(user=null,id=null,nom=null,prenom=null) {
+  // Affiche la fenêtre modale avec Swal et injecte le tableau HTML
+ 
+
+  Swal.fire({
+    
+    title: 'Les absences de '+prenom+' '+' '+nom,
+    html: `<div id="sms"></div>
+    <div class="table-responsive">
+          <table id='absences' class='table table-bordered table-striped table-hover table-condensed' >
+            <thead>
+             <th>#</th>
+            <th>DATE </th>
+            <th>PERIODE</th>
+            </thead>
+          </table>
+        </div>`,
+    width: '80%',
+    showCloseButton: true,
+    showCancelButton: false,
+    focusConfirm: false
+  });
+
+  // Délai pour cacher un éventuel message après affichage
+  $('#sms').delay('slow').fadeOut(3000);
+
+  // Initialisation du DataTable après l'affichage du tableau dans Swal
+  $("#absences").DataTable({
+    "destroy": true,
+    "processing": true,
+    "serverSide": true,
+    "order": [[1, 'DESC']],
+    
+    "ajax": {
+      url: "<?php echo base_url('dashboard/Dashboard_annuel/detail_abs/'); ?>",
+      type: "POST",
+      data: {
+        user: user,
+        keys: id
+      },
+      beforeSend: function() {
+        // Vous pouvez gérer un message de chargement ici si nécessaire
+      }
+    },
+    lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
+    pageLength: 10,
+    "columnDefs": [{
+      "targets": [],
+      "orderable": false
+    }],
+    dom: 'Bfrtlip',
+    buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+    language: {
+      "sProcessing": "Traitement en cours...",
+      "sSearch": "Rechercher&nbsp;:",
+      "sLengthMenu": "Afficher _MENU_ &eacute;l&eacute;ments",
+      "sInfo": "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+      "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+      "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+      "sLoadingRecords": "Chargement en cours...",
+      "sZeroRecords": "Aucun &eacute;l&eacute;ment &agrave; afficher",
+      "sEmptyTable": "Aucune donn&eacute;e disponible dans le tableau",
+      "oPaginate": {
+        "sFirst": "Premier",
+        "sPrevious": "Pr&eacute;c&eacute;dent",
+        "sNext": "Suivant",
+        "sLast": "Dernier"
+      },
+      "oAria": {
+        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+        "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+      }
+    }
+  });
+}
+
+
+
+function afficherConges(user=null,id=null,nom=null,prenom=null) {
+  // Affiche la fenêtre modale avec Swal et injecte le tableau HTML
+  var titre = "";
+
+if (id == 1) {
+    titre = "congés";
+} else if (id == 2) {  // Correction ici (changement de 'elseif' à 'else if' et 'id==1' à 'id==2')
+    titre = "malades";
+}  else if (id == 3) {  // Correction ici (changement de 'elseif' à 'else if' et 'id==1' à 'id==2')
+    titre = "jours se trouvant sur  terrains";
+} else if (id == 4) {  // Correction ici (changement de 'elseif' à 'else if' et 'id==1' à 'id==2')
+    titre = "jours se trouvant en missions  ";
+}else {
+    titre = "jours se trouvant en formations  ";
+}
+
+  Swal.fire({
+    title: 'Les '+titre +' de '+prenom+' '+' '+nom,
+    html: `<div id="sms"></div>
+    <div class="table-responsive">
+          <table id='absences' class='table table-bordered table-striped table-hover table-condensed' >
+            <thead>
+             <th>#</th>
+            <th>DATE </th>
+            <th>PERIODE</th>
+            </thead>
+          </table>
+        </div>`,
+    width: '80%',
+    showCloseButton: true,
+    showCancelButton: false,
+    focusConfirm: false
+  });
+
+  // Délai pour cacher un éventuel message après affichage
+  $('#sms').delay('slow').fadeOut(3000);
+
+  // Initialisation du DataTable après l'affichage du tableau dans Swal
+  $("#absences").DataTable({
+    "destroy": true,
+    "processing": true,
+    "serverSide": true,
+    "order": [[1, 'DESC']],
+    
+    "ajax": {
+      url: "<?php echo base_url('dashboard/Dashboard_annuel/detail_cong/'); ?>",
+      type: "POST",
+      data: {
+        user: user,
+        keys: id
+      },
+      beforeSend: function() {
+        // Vous pouvez gérer un message de chargement ici si nécessaire
+      }
+    },
+    lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
+    pageLength: 10,
+    "columnDefs": [{
+      "targets": [],
+      "orderable": false
+    }],
+    dom: 'Bfrtlip',
+    buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+    language: {
+      "sProcessing": "Traitement en cours...",
+      "sSearch": "Rechercher&nbsp;:",
+      "sLengthMenu": "Afficher _MENU_ &eacute;l&eacute;ments",
+      "sInfo": "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+      "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+      "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+      "sLoadingRecords": "Chargement en cours...",
+      "sZeroRecords": "Aucun &eacute;l&eacute;ment &agrave; afficher",
+      "sEmptyTable": "Aucune donn&eacute;e disponible dans le tableau",
+      "oPaginate": {
+        "sFirst": "Premier",
+        "sPrevious": "Pr&eacute;c&eacute;dent",
+        "sNext": "Suivant",
+        "sLast": "Dernier"
+      },
+      "oAria": {
+        "sSortAscending": ": activer pour trier la colonne par ordre croissant",
+        "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+      }
+    }
+  });
 }
 </script> 
 

@@ -252,7 +252,7 @@ $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : nu
 $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
  e.DATE_NAISSANCE_EMPLOYE,e.SEXE_EMPLOYE,p.ID_PRESENCE,p.DATE_PRESENCE,
   p.QR_CODE_PRES_ID, p.ID_UTILISATEUR ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE,
-  e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE 
+  e.NUMERO_CNI_EMPLOYE,e.TELEPHONE_EMPLOYE,e.EMAIL_EMPLOYE ,p.MOTIF,p.STATUT
   FROM presences p JOIN employes e ON e.ID_UTILISATEUR=p.ID_UTILISATEUR 
    JOIN agences a ON a.ID_AGENCE=e.ID_AGENCE WHERE 1 ";
 
@@ -285,8 +285,12 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
           $critaire=" AND  `STATUT`=0 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
 
         }
-        // $critaire1="AND`STAUT`=0AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
-// '.$critaire1.'
+        elseif ($ID==4) { 
+
+            $critaire=" AND  `STATUT`=2 AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') LIKE '%".$KEY."%'";
+
+            }
+               
        
         $query_secondaire=$query_principal.'  '.$critaire.' '.$criteres1.' '.$criteres3.' '.$search.' '.$order_by.'   '.$limit;
         $query_filter=$query_principal.''.$critaire.' '.$criteres1.' '.$criteres3.' '.$search;
@@ -295,7 +299,16 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
         $u=0;
         $data = array();
         foreach ($fetch_data as $row) 
-        {  
+        {    $statut='';
+            if($row->STATUT==2){
+                $statut=$row->MOTIF;
+            }
+            elseif($row->STATUT==0){
+              $statut='retard';
+            }
+            else{
+                $statut='Ponctuel';
+            }
             $u++;
             $intrant=array();
             $intrant[] = $u;
@@ -304,6 +317,9 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
 			$intrant[] = '<table> <tbody><tr><td>' . $row->TELEPHONE_EMPLOYE . ' ' . $row->EMAIL_EMPLOYE . '</td></tr></tbody></table></a>';
             $intrant[] =$row->DESCRIPTION;
             $intrant[] =$row->DATE_PRESENCE;
+            $intrant[] =$statut;
+
+
             $data[] = $intrant;
         }
 
@@ -360,7 +376,8 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
           DATE_FORMAT(`DATE_PRESENCE`, '%Y-%m-%d') as annees,
           (SELECT COUNT(`ID_UTILISATEUR`) FROM employes WHERE ID_UTILISATEUR NOT IN (SELECT (`ID_UTILISATEUR`) FROM presences) ) as absant,
             SUM(CASE WHEN (`STATUT`) =1 THEN 1 ELSE 0 END) AS number_of_punctuals,
-          SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates
+        SUM(CASE WHEN (`STATUT`) =0 THEN 1 ELSE 0 END) AS  number_of_lates,
+          SUM(CASE WHEN (`STATUT`) =2 THEN 1 ELSE 0 END) AS  number_of_just
       FROM
           presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
       WHERE 1 ".$criteres1."  ".$criteres3." AND
@@ -372,27 +389,43 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
           DAYOFWEEK(`DATE_PRESENCE`);
           ");
     
-    
     $retards=" ";
     $ponctuels=" ";
+    $justifies=" ";
+
     $immacontrole_categorie=" ";
     $immadeclare_categorie=" ";
     $immadeclare_categoriev=" ";
     $immadeclare_categoriet=" ";
+    
     $retard_traite=0;
     $ponctuel_traite=0;
     $presence_traite=0;
+    $justifies_traite=0;
     
      foreach ($control as  $value) {
           
-          $key_id1=($value['annees']>0) ? $value['annees'] : "0" ;
-          $sommeretards=($value['number_of_lates']>0) ? $value['number_of_lates'] : "0" ;
-          $sommeponctuals=($value['number_of_punctuals']>0) ? $value['number_of_punctuals'] : "0" ;
-          $retards.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeretards.",key2:3,key:'". $key_id1."'},";
-          $ponctuels.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeponctuals.",key2:2,key:'". $key_id1."'},";
-    
-          $retard_traite=$retard_traite+$value['number_of_lates'];
-          $ponctuel_traite=$ponctuel_traite+$value['number_of_punctuals'];
+        $key_id1=($value['annees']>0) ? $value['annees'] : "0" ;
+
+        $sommeretards=($value['number_of_lates']>0) ? $value['number_of_lates'] : "0" ;
+        $sommeponctuals=($value['number_of_punctuals']>0) ? $value['number_of_punctuals'] : "0" ;
+        $sommejust=($value['number_of_just']>0) ? $value['number_of_just'] : "0" ;
+
+
+        $sommeexpt=($value['tout']>0) ? $value['tout'] : "0" ;
+
+        $retards.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeretards.",key2:3,key:'". $key_id1."'},";
+        $ponctuels.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeponctuals.",key2:2,key:'". $key_id1."'},";
+        $justifies.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommejust.",key2:4,key:'". $key_id1."'},";
+
+        $immadeclare_categoriet.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeexpt.",key2:1,key:'". $key_id1."'},";
+  
+        $retard_traite=$retard_traite+$value['number_of_lates'];
+        $ponctuel_traite=$ponctuel_traite+$value['number_of_punctuals'];
+        $justifies_traite=$justifies_traite+$value['number_of_just'];
+
+        $presence_traite=$presence_traite+$value['tout'];
+        
         
     }
     
@@ -900,7 +933,12 @@ $rapp="<script type=\"text/javascript\">
             color: 'green',
              name:'Ponctuels: (".number_format($ponctuel_traite,0,',',' ').")', 
             data: [".$ponctuels."]
-        }
+        },
+     {
+        color: '#9ACD32',
+         name:'Retard justifies: (".number_format($justifies_traite,0,',',' ').")', 
+        data: [".$justifies."]
+    }
         
         ]
     
