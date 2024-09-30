@@ -426,7 +426,9 @@ if (id == 1) {
       type: "POST",
       data: {
         user: user,
-        keys: id
+        keys: id,
+        mois: $('#mois').val(),
+
       },
       beforeSend: function() {
         // Vous pouvez gérer un message de chargement ici si nécessaire
@@ -504,7 +506,9 @@ function afficherAbsences(user=null,id=null,nom=null,prenom=null) {
       type: "POST",
       data: {
         user: user,
-        keys: id
+        keys: id,
+       mois: $('#mois').val(),
+
       },
       beforeSend: function() {
         // Vous pouvez gérer un message de chargement ici si nécessaire
@@ -593,7 +597,9 @@ if (id == 1) {
       type: "POST",
       data: {
         user: user,
-        keys: id
+        keys: id,
+      mois: $('#mois').val(),
+
       },
       beforeSend: function() {
         // Vous pouvez gérer un message de chargement ici si nécessaire

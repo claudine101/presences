@@ -947,10 +947,7 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
         $condition = '';
         $condition2 = '';
         $condition3 = '';
-        $condition = '';
-        $condition = '';
-        $condition = '';
-
+       
         $mois = $this->input->post('mois');
         if (!empty($mois)) {
           $condition = " AND DATE_FORMAT(p.DATE_PRESENCE, '%m') = '".$mois."'";
@@ -1120,11 +1117,16 @@ FROM
     $critaire_avant.=" AND TIME(`DATE_PRESENCE`)>'12:00:00' ";
     }
    }
+        $condition = '';
+        $mois = $this->input->post('mois');
+        if (!empty($mois)) {
+          $condition = " AND DATE_FORMAT(DATE_PRESENCE, '%m') = '".$mois."'";
+        }
        
         $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
 
 
-        $query_principal=" SELECT `ID_PRESENCE`, `ID_UTILISATEUR`, `QR_CODE_PRES_ID`, `STATUT`,`MOTIF`, `DATE_PRESENCE` FROM `presences` WHERE  ID_UTILISATEUR= ".$user."";
+        $query_principal=" SELECT `ID_PRESENCE`, `ID_UTILISATEUR`, `QR_CODE_PRES_ID`, `STATUT`,`MOTIF`, `DATE_PRESENCE` FROM `presences` WHERE  ID_UTILISATEUR= ".$user." ".$condition ;
 
                 $order_column = array('ID_PRESENCE','DATE_PRESENCE', 'STATUT');
 
@@ -1200,6 +1202,12 @@ FROM
         
             }
         }
+        $condition2 = '';
+       
+        $mois = $this->input->post('mois');
+        if (!empty($mois)) {
+          $condition2 = " AND DATE_FORMAT(a.date_absence, '%m') = '".$mois."'";
+        }
         $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
 
         $order_column = array('id','date_absence', 'periode');
@@ -1208,7 +1216,7 @@ FROM
             SELECT  e.*,a.date_absence,a.periode
                 FROM employes e LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
                 WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() and   a.id_utilisateur=".$user."
-            ";
+             ".$condition2;
         
             $limit='LIMIT 0,10';
             if($_POST['length'] != -1)
@@ -1272,7 +1280,12 @@ FROM
            
                }
            }
- 
+           $i = 1;
+           $condition3 = '';
+           $mois = $this->input->post('mois');
+           if (!empty($mois)) {
+             $condition3 = " AND DATE_FORMAT(a.DATE_CONGE, '%m') = '".$mois."'";
+           }
          $var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;     
  
  
@@ -1280,7 +1293,7 @@ FROM
              SELECT  e.*,a.DATE_CONGE,a.PERIODE
                  FROM employes e LEFT JOIN  conges a ON e.ID_UTILISATEUR=a.id_utilisateur
                  WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() and   a.id_utilisateur=".$user." AND a.ID_MOTIF=".$keys."
-             ";
+              ".$condition3 ;
          
              $limit='LIMIT 0,10';
              if($_POST['length'] != -1)
