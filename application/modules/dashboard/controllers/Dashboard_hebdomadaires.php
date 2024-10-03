@@ -894,17 +894,17 @@ color: '#FFD700',
                 FROM employes e LEFT JOIN  absences a ON e.ID_UTILISATEUR=a.id_utilisateur
                 WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() and   a.id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."
             ";
-        
+            $order_column = array('id','date_absence', 'periode');
+
             $limit='LIMIT 0,10';
             if($_POST['length'] != -1)
             {
                 $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
             }
-            $order_by='';
-            if($_POST['order']['0']['column']!=0)
-            {
-                $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY date_absence  ASC'; 
-            }
+           
+
+            $order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY date_absence DESC';
+
 
             $search = !empty($_POST['search']['value']) ? ("AND (date_absence LIKE '%$var_search%'  ) ") : '';
                 $critaire='';
@@ -971,47 +971,58 @@ color: '#FFD700',
                         echo json_encode(1);
                    }
                    else {
-                    // Insert FULL days from 23/08/2024 to 25/08/2024
-                    $start_date=$this->input->post('DEBUT');
-                    $end_date=$this->input->post('FIN');
-    
-                    $current_date = strtotime($start_date);
-                    $end_date = strtotime($end_date);
-                    
-    
-                    while ($current_date <= $end_date) {
-    
-                        $day_of_week = date('N', $current_date); // 'N' renvoie 1 (lundi) à 7 (dimanche)
-                        if ($day_of_week != 7 && $day_of_week != 6)
-                        {
-                                $data_am = array(
-                                    'ID_UTILISATEUR' => $this->input->post('ID_UTILISATEUR'),
-                                    'DATE_CONGE' =>date('Y-m-d',$current_date),
-                                    'periode' =>'AM' ,
-                                    'ID_MOTIF' => $this->input->post('ID_MOTIF'),
-    
-                                );
-                                $data_pm = array(
-                                    'ID_UTILISATEUR' => $this->input->post('ID_UTILISATEUR'),
-                                    'DATE_CONGE' => date('Y-m-d',$current_date),
-                                    'periode' =>'PM',
-                                    'ID_MOTIF' => $this->input->post('ID_MOTIF'),
-    
-                                );
-                                $table = 'conges';
-                                $tables = 'absences';
-                                $tables1 = 'presences';
-    
-                                $this->Modele->deleteDataWiths($table,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
-                                $this->Modele->deleteDataWith($tables,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
-                                $this->Modele->deleteDataWithDateFormats($tables1,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
-    
-                                $this->Modele->create($table, $data_pm);
-                                $this->Modele->create($table, $data_am);
-                               
-                      }
-                     
-                        $current_date = strtotime('+1 day', $current_date);
+                   // Insert FULL days from 23/08/2024 to 25/08/2024
+				//Récupération des dates de début et de fin
+						$start_date = $this->input->post('DEBUT');
+						$end_date = $this->input->post('FIN');
+                        $id=$this->input->post('ID_UTILISATEUR');
+						// Conversion en timestamps
+						$current_date = strtotime($start_date);
+						$end_date = strtotime($end_date);
+
+						// Récupération de l'ID utilisateur et du motif
+						// $id_utilisateur = $this->input->post('ID_UTILISATEUR');
+						$id_motif = $this->input->post('ID_MOTIF');
+
+						// Boucle sur chaque jour de l'intervalle
+						while ($current_date <= $end_date) {
+							// Récupération du jour de la semaine (1 = lundi, 7 = dimanche)
+							$day_of_week = date('N', $current_date);
+
+							// Exclure les week-ends (samedi et dimanche)
+							if ($day_of_week != 7 && $day_of_week != 6) {
+								// Préparation des données pour la matinée (AM) et l'après-midi (PM)
+								$data_am = array(
+									'ID_UTILISATEUR' => $id,
+									'DATE_CONGE' => date('Y-m-d', $current_date),
+									'periode' => 'AM',
+									'ID_MOTIF' => $id_motif,
+								);
+
+								$data_pm = array(
+									'ID_UTILISATEUR' => $id,
+									'DATE_CONGE' => date('Y-m-d', $current_date),
+									'periode' => 'PM',
+									'ID_MOTIF' => $id_motif,
+								);
+
+								// Tables pour supprimer les données existantes
+								$table_conges = 'conges';
+								$table_absences = 'absences';
+								$table_presences = 'presences';
+
+								// Suppression des enregistrements existants pour la date
+								$this->Modele->deleteDataWiths($table_conges, $id, date('Y-m-d', $current_date));
+								$this->Modele->deleteDataWith($table_absences, $id, date('Y-m-d', $current_date));
+								$this->Modele->deleteDataWithDateFormats($table_presences, $id, date('Y-m-d', $current_date));
+
+								// Insertion des nouveaux enregistrements (AM et PM)
+								$this->Modele->create($table_conges, $data_am);
+								$this->Modele->create($table_conges, $data_pm);
+							}
+
+							// Passer au jour suivant
+							$current_date = strtotime('+1 day', $current_date);
                         
                     }
                         echo json_encode(1);
@@ -1046,17 +1057,17 @@ color: '#FFD700',
                  WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() and   a.id_utilisateur=".$this->session->userdata('ID_UTILISATEUR')."
              ";
          
-             $limit='LIMIT 0,10';
-             if($_POST['length'] != -1)
-             {
-                 $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
-             }
-             $order_by='';
-             if($_POST['order']['0']['column']!=0)
-             {
-                 $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY DATE_CONGE ASC'; 
-             }
- 
+             $order_column = array('ID_CONGE ','DATE_CONGE', 'PERIODE');
+
+            $limit='LIMIT 0,10';
+            if($_POST['length'] != -1)
+            {
+                $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
+            }
+           
+
+            $order_by = isset($_POST['order']) ? 'ORDER BY ' . $order_column[$_POST['order']['0']['column']] . '  ' . $_POST['order']['0']['dir'] : ' ORDER BY DATE_CONGE DESC';
+
              $search = !empty($_POST['search']['value']) ? ("AND (DATE_CONGE LIKE '%$var_search%'  ) ") : '';
                  $critaire='';
                  

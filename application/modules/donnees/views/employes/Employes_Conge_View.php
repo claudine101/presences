@@ -65,9 +65,9 @@
                     <div class="col-md-6">
                       <label for="Ftype">Periode</label>
                       <select class="form-control" name="PERIODE" id="PERIODE">
-                        <option value="2">---Sélectionner---</option>
+                        <option value="">---Sélectionner---</option>
                         <option value="1">AM</option>
-                        <option value="0">PM</option>
+                        <option value="2">PM</option>
                       </select>
                       <!-- <div><font color="red" id="error_province"></font></div>  -->
                       <?php echo form_error('PERIODE', '<div class="text-danger">', '</div>'); ?>

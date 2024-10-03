@@ -175,6 +175,7 @@ SELECT  e.*,a.date_absence,a.periode,ag.DESCRIPTION
             $limit='LIMIT '.$_POST["start"].','.$_POST["length"];
         }
         $order_by='';
+        $order_column = array('ID_PRESENCE','DATE_PRESENCE', 'STATUT');
         if($_POST['order']['0']['column']!=0)
         {
             $order_by = isset($_POST['order']) ? ' ORDER BY '.$_POST['order']['0']['column'] .'  '.$_POST['order']['0']['dir'] : ' ORDER BY ID_PRESENCE ASC'; 

@@ -290,15 +290,13 @@ class  Employes extends CI_Controller
 		} 
 		else {
 			$periode = $this->input->post('PERIODE');
-			
-				
 			if(!empty($periode)){
 					// Prepare data for 22/08/2024 PM OU AM
 					$data = array(
 						'ID_UTILISATEUR' => $id,
 				        'DATE_CONGE' => $this->input->post('DEBUT'),
 				        'ID_MOTIF' => $this->input->post('ID_MOTIF'),
-						'periode' =>$periode==0?'PM' :'AM'
+						'periode' =>$periode==2?'PM' :'AM'
 					);
 					
 					$table = 'conges';
@@ -322,44 +320,57 @@ class  Employes extends CI_Controller
 			   }
 			   else {
 				// Insert FULL days from 23/08/2024 to 25/08/2024
-				$start_date=$this->input->post('DEBUT');
-				$end_date=$this->input->post('FIN');
+				//Récupération des dates de début et de fin
+						$start_date = $this->input->post('DEBUT');
+						$end_date = $this->input->post('FIN');
 
-				$current_date = strtotime($start_date);
-				$end_date = strtotime($end_date);
-				
+						// Conversion en timestamps
+						$current_date = strtotime($start_date);
+						$end_date = strtotime($end_date);
 
-				while ($current_date <= $end_date) {
+						// Récupération de l'ID utilisateur et du motif
+						// $id_utilisateur = $this->input->post('ID_UTILISATEUR');
+						$id_motif = $this->input->post('ID_MOTIF');
 
-					$day_of_week = date('N', $current_date); // 'N' renvoie 1 (lundi) à 7 (dimanche)
-					if ($day_of_week != 7 && $day_of_week != 6)
-					{
-							$data_am = array(
-								'ID_UTILISATEUR' => $id,
-								'DATE_CONGE' =>date('Y-m-d',$current_date),
-								'periode' =>'AM' ,
-								'ID_MOTIF' => $this->input->post('ID_MOTIF'),
+						// Boucle sur chaque jour de l'intervalle
+						while ($current_date <= $end_date) {
+							// Récupération du jour de la semaine (1 = lundi, 7 = dimanche)
+							$day_of_week = date('N', $current_date);
 
-							);
-							$data_pm = array(
-								'ID_UTILISATEUR' => $id,
-								'DATE_CONGE' => date('Y-m-d',$current_date),
-								'periode' =>'PM',
-								'ID_MOTIF' => $this->input->post('ID_MOTIF'),
+							// Exclure les week-ends (samedi et dimanche)
+							if ($day_of_week != 7 && $day_of_week != 6) {
+								// Préparation des données pour la matinée (AM) et l'après-midi (PM)
+								$data_am = array(
+									'ID_UTILISATEUR' => $id,
+									'DATE_CONGE' => date('Y-m-d', $current_date),
+									'periode' => 'AM',
+									'ID_MOTIF' => $id_motif,
+								);
 
-							);
-							$table = 'conges';
-							$tables = 'absences';
-							$tables1 = 'presences';
+								$data_pm = array(
+									'ID_UTILISATEUR' => $id,
+									'DATE_CONGE' => date('Y-m-d', $current_date),
+									'periode' => 'PM',
+									'ID_MOTIF' => $id_motif,
+								);
 
-							$this->Modele->deleteDataWiths($table, $id, $this->input->post('DEBUT'));
-							$this->Modele->deleteDataWith($tables, $id, $this->input->post('DEBUT'));
-							$this->Modele->deleteDataWithDateFormats($tables1, $id, $this->input->post('DEBUT'));
+								// Tables pour supprimer les données existantes
+								$table_conges = 'conges';
+								$table_absences = 'absences';
+								$table_presences = 'presences';
 
-							$this->Modele->create($table, $data_pm);
-							$this->Modele->create($table, $data_am);
-				  }
-					$current_date = strtotime('+1 day', $current_date);
+								// Suppression des enregistrements existants pour la date
+								$this->Modele->deleteDataWiths($table_conges, $id, date('Y-m-d', $current_date));
+								$this->Modele->deleteDataWith($table_absences, $id, date('Y-m-d', $current_date));
+								$this->Modele->deleteDataWithDateFormats($table_presences, $id, date('Y-m-d', $current_date));
+
+								// Insertion des nouveaux enregistrements (AM et PM)
+								$this->Modele->create($table_conges, $data_am);
+								$this->Modele->create($table_conges, $data_pm);
+							}
+
+							// Passer au jour suivant
+							$current_date = strtotime('+1 day', $current_date);
 					
 				}
 
