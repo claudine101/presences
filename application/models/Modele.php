@@ -150,7 +150,36 @@ function insert_batch($table,$data){
      $sql=$this->db->delete($table) ;
      return $sql;
    }
+   public function deleteDataWithDateFormat($table, $id_utilisateur, $critere) {
+    // Construction de la requête avec un SQL brut
+    $sql = "DELETE FROM $table WHERE ID_UTILISATEUR = ? AND DATE_FORMAT(DATE_PRESENCE, '%p') = ?";
+    
+    // Exécution de la requête en passant les paramètres
+    return $this->db->query($sql, array($id_utilisateur, $critere));
+}
 
+public function deleteDataWithDateFormats($table, $id_utilisateur, $critere) {
+  // Construction de la requête avec un SQL brut
+  $sql = "DELETE FROM $table WHERE ID_UTILISATEUR = ? AND DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = ?";
+  
+  // Exécution de la requête en passant les paramètres
+  return $this->db->query($sql, array($id_utilisateur, $critere));
+}
+public function deleteDataWith($table, $id_utilisateur, $critere) {
+  // Construction de la requête avec un SQL brut
+  $sql = "DELETE FROM $table WHERE id_utilisateur = ? AND DATE_FORMAT(date_absence, '%Y-%m-%d') = ?";
+  
+  // Exécution de la requête en passant les paramètres
+  return $this->db->query($sql, array($id_utilisateur, $critere));
+}
+
+public function deleteDataWiths($table, $id_utilisateur, $critere) {
+  // Construction de la requête avec un SQL brut
+  $sql = "DELETE FROM $table WHERE ID_UTILISATEUR = ? AND DATE_FORMAT(DATE_CONGE, '%Y-%m-%d') = ?";
+  
+  // Exécution de la requête en passant les paramètres
+  return $this->db->query($sql, array($id_utilisateur, $critere));
+}
    function getRequeteOne($requete){
      $query=$this->db->query($requete);
      if ($query) {

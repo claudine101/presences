@@ -287,7 +287,7 @@ language: {
         
           $retards.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeretards.",key2:3,key:'". $key_id1."'},";
           $ponctuels.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeponctuals.",key2:2,key:'". $key_id1."'},";
-          $immadeclare_categoriet.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeexpt.",key2:1,key:'". $key_id1."'},";
+        //   $immadeclare_categoriet.="{name:'".str_replace("'","\'", $value['day_of_week'])."', y:". $sommeexpt.",key2:1,key:'". $key_id1."'},";
     
           $retard_traite=$retard_traite+$value['nombre_absents'];
           $ponctuel_traite=$ponctuel_traite+$value['nombre_absents'];
@@ -952,10 +952,20 @@ color: '#FFD700',
                             'ID_MOTIF' => $this->input->post('ID_MOTIF'),
                             'periode' =>$periode==2?'PM' :'AM'
                         );
-                        $table = 'conges';
 
-                        $criteres['DATE_CONGE'] = $this->input->post('DEBUT');
-		                $this->Modele->delete($table, $criteres);
+                        $table = 'conges';
+                        $tables = 'absences';
+                        $tables1 = 'presences';
+                        $critere="";
+                        if($periode==2){
+                         $critere="PM";
+                        }
+                        else{
+                         $critere="AM";
+                        }
+                        $this->Modele->deleteDataWiths($table,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
+                        $this->Modele->deleteDataWith($tables,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
+                        $this->Modele->deleteDataWithDateFormat($tables1,$this->input->post('ID_UTILISATEUR'), $critere);
 
                         $this->Modele->create($table, $data);
                         echo json_encode(1);
@@ -989,11 +999,16 @@ color: '#FFD700',
     
                                 );
                                 $table = 'conges';
-                                $criteres['DATE_CONGE'] = date('Y-m-d',$current_date);
-                                $this->Modele->delete($table, $criteres);
-
+                                $tables = 'absences';
+                                $tables1 = 'presences';
+    
+                                $this->Modele->deleteDataWiths($table,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
+                                $this->Modele->deleteDataWith($tables,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
+                                $this->Modele->deleteDataWithDateFormats($tables1,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
+    
                                 $this->Modele->create($table, $data_pm);
                                 $this->Modele->create($table, $data_am);
+                               
                       }
                      
                         $current_date = strtotime('+1 day', $current_date);

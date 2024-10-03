@@ -292,7 +292,7 @@ class  Employes extends CI_Controller
 			$periode = $this->input->post('PERIODE');
 			
 				
-			   if($periode==0 || $periode==1 ){
+			if(!empty($periode)){
 					// Prepare data for 22/08/2024 PM OU AM
 					$data = array(
 						'ID_UTILISATEUR' => $id,
@@ -300,7 +300,21 @@ class  Employes extends CI_Controller
 				        'ID_MOTIF' => $this->input->post('ID_MOTIF'),
 						'periode' =>$periode==0?'PM' :'AM'
 					);
+					
 					$table = 'conges';
+					$tables = 'absences';
+					$tables1 = 'presences';
+					$critere="";
+					if($periode==2){
+					 $critere="PM";
+					}
+					else{
+					 $critere="AM";
+					}
+					$this->Modele->deleteDataWiths($table, $id, $this->input->post('DEBUT'));
+					$this->Modele->deleteDataWith($tables, $id, $this->input->post('DEBUT'));
+					$this->Modele->deleteDataWithDateFormat($tables1, $id, $critere);
+
 			        $this->Modele->create($table, $data);
 					$datas['message'] = "<div class='alert alert-success text-center' id='message'>La modification de l'employé a été effectuée avec succès.</div>";
 				$this->session->set_flashdata($datas);
@@ -335,6 +349,13 @@ class  Employes extends CI_Controller
 
 							);
 							$table = 'conges';
+							$tables = 'absences';
+							$tables1 = 'presences';
+
+							$this->Modele->deleteDataWiths($table, $id, $this->input->post('DEBUT'));
+							$this->Modele->deleteDataWith($tables, $id, $this->input->post('DEBUT'));
+							$this->Modele->deleteDataWithDateFormats($tables1, $id, $this->input->post('DEBUT'));
+
 							$this->Modele->create($table, $data_pm);
 							$this->Modele->create($table, $data_am);
 				  }
