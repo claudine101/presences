@@ -1030,7 +1030,7 @@ FROM
             $sub_array[] = $this->get_terrains($row);
 			$sub_array[] =$this->get_missions($row);
 			$sub_array[] = $this->get_formations($row);
-			$sub_array[] = '<strong style="color: red;">'.($row->absences+$row->presences+$row->retards+$row->conges+$row->malades+$row->surTerrains+ $row->enMissions+$row->enFormations).'</strong>';
+			$sub_array[] = '<strong style="color: red;">'.($row->absences+$row->presences+$row->retards+$row->retardsJust+$row->conges+$row->malades+$row->surTerrains+ $row->enMissions+$row->enFormations).'</strong>';
 
 
 			$data[] = $sub_array;
