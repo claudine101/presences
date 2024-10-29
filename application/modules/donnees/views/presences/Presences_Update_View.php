@@ -57,7 +57,7 @@
                                   <?php echo form_error('DATE_PRESENCE', '<div class="text-danger">', '</div>'); ?>
                                 </div>
                                 <div class="col-md-6">
-                                  <label for="FName">Date presence</label>
+                                  <label for="FName">Heure presence</label>
                                   <input  type="time" name="heure" autocomplete="off" id="heure" value="<?= $data['min'] ?>"  class="form-control" >
                                  
                                   <?php echo form_error('heure', '<div class="text-danger">', '</div>'); ?>
