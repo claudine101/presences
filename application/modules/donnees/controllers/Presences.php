@@ -272,7 +272,7 @@ class  Presences extends CI_Controller
 	function getOne($id)
 	{
 		$employes = $this->Modele->getOne('Presences', array('ID_PRESENCE' => $id));
-		$employes=$this->Model->getRequeteOne("SELECT p.*,date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') as dates,date_format(p.`DATE_PRESENCE`,'%h:%m') as min ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE FROM presences p JOIN 
+		$employes=$this->Model->getRequeteOne("SELECT p.*,date_format(p.`DATE_PRESENCE`,'%Y-%m-%d') as dates,date_format(p.`DATE_PRESENCE`,'%H:%i') as min ,e.NOM_EMPLOYE,e.PRENOM_EMPLOYE FROM presences p JOIN 
 		employes e on P.ID_UTILISATEUR=e.ID_UTILISATEUR  WHERE p.ID_PRESENCE=".$id."");
 
 	
@@ -302,7 +302,7 @@ class  Presences extends CI_Controller
 			$date_presence = $date_presence_date . ' ' . $date_presence_time. ':00';// Combine date et heure
 
 			$data = array(
-				//'DATE_PRESENCE' => $date_presence,
+				'DATE_PRESENCE' => $date_presence,
 				'STATUT'=>1
 			);
 			

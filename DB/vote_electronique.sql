@@ -2,14 +2,15 @@
 -- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 11 avr. 2024 à 14:34
--- Version du serveur :  5.7.31
--- Version de PHP : 7.3.21
+-- Host: 127.0.0.1:3306
+-- Generation Time: Oct 11, 2024 at 07:20 AM
+-- Server version: 5.7.31
+-- PHP Version: 7.3.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -17,24 +18,73 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `vote_electronique`
+-- Database: `vote_electronique`
 --
+
+DELIMITER $$
+--
+-- Functions
+--
+DROP FUNCTION IF EXISTS `AES_DECRYPT_DATA`$$
+CREATE DEFINER=`root`@`localhost` FUNCTION `AES_DECRYPT_DATA` (`encrypted_data` TEXT, `cle` TEXT) RETURNS TEXT CHARSET latin1 BEGIN
+    DECLARE decrypted_data TEXT;
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET decrypted_data = NULL;
+    
+    IF encrypted_data IS NULL OR cle IS NULL THEN
+        RETURN NULL;
+    END IF;
+
+    SET decrypted_data = CAST(AES_DECRYPT(FROM_BASE64(encrypted_data), cle) AS CHAR);
+
+    RETURN decrypted_data;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `Employes`
+-- Table structure for table `blocks`
 --
 
-DROP TABLE IF EXISTS `Employes`;
-CREATE TABLE IF NOT EXISTS `Employes` (
+DROP TABLE IF EXISTS `blocks`;
+CREATE TABLE IF NOT EXISTS `blocks` (
+  `ID_BLOCK` int(11) NOT NULL AUTO_INCREMENT,
+  `INDEXE` int(11) NOT NULL,
+  `TRANSACTIONS` text NOT NULL,
+  `PREVIOUS_HASH` text NOT NULL,
+  `HASH` text NOT NULL,
+  `DATE_INSERTION` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID_BLOCK`)
+) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `blocks`
+--
+
+INSERT INTO `blocks` (`ID_BLOCK`, `INDEXE`, `TRANSACTIONS`, `PREVIOUS_HASH`, `HASH`, `DATE_INSERTION`) VALUES
+(41, 6, '[{\"candidate_id\":\"30\",\"voter_id\":\"5\",\"timestamp\":1724335537}]', '7abf32101b36c833a0489db9036f584f11a6b81c89bbed43579f59f5dfd6319b', '1ceca4ab91758008bde75e0da84070eef9dd384cf67e87d762453c24a80a6932', '2024-08-22 14:05:37'),
+(39, 4, '[{\"candidate_id\":\"29\",\"voter_id\":\"5\",\"timestamp\":1724334283}]', '2ab80ba466e9137e8095921a9f72e009408e84f6231f64ba316295674169d8c2', '1fad57fa352b0969eb64f4cd9ce8b9fa8095759cdd6e75b431a32e35315bb285', '2024-08-22 13:44:43'),
+(40, 5, '[{\"candidate_id\":\"29\",\"voter_id\":\"5\",\"timestamp\":1724334297}]', '1fad57fa352b0969eb64f4cd9ce8b9fa8095759cdd6e75b431a32e35315bb285', '7abf32101b36c833a0489db9036f584f11a6b81c89bbed43579f59f5dfd6319b', '2024-08-22 13:44:57'),
+(36, 1, '[{\"candidate_id\":\"17\",\"voter_id\":\"2\",\"timestamp\":1721397837}]', '0', '847c87eb9bc5b305f9c65f1b02557af6d24ec0c56b837d8f762708d0cd775d08', '2024-07-19 14:03:57'),
+(37, 2, '[{\"candidate_id\":\"16\",\"voter_id\":\"2\",\"timestamp\":1721397842}]', '847c87eb9bc5b305f9c65f1b02557af6d24ec0c56b837d8f762708d0cd775d08', '2ab80ba466e9137e8095921a9f72e009408e84f6231f64ba316295674169d8c2', '2024-07-19 14:04:02'),
+(38, 2, '[{\"candidate_id\":\"16\",\"voter_id\":\"9\",\"timestamp\":1721397842}]', '2ab80ba466e9137e8095921a9f72e009408e84f6231f64ba316295674169d8c2', '2ab80ba466e9137e8095921a9f72e009408e84f6231f64ba316295674169d8c2', '2024-07-19 14:04:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `candidats`
+--
+
+DROP TABLE IF EXISTS `candidats`;
+CREATE TABLE IF NOT EXISTS `candidats` (
   `ID_CANDIDAT` int(11) NOT NULL AUTO_INCREMENT,
   `NOM_CANDIDAT` varchar(255) NOT NULL,
   `PRENOM_CANDIDAT` varchar(255) NOT NULL,
   `TELEPHONE_CANDIDAT` varchar(100) NOT NULL,
   `EMAIL_CANDIDAT` varchar(255) NOT NULL,
   `NUMERO_CNI_CANDIDAT` varchar(255) NOT NULL,
-  `DATE_NAISSANCE_CANDIDAT` datetime NOT NULL,
+  `DATE_NAISSANCE_CANDIDAT` varchar(255) NOT NULL,
   `SEXE_CANDIDAT` varchar(10) NOT NULL,
   `PHOTO_CANDIDAT` text NOT NULL,
   `ID_COLLINE_CANDIDAT` int(11) NOT NULL,
@@ -43,32 +93,45 @@ CREATE TABLE IF NOT EXISTS `Employes` (
   `IS_ACTIVE_CANDIDAT` int(11) NOT NULL DEFAULT '0' COMMENT '=O inactive 1=active',
   `ID_UTILISATEUR` int(11) NOT NULL,
   PRIMARY KEY (`ID_CANDIDAT`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `Employes`
+-- Dumping data for table `candidats`
 --
 
-INSERT INTO `Employes` (`ID_CANDIDAT`, `NOM_CANDIDAT`, `PRENOM_CANDIDAT`, `TELEPHONE_CANDIDAT`, `EMAIL_CANDIDAT`, `NUMERO_CNI_CANDIDAT`, `DATE_NAISSANCE_CANDIDAT`, `SEXE_CANDIDAT`, `PHOTO_CANDIDAT`, `ID_COLLINE_CANDIDAT`, `ID_POSTE`, `ID_PARTIE_POLITIQUE`, `IS_ACTIVE_CANDIDAT`, `ID_UTILISATEUR`) VALUES
-(2, 'MANIRAKIZA', 'fghj', '79909743', 'darcy@mediabox.bi', '6667', '2006-04-11 00:00:00', 'F', 'http://localhost/presences//uploads/Employes/240411100800am', 1944, 5, 8, 0, 0),
-(3, 'NDAYISABA', 'Claudine', '61236061', 'claudine@mediabox.bi', '531.02/3456', '1999-02-04 00:00:00', 'F', 'http://localhost/presences//uploads/Employes/240411121456pm', 321, 2, 2, 0, 0),
-(4, 'MANIRAKIZA', 'fdfdfdfdffdfd', '79909743', 'darcrry@mediabox.bi', '434343435', '0000-00-00 00:00:00', 'F', 'http://localhost/presences/uploads/cameraImagePsr/240411122333pm.png', 662, 2, 2, 0, 0),
-(5, 'MANIRAKIZA', 'gfgfgffff', '79909743', 'darcy@mediabox.bi', '444444', '1999-02-02 00:00:00', 'H', 'http://localhost/presences//uploads/Employes/240411124658pm', 1650, 2, 1, 0, 0),
-(6, 'MANIRAKIZA', 'asdfgh', '79909743', 'darcy@mediabox.bi', 'erty', '1999-12-03 00:00:00', 'H', 'http://localhost/presences//uploads/Employes/240411125022pm', 2806, 2, 8, 0, 0),
-(7, 'MANIRAKIZA', '44455', '79909743', 'darcy@mediabox.bi', 'SDFGHJKL', '2006-04-11 00:00:00', 'H', 'http://localhost/presences/uploads/cameraImagePsr/240411130125pm.png', 624, 7, 1, 0, 0),
-(8, 'MANIRAKIZA', 'wwwwww', '79909741', 'darcwy@mediabox.bi', '1111111111', '1999-02-01 00:00:00', 'F', 'http://localhost/presences//uploads/Employes/240411132208pm', 262, 2, 1, 0, 0),
-(9, 'MANIRAKIZA', '', '79909743', 'darcy@mediabox.bi', '', '0000-00-00 00:00:00', '', 'http://localhost/presences//uploads/Employes/240411132748pm', 0, 0, 0, 0, 0),
-(10, 'MANIRAKIZA', 'ssdfghj', '79909743', 'darcy@mediabox.bi', '723456', '2006-04-11 00:00:00', 'F', '', 0, 0, 0, 0, 0),
-(11, 'MANIRAKIZA', 'cococococoococco', '79909743', 'darcy@mediabox.bi', '345678', '1999-02-03 00:00:00', 'F', '', 515, 6, 1, 0, 0),
-(12, 'MANIRAKIZA', '2345678567890', '79909743', 'darcy@mediabox.bi', '123456789', '1999-01-01 00:00:00', 'H', '', 515, 2, 1, 0, 0),
-(13, 'MANIRAKIZA', '1234567890-=', '79909743', 'darcy@mediabox.bi', '234567890-', '1999-12-03 00:00:00', 'F', '', 288, 7, 1, 0, 0),
-(14, 'MANIRAKIZA', '1234567890-', '79909743', 'darcy@mediabox.bi', '1234567890-', '1009-12-12 00:00:00', 'H', '', 2369, 7, 2, 0, 0),
-(15, 'MANIRAKIZA', '1234567890', '79909743', 'darcy@mediabox.bi', 'sdfghjk', '1090-12-12 00:00:00', 'H', '', 662, 2, 1, 0, 0);
+INSERT INTO `candidats` (`ID_CANDIDAT`, `NOM_CANDIDAT`, `PRENOM_CANDIDAT`, `TELEPHONE_CANDIDAT`, `EMAIL_CANDIDAT`, `NUMERO_CNI_CANDIDAT`, `DATE_NAISSANCE_CANDIDAT`, `SEXE_CANDIDAT`, `PHOTO_CANDIDAT`, `ID_COLLINE_CANDIDAT`, `ID_POSTE`, `ID_PARTIE_POLITIQUE`, `IS_ACTIVE_CANDIDAT`, `ID_UTILISATEUR`) VALUES
+(23, 'NDAYISHIMIYE', 'Violette', '61236962', 'violette@gmail.com', '532.093/45467', '2006-07-21', 'F', 'http://localhost/ceni//uploads/Candidats/240723075258am.jpg', 2248, 2, 1, 1, 0),
+(16, 'MANIRAKIZA', 'claudine', '79909743', 'darcy@mediabox.bi', 'hhhdhdhd', '2006-04-17', 'F', 'http://localhost/ceni/uploads/cameraImageCeni/240417155055pm.png', 2208, 2, 8, 1, 0),
+(17, 'claudia', 'claudia', '79909743', 'darcy@mediabox.bi', '3456782', '2006-04-17', 'H', 'http://localhost/ceni//uploads/Candidats/240430081526am.jpg', 457, 7, 1, 1, 0),
+(25, 'deo', 'claudine', '79909743', 'darcy@mediabox.bi', 'hhhdhdhd', '2006-04-17', 'F', 'http://localhost/ceni/uploads/cameraImageCeni/240417155055pm.png', 2208, 2, 8, 1, 0),
+(26, 'keza', 'claudia', '79909743', 'darcy@mediabox.bi', '3456782', '2006-04-17', 'H', 'http://localhost/ceni//uploads/Candidats/240430081526am.jpg', 457, 7, 1, 1, 0),
+(24, 'remi\r\n', 'Violette', '61236962', 'violette@gmail.com', '532.093/45467', '2006-07-21', 'F', 'http://localhost/ceni//uploads/Candidats/240723075258am.jpg', 2248, 2, 1, 1, 0),
+(27, 'KANEZE', 'KEKE', '61236061', 'keke@gmail.com', '121313', '2006-07-22', 'H', 'http://localhost/ceni//uploads/Candidats/240723083454am.jpg', 699, 2, 8, 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `droits`
+-- Table structure for table `candidatse`
+--
+
+DROP TABLE IF EXISTS `candidatse`;
+CREATE TABLE IF NOT EXISTS `candidatse` (
+  `ID_CANDIDAT` int(255) NOT NULL AUTO_INCREMENT,
+  `NOM_CANDIDAT` varbinary(255) DEFAULT NULL,
+  PRIMARY KEY (`ID_CANDIDAT`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `candidatse`
+--
+
+INSERT INTO `candidatse` (`ID_CANDIDAT`, `NOM_CANDIDAT`) VALUES
+(1, 0xe512fe2dc54c51dabba6c7185a10f7c7);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `droits`
 --
 
 DROP TABLE IF EXISTS `droits`;
@@ -80,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `droits` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 --
--- Déchargement des données de la table `droits`
+-- Dumping data for table `droits`
 --
 
 INSERT INTO `droits` (`ID_DROIT`, `ID_PROFIL`, `IHM`) VALUES
@@ -91,27 +154,107 @@ INSERT INTO `droits` (`ID_DROIT`, `ID_PROFIL`, `IHM`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `Employes`
+-- Table structure for table `electeurs`
 --
 
-DROP TABLE IF EXISTS `Employes`;
-CREATE TABLE IF NOT EXISTS `Employes` (
+DROP TABLE IF EXISTS `electeurs`;
+CREATE TABLE IF NOT EXISTS `electeurs` (
   `ID_ELECTEUR` int(11) NOT NULL AUTO_INCREMENT,
   `NOM_ELECTEUR` varchar(255) NOT NULL,
   `PRENOM_ELECTEUR` varchar(255) NOT NULL,
   `ADRESE_ELECTEUR` varchar(255) NOT NULL,
   `NUMERO_CNI_ELECTEUR` varchar(255) NOT NULL,
   `LIEU_NAISSANCE_ELECTEUR` int(11) NOT NULL,
+  `TELEPHONE_ELECTEUR` varchar(10) NOT NULL,
+  `EMAIL_ELECTEUR` varchar(100) NOT NULL,
+  `DATE_NAISSANCE_ELECTEUR` varchar(10) NOT NULL,
+  `SEXE_ELECTEUR` varchar(10) NOT NULL,
+  `PHOTO_ELECTEUR` varchar(255) NOT NULL,
   `ID_COLLINE_ELECTEUR` int(11) NOT NULL,
   `IS_ACTIVE_ELECTEUR` int(11) NOT NULL COMMENT '=O inactive 1=active',
   `ID_UTILISATEUR` int(11) NOT NULL,
   PRIMARY KEY (`ID_ELECTEUR`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `electeurs`
+--
+
+INSERT INTO `electeurs` (`ID_ELECTEUR`, `NOM_ELECTEUR`, `PRENOM_ELECTEUR`, `ADRESE_ELECTEUR`, `NUMERO_CNI_ELECTEUR`, `LIEU_NAISSANCE_ELECTEUR`, `TELEPHONE_ELECTEUR`, `EMAIL_ELECTEUR`, `DATE_NAISSANCE_ELECTEUR`, `SEXE_ELECTEUR`, `PHOTO_ELECTEUR`, `ID_COLLINE_ELECTEUR`, `IS_ACTIVE_ELECTEUR`, `ID_UTILISATEUR`) VALUES
+(1, 'MANIRAKIZA', 'cooo', '', '12345678', 0, '79909743', 'darcy@mediabox.bi', '2006-04-29', 'F', 'http://localhost/ceni//uploads/Electeurs/240430085320am.png', 1593, 0, 0),
+(2, 'MANI', 'coco', '', '12345678', 0, '79909743', 'darcy@mediabox.bi', '2006-04-29', 'F', 'http://localhost/ceni//uploads/Electeurs/240430085320am.png', 1593, 0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `partie_politiques`
+-- Table structure for table `employes`
+--
+
+DROP TABLE IF EXISTS `employes`;
+CREATE TABLE IF NOT EXISTS `employes` (
+  `ID_EMPLOYE` int(11) NOT NULL AUTO_INCREMENT,
+  `NOM_EMPLOYE` varchar(255) NOT NULL,
+  `PRENOM_EMPLOYE` varchar(255) NOT NULL,
+  `ADRESE_EMPLOYE` varchar(255) NOT NULL,
+  `NUMERO_CNI_EMPLOYE` varchar(255) NOT NULL,
+  `LIEU_NAISSANCE_EMPLOYE` int(11) NOT NULL,
+  `TELEPHONE_EMPLOYE` varchar(10) NOT NULL,
+  `EMAIL_EMPLOYE` varchar(100) NOT NULL,
+  `DATE_NAISSANCE_EMPLOYE` varchar(10) NOT NULL,
+  `SEXE_EMPLOYE` varchar(10) NOT NULL,
+  `PHOTO_EMPLOYE` varchar(255) NOT NULL,
+  `ID_COLLINE_EMPLOYE` int(11) NOT NULL,
+  `IS_ACTIVE_EMPLOYE` int(11) NOT NULL COMMENT '=O inactive 1=active',
+  `ID_UTILISATEUR` int(11) NOT NULL,
+  PRIMARY KEY (`ID_EMPLOYE`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `employes`
+--
+
+INSERT INTO `employes` (`ID_EMPLOYE`, `NOM_EMPLOYE`, `PRENOM_EMPLOYE`, `ADRESE_EMPLOYE`, `NUMERO_CNI_EMPLOYE`, `LIEU_NAISSANCE_EMPLOYE`, `TELEPHONE_EMPLOYE`, `EMAIL_EMPLOYE`, `DATE_NAISSANCE_EMPLOYE`, `SEXE_EMPLOYE`, `PHOTO_EMPLOYE`, `ID_COLLINE_EMPLOYE`, `IS_ACTIVE_EMPLOYE`, `ID_UTILISATEUR`) VALUES
+(1, 'MANIRAKIZA', 'cooo', '', '12345678', 0, '79909743', 'darcy@mediabox.bi', '2006-04-29', 'F', 'http://localhost/ceni//uploads/employes/240430085320am.png', 1593, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `participants`
+--
+
+DROP TABLE IF EXISTS `participants`;
+CREATE TABLE IF NOT EXISTS `participants` (
+  `ID_PARTICIPANT` int(11) NOT NULL AUTO_INCREMENT,
+  `NOM` varchar(255) NOT NULL,
+  `PRENOM` varchar(255) NOT NULL,
+  `TELEPHONE` varchar(100) NOT NULL,
+  `EMAIL` varchar(255) NOT NULL,
+  `NUMERO_CNI` varchar(255) NOT NULL,
+  `DATE_NAISSANCE` varchar(255) NOT NULL,
+  `ID_SEXE` varchar(10) NOT NULL,
+  `PHOTO` text NOT NULL,
+  `ID_COLLINE` int(11) NOT NULL,
+  `ID_POSTE` int(11) DEFAULT NULL,
+  `ID_PARTIE_POLITIQUE` int(11) DEFAULT NULL,
+  `IS_ACTIVE` int(11) NOT NULL DEFAULT '0' COMMENT '=O inactive 1=active',
+  `IS_CANDIDAT` int(11) NOT NULL COMMENT '1=candidat et 0=electeur',
+  `ID_UTILISATEUR` int(11) NOT NULL,
+  PRIMARY KEY (`ID_PARTICIPANT`)
+) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `participants`
+--
+
+INSERT INTO `participants` (`ID_PARTICIPANT`, `NOM`, `PRENOM`, `TELEPHONE`, `EMAIL`, `NUMERO_CNI`, `DATE_NAISSANCE`, `ID_SEXE`, `PHOTO`, `ID_COLLINE`, `ID_POSTE`, `ID_PARTIE_POLITIQUE`, `IS_ACTIVE`, `IS_CANDIDAT`, `ID_UTILISATEUR`) VALUES
+(32, 'NDAYISABA', 'Claudine', '79909743', 'darcy@mediabox.bi', '1234567890', '1995-12-13', '1', 'http://localhost/ceni//uploads/Electeurs/240822143252pm.jpg', 276, NULL, NULL, 1, 0, 13),
+(35, 'GAHENGERI', 'Faustin', '61236061', 'faustin@gmail.com', '123456789', '1980-12-12', '1', 'http://localhost/ceni//uploads/Candidats/240822145808pm.jpg', 32, 2, 8, 1, 1, 15),
+(34, 'MANIRAKIZA', 'ASDFGHJK', '79909743', 'darcy@mediabox.bi', '234567890', '1987-12-12', '1', 'http://localhost/ceni//uploads/Candidats/240822144857pm.jpg', 976, 2, 2, 1, 1, 14);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `partie_politiques`
 --
 
 DROP TABLE IF EXISTS `partie_politiques`;
@@ -122,18 +265,18 @@ CREATE TABLE IF NOT EXISTS `partie_politiques` (
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `partie_politiques`
+-- Dumping data for table `partie_politiques`
 --
 
 INSERT INTO `partie_politiques` (`ID_PARTIE_POLITIQUE`, `DESCRIPTION`) VALUES
 (1, 'CNDD-FDD'),
 (2, 'FNLS'),
-(8, 'Independant(e)');
+(8, 'Independant');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `postes`
+-- Table structure for table `postes`
 --
 
 DROP TABLE IF EXISTS `postes`;
@@ -144,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `postes` (
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `postes`
+-- Dumping data for table `postes`
 --
 
 INSERT INTO `postes` (`ID_POSTE`, `DESCRIPTION`) VALUES
@@ -156,29 +299,29 @@ INSERT INTO `postes` (`ID_POSTE`, `DESCRIPTION`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `profils`
+-- Table structure for table `profils`
 --
 
 DROP TABLE IF EXISTS `profils`;
 CREATE TABLE IF NOT EXISTS `profils` (
   `ID_PROFIL` int(11) NOT NULL AUTO_INCREMENT,
-  `STATUT` varchar(250) NOT NULL,
+  `STATUT` varchar(255) NOT NULL,
   PRIMARY KEY (`ID_PROFIL`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `profils`
+-- Dumping data for table `profils`
 --
 
 INSERT INTO `profils` (`ID_PROFIL`, `STATUT`) VALUES
-(1, 'Administrateurs'),
-(2, 'Employes'),
-(4, 'DAF');
+(1, 'Admins'),
+(2, 'Candidat'),
+(3, 'Electeur');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `session_votes`
+-- Table structure for table `session_votes`
 --
 
 DROP TABLE IF EXISTS `session_votes`;
@@ -192,7 +335,28 @@ CREATE TABLE IF NOT EXISTS `session_votes` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `syst_collines`
+-- Table structure for table `sexes`
+--
+
+DROP TABLE IF EXISTS `sexes`;
+CREATE TABLE IF NOT EXISTS `sexes` (
+  `ID_SEXE` int(11) NOT NULL AUTO_INCREMENT,
+  `DESCRIPTION` varchar(255) NOT NULL,
+  PRIMARY KEY (`ID_SEXE`)
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sexes`
+--
+
+INSERT INTO `sexes` (`ID_SEXE`, `DESCRIPTION`) VALUES
+(1, 'Homme'),
+(2, 'Femme\r\n');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `syst_collines`
 --
 
 DROP TABLE IF EXISTS `syst_collines`;
@@ -207,7 +371,7 @@ CREATE TABLE IF NOT EXISTS `syst_collines` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5047 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `syst_collines`
+-- Dumping data for table `syst_collines`
 --
 
 INSERT INTO `syst_collines` (`COLLINE_ID`, `COLLINE_NAME`, `ZONE_ID`, `LATITUDE`, `LONGITUDE`) VALUES
@@ -3175,7 +3339,7 @@ INSERT INTO `syst_collines` (`COLLINE_ID`, `COLLINE_NAME`, `ZONE_ID`, `LATITUDE`
 -- --------------------------------------------------------
 
 --
--- Structure de la table `syst_communes`
+-- Table structure for table `syst_communes`
 --
 
 DROP TABLE IF EXISTS `syst_communes`;
@@ -3187,10 +3351,10 @@ CREATE TABLE IF NOT EXISTS `syst_communes` (
   `COMMUNE_LONGITUDE` float NOT NULL DEFAULT '-1',
   PRIMARY KEY (`COMMUNE_ID`),
   KEY `PROVINCE_ID` (`PROVINCE_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `syst_communes`
+-- Dumping data for table `syst_communes`
 --
 
 INSERT INTO `syst_communes` (`COMMUNE_ID`, `COMMUNE_NAME`, `PROVINCE_ID`, `COMMUNE_LATITUDE`, `COMMUNE_LONGITUDE`) VALUES
@@ -3317,7 +3481,7 @@ INSERT INTO `syst_communes` (`COMMUNE_ID`, `COMMUNE_NAME`, `PROVINCE_ID`, `COMMU
 -- --------------------------------------------------------
 
 --
--- Structure de la table `syst_provinces`
+-- Table structure for table `syst_provinces`
 --
 
 DROP TABLE IF EXISTS `syst_provinces`;
@@ -3329,10 +3493,10 @@ CREATE TABLE IF NOT EXISTS `syst_provinces` (
   `PROVINCE_LONGITUDE` varchar(50) NOT NULL DEFAULT '-1',
   `PAYS_CODE` varchar(250) NOT NULL DEFAULT 'BI',
   PRIMARY KEY (`PROVINCE_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `syst_provinces`
+-- Dumping data for table `syst_provinces`
 --
 
 INSERT INTO `syst_provinces` (`PROVINCE_ID`, `PROVINCE_NAME`, `OBJECTIF`, `PROVINCE_LATITUDE`, `PROVINCE_LONGITUDE`, `PAYS_CODE`) VALUES
@@ -3353,15 +3517,12 @@ INSERT INTO `syst_provinces` (`PROVINCE_ID`, `PROVINCE_NAME`, `OBJECTIF`, `PROVI
 (15, 'Ngozi', 13585, '-2.90847', '29.8057', 'BI'),
 (16, 'Rumonge', 16221, '-3.97226', '29.4305', 'BI'),
 (17, 'Rutana', 9860, '-3.92546', '29.9823', 'BI'),
-(18, 'Ruyigi', 7158, '-3.47421', '30.2379', 'BI'),
-(19, 'Sud-Kivu', 2000000, '-3.206704336023286', '29.07004647884585', 'CD'),
-(20, 'Nord-Kivu', 2000000, '-1.6607633259896675', '29.20248976118807', 'CD'),
-(22, 'Bujumbura Rural Province', 2000000, '-3.4190434767517357', '29.384908676147464', 'BI');
+(18, 'Ruyigi', 7158, '-3.47421', '30.2379', 'BI');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `syst_zones`
+-- Table structure for table `syst_zones`
 --
 
 DROP TABLE IF EXISTS `syst_zones`;
@@ -3372,10 +3533,10 @@ CREATE TABLE IF NOT EXISTS `syst_zones` (
   `LATITUDE` float DEFAULT '-1',
   `LONGITUDE` float DEFAULT '-1',
   PRIMARY KEY (`ZONE_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=415 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=413 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `syst_zones`
+-- Dumping data for table `syst_zones`
 --
 
 INSERT INTO `syst_zones` (`ZONE_ID`, `ZONE_NAME`, `COMMUNE_ID`, `LATITUDE`, `LONGITUDE`) VALUES
@@ -3785,12 +3946,13 @@ INSERT INTO `syst_zones` (`ZONE_ID`, `ZONE_NAME`, `COMMUNE_ID`, `LATITUDE`, `LON
 -- --------------------------------------------------------
 
 --
--- Structure de la table `utilisateurs`
+-- Table structure for table `utilisateurs`
 --
 
 DROP TABLE IF EXISTS `utilisateurs`;
 CREATE TABLE IF NOT EXISTS `utilisateurs` (
   `ID_UTILISATEUR` int(11) NOT NULL AUTO_INCREMENT,
+  `id` text,
   `USERNAME` varchar(255) NOT NULL,
   `NOM` varchar(100) NOT NULL,
   `PRENOM` varchar(100) NOT NULL,
@@ -3801,31 +3963,68 @@ CREATE TABLE IF NOT EXISTS `utilisateurs` (
   `IS_ACTIVE` int(11) NOT NULL DEFAULT '0' COMMENT '0=inactive 1=active',
   `DATE_INSERTION` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID_UTILISATEUR`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 
 --
--- Déchargement des données de la table `utilisateurs`
+-- Dumping data for table `utilisateurs`
 --
 
-INSERT INTO `utilisateurs` (`ID_UTILISATEUR`, `USERNAME`, `NOM`, `PRENOM`, `NUMERO_CNI`, `TELEPHONE`, `PASSWORD`, `ID_PROFIL`, `IS_ACTIVE`, `DATE_INSERTION`) VALUES
-(8, 'uyttc@gmail.com', '', '', '', '', '25d55ad283aa400af464c76d713c07ad', 1, 0, '2024-04-03 15:45:58'),
-(2, 'claudine@gmail.com', '', '', '', '', '25d55ad283aa400af464c76d713c07ad', 1, 1, '2024-03-26 17:21:35'),
-(5, 'uyc@gmail.com', '', '', '', '', '25d55ad283aa400af464c76d713c07ad', 1, 0, '2024-03-28 11:53:30');
+INSERT INTO `utilisateurs` (`ID_UTILISATEUR`, `id`, `USERNAME`, `NOM`, `PRENOM`, `NUMERO_CNI`, `TELEPHONE`, `PASSWORD`, `ID_PROFIL`, `IS_ACTIVE`, `DATE_INSERTION`) VALUES
+(14, NULL, 'darcy@mediabox.bi', '', '', '', '', '78efd260cf7c6dba06a0f674d8c560bc', 2, 1, '2024-08-22 16:48:57'),
+(5, '0x4ad2a6798b9c948cfd625a90ac35fa97', 'uyc@gmail.com', '', '', '', '', '25d55ad283aa400af464c76d713c07ad', 1, 1, '2024-03-28 11:53:30'),
+(12, NULL, 'darcy@mediabox.bi', '', '', '', '', '78efd260cf7c6dba06a0f674d8c560bc', 2, 1, '2024-08-22 16:31:46'),
+(11, NULL, 'bernard@gmail.com', '', '', '', '', '2b355c9d2e6b53047279eb157d671fa6', 2, 1, '2024-08-22 16:01:09'),
+(15, NULL, 'faustin@gmail.com', '', '', '', '', 'c26ec759a400903de62dac29df272d1d', 2, 1, '2024-08-22 16:58:08');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `votes`
+-- Table structure for table `votes`
 --
 
 DROP TABLE IF EXISTS `votes`;
 CREATE TABLE IF NOT EXISTS `votes` (
   `ID_VOTE` int(11) NOT NULL AUTO_INCREMENT,
-  `ID_ELECTEUR` int(11) NOT NULL,
-  `ID_CANDIDAT` int(11) NOT NULL,
-  `DATE_VOTE` datetime NOT NULL,
+  `ID_UTILISATEUR` text NOT NULL,
+  `ID_CANDIDAT` text NOT NULL,
+  `ENCRYPTED_VOTE` text NOT NULL,
+  `SIGNATURE` text NOT NULL,
+  `DATE_VOTE` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID_VOTE`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `votes`
+--
+
+INSERT INTO `votes` (`ID_VOTE`, `ID_UTILISATEUR`, `ID_CANDIDAT`, `ENCRYPTED_VOTE`, `SIGNATURE`, `DATE_VOTE`) VALUES
+(4, '5', '35', 'NXwzNQ==', 'dN3AyiTia4TIOt8wUjMBnJUlyl04Ly8X6BILyprcJTo81Vgj2S0rLFaGAewB2d/vgIX2+PKESdSF9P2v9MLcEFdFmi2g6j3Tb5g+aRKdwHxxQ/E1WaAuTO+mlVgn4uEc986vhLcdsNb37tR4hcIqTThcGkDFj/NGlyl/Qpa1L1Mswt2dMjgv1CGXkDm61qm6Gs6eDQY/UlqWosa6elTBRZETiK/kRH9+vNtyjqjfCxLppfa0jhz0O+/nS/HFHEa7SBamhUZsa4mh1T/1Id5sF4pUEH+mRpHT4/yk6JDEx77oQtGwPL3MNu/gWDrSE+a0cTrtG7Mu5YHnADN+ezztnYp18Li1gVQaK6cG/wpKReLMwbE1Axq+1kBTNICwWP6/h7KHBDX9zNPCIC3NbUr9A3CmfVKQMJrDbz1Pe1+TesoITnhAfnaleDgJIIMhzDC2QkMhf+EZ6wASDvAVKjZrajY5vuCfFpG20Enrvv4tIlwAOCDYBuvaTrdU9GbDVspAGjMapUBz9H0A03Qs4JrLFyjIkNjhRgF57GC38WYUy7Ys7fX3cyxFl5kisdNAHV87sfvBni3++o+teJ/GZ4NiHMHPwD1Bk6c6Xwg3j99JK19m0AYr7fRp94bmQPy5qg1zhyAPY6O/KTQrArAaJ38iYFcRNhs2sRXQht6rVR0VzEo=', '2024-10-01 17:11:17'),
+(6, '5', '35', 'NXwzNQ==', 'dN3AyiTia4TIOt8wUjMBnJUlyl04Ly8X6BILyprcJTo81Vgj2S0rLFaGAewB2d/vgIX2+PKESdSF9P2v9MLcEFdFmi2g6j3Tb5g+aRKdwHxxQ/E1WaAuTO+mlVgn4uEc986vhLcdsNb37tR4hcIqTThcGkDFj/NGlyl/Qpa1L1Mswt2dMjgv1CGXkDm61qm6Gs6eDQY/UlqWosa6elTBRZETiK/kRH9+vNtyjqjfCxLppfa0jhz0O+/nS/HFHEa7SBamhUZsa4mh1T/1Id5sF4pUEH+mRpHT4/yk6JDEx77oQtGwPL3MNu/gWDrSE+a0cTrtG7Mu5YHnADN+ezztnYp18Li1gVQaK6cG/wpKReLMwbE1Axq+1kBTNICwWP6/h7KHBDX9zNPCIC3NbUr9A3CmfVKQMJrDbz1Pe1+TesoITnhAfnaleDgJIIMhzDC2QkMhf+EZ6wASDvAVKjZrajY5vuCfFpG20Enrvv4tIlwAOCDYBuvaTrdU9GbDVspAGjMapUBz9H0A03Qs4JrLFyjIkNjhRgF57GC38WYUy7Ys7fX3cyxFl5kisdNAHV87sfvBni3++o+teJ/GZ4NiHMHPwD1Bk6c6Xwg3j99JK19m0AYr7fRp94bmQPy5qg1zhyAPY6O/KTQrArAaJ38iYFcRNhs2sRXQht6rVR0VzEo=', '2024-10-01 17:11:17');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `votes111`
+--
+
+DROP TABLE IF EXISTS `votes111`;
+CREATE TABLE IF NOT EXISTS `votes111` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `encrypted_vote` text NOT NULL,
+  `signature` text NOT NULL,
+  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `votes111`
+--
+
+INSERT INTO `votes111` (`id`, `encrypted_vote`, `signature`, `timestamp`) VALUES
+(1, 'HY4cz+SGz2GuZFgmNYV3eQ==', '', '2024-06-29 18:20:15'),
+(2, 'rt5KlGMotJMhYqKBHUrtow==', '', '2024-06-29 18:25:12'),
+(3, 'rt5KlGMotJMhYqKBHUrtow==', '', '2024-07-01 14:23:21'),
+(4, '/x1OqruuxzM1YTaeNjgn3g==', '', '2024-07-02 14:09:55');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
