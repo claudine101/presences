@@ -150,12 +150,12 @@ function insert_batch($table,$data){
      $sql=$this->db->delete($table) ;
      return $sql;
    }
-   public function deleteDataWithDateFormat($table, $id_utilisateur, $critere) {
+   public function deleteDataWithDateFormat($table, $id_utilisateur, $critere,$date) {
     // Construction de la requête avec un SQL brut
-    $sql = "DELETE FROM $table WHERE ID_UTILISATEUR = ? AND DATE_FORMAT(DATE_PRESENCE, '%p') = ?";
+    $sql = "DELETE FROM $table WHERE ID_UTILISATEUR = ? AND DATE_FORMAT(DATE_PRESENCE, '%p') = ? AND DATE_FORMAT(DATE_PRESENCE, '%Y-%m-%d') = ?";
     
     // Exécution de la requête en passant les paramètres
-    return $this->db->query($sql, array($id_utilisateur, $critere));
+    return $this->db->query($sql, array($id_utilisateur, $critere,$date));
 }
 
 public function deleteDataWithDateFormats($table, $id_utilisateur, $critere) {

@@ -965,7 +965,7 @@ color: '#FFD700',
                         }
                         $this->Modele->deleteDataWiths($table,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
                         $this->Modele->deleteDataWith($tables,$this->input->post('ID_UTILISATEUR'), $this->input->post('DEBUT'));
-                        $this->Modele->deleteDataWithDateFormat($tables1,$this->input->post('ID_UTILISATEUR'), $critere);
+                        $this->Modele->deleteDataWithDateFormat($tables1,$this->input->post('ID_UTILISATEUR'), $critere,$this->input->post('DEBUT'));
 
                         $this->Modele->create($table, $data);
                         echo json_encode(1);

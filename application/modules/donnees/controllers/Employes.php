@@ -311,7 +311,9 @@ class  Employes extends CI_Controller
 					}
 					$this->Modele->deleteDataWiths($table, $id, $this->input->post('DEBUT'));
 					$this->Modele->deleteDataWith($tables, $id, $this->input->post('DEBUT'));
-					$this->Modele->deleteDataWithDateFormat($tables1, $id, $critere);
+					// $this->Modele->deleteDataWithDateFormat($tables1, $id, $critere);
+					$this->Modele->deleteDataWithDateFormat($tables1,$id, $critere,$this->input->post('DEBUT'));
+
 
 			        $this->Modele->create($table, $data);
 					$datas['message'] = "<div class='alert alert-success text-center' id='message'>La modification de l'employé a été effectuée avec succès.</div>";
