@@ -663,7 +663,10 @@ color: '#FFD700',
         // $targetTimePM = new DateTime('14:15');
         // Récupérer l'heure actuelle au format H:i:s
         $currentTime = date('H:i:s');
-        $current_time = new DateTime($currentTime);
+        // print_r($currentTime);
+        
+        $current_time = (new DateTime($currentTime))->sub(new DateInterval('PT1H'));;
+
         $time= new DateTime($targetTimeAM);
 
         // Ajouter 15 minutes
@@ -674,6 +677,11 @@ color: '#FFD700',
 
         $formattedDate = $current_time->add(new DateInterval('PT1H'))->format('A');
         $statu=0;
+        // print_r($arrival_time);
+        // print_r($current_time);
+
+
+        // exit();
         if ($current_time<$arrival_time) {
             $statu=1;
         } 
