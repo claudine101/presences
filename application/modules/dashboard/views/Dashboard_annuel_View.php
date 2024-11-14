@@ -64,7 +64,7 @@
                     </div>
             </div><!-- /.col -->
             <div class="form-group col-md-3"><h4 style='color:blue'>Rapport annuel</h4></div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-1">
                     <label  style='color:blue'>agences</label>
                     <select class="form-control input-sm" name="ID_AGENCE" id="ID_AGENCE" onchange='get_rapport()'>
                       <option value="">agences</option>
@@ -74,11 +74,16 @@
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                        <label style='color:blue'>Date</label>
+                        <label style='color:blue'>Date debut</label>
                         <input onchange='get_rapport()' type="date" name="DATE_PRESENCE" autocomplete="off" id="DATE_PRESENCE" value="<?= set_value('DATE_PRESENCE') ?>" class="form-control">
 
                     </div>
-            <div class="form-group col-md-3">
+                    <div class="form-group col-md-3">
+                        <label style='color:blue'>Date fin</label>
+                        <input onchange='get_rapport()' type="date" name="DATE_FIN" autocomplete="off" id="DATE_FIN" value="<?= set_value('DATE_FIN') ?>" class="form-control">
+
+                    </div>
+            <div class="form-group col-md-2">
                   <label  style='color:blue'>Avant  ou  après midi</label>
                   <select class="form-control input-sm" name="avant" id="avant" onchange='get_rapport()'>
                       <option value="">Avant  ou  après midi</option>
@@ -106,9 +111,8 @@
               <div id="container3"  class="col-md-12" >
               <div class="card">
               <div class="col-sm-4 text-right">
-
-
-            <span style="margin-right: 15px" class="col-md-12 row">
+              
+            <span style="margin-right: 15px" class="col-md-12 row" style="background-color: red">
                 <div class="col-md-6">
                             <label for="mois"></label>
                             <select class="form-control input-sm" id="mois" name="mois" onchange='liste()'>
@@ -127,12 +131,13 @@
                               <option value="12">Décembre</option>
                             </select>
                 </div>
-                <div class="col-md-3"></div>
-                <div class="col-md-3"></div>
             </span>
+
 
             </div><!-- /.col -->
               <div class="card-body">
+            <div class="col-md-8"><h4 style="color:blue" id='titre'></h4></div>
+
                 <div class="col-md-12">
                   <?= $this->session->flashdata('message'); ?>
                   <div class="table-responsive">
@@ -289,7 +294,24 @@ liste();
 });   
 function liste()
   {
+  var DATE_PRESENCE=$('#DATE_PRESENCE').val();
+  var DATE_FIN=$('#DATE_FIN').val();
   $('#message').delay('slow').fadeOut(3000);
+  $("#titre").html("Détails de tous les ponctualité");
+  if(DATE_PRESENCE)
+  {
+      if(DATE_FIN)
+      {
+        $("#titre").html("Détails de tous les ponctualité de "+DATE_PRESENCE+" jusqu'à le  "+DATE_PRESENCE);
+        
+      }
+      else{
+         $("#titre").html("Détails de tous les ponctualité de "+DATE_PRESENCE);
+         
+      }
+  }
+
+ 
   $("#reponse1").DataTable({
   "destroy" : true,
   "processing":true,
@@ -302,6 +324,8 @@ function liste()
   data : {
     
     mois: $('#mois').val(),
+    DATE_PRESENCE:DATE_PRESENCE,
+    DATE_FIN:DATE_FIN
   },
   beforeSend : function() {
   }
@@ -357,6 +381,9 @@ function get_rapport(){
 var agence=$('#ID_AGENCE').val()
 var avant=$('#avant').val();
 var DATE_PRESENCE=$('#DATE_PRESENCE').val();
+var DATE_FIN=$('#DATE_FIN').val();
+liste();
+
 $.ajax({
 url : "<?=base_url()?>dashboard/Dashboard_annuel/get_rapport_user",
 type : "POST",
@@ -365,7 +392,8 @@ cache:false,
 data:{
 agence:agence,
 avant:avant,
-DATE_PRESENCE:DATE_PRESENCE
+DATE_PRESENCE:DATE_PRESENCE,
+DATE_FIN:DATE_FIN
 },
 success:function(data){   
   $('#container').html("");             
