@@ -66,7 +66,7 @@ class Dashboard_hebdomadaires extends CI_Controller
 
           FROM
               presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
-          WHERE presences.ID_UTILISATEUR= ".$this->session->userdata('ID_UTILISATEUR')." ". $critaire_avant."
+          WHERE DATE(DATE_PRESENCE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE() AND presences.ID_UTILISATEUR= ".$this->session->userdata('ID_UTILISATEUR')." ". $critaire_avant."
           GROUP BY
               MONTH(`DATE_PRESENCE`)
           ORDER BY

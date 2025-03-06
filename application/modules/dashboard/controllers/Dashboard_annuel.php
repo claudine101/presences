@@ -97,7 +97,7 @@ class Dashboard_annuel extends CI_Controller
 
           FROM
               presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
-          WHERE 1".$criteres1."  ".$criteres3."  ".$criteres_date1."
+          WHERE DATE(DATE_PRESENCE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()  ".$criteres1."  ".$criteres3."  ".$criteres_date1."
           GROUP BY
               MONTH(`DATE_PRESENCE`)
           ORDER BY
@@ -974,10 +974,6 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
                         $criteres_date1.=" AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d')>= '".$dates."' AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d')<= '".$datesfin."' ";
                         $criteres_date2.=" AND date_format(a.date_absence,'%Y-%m-%d')>= '".$dates."' AND date_format(a.date_absence,'%Y-%m-%d')<= '".$datesfin."' ";
                         $criteres_date3.=" AND date_format(c.DATE_CONGE,'%Y-%m-%d')>= '".$dates."' AND date_format(c.DATE_CONGE,'%Y-%m-%d')<= '".$datesfin."' ";
-
-                        // $criteres_date2.=" AND date_format(a.date_absence,'%Y-%m-%d')= '".$dates."'  ";
-                        // $criteres_date3.=" AND date_format(a.DATE_CONGE,'%Y-%m-%d')= '".$dates."'  ";
-
                     }
                     else{
                         $criteres_date1.=" AND date_format(p.`DATE_PRESENCE`,'%Y-%m-%d')= '".$dates."'  ";
@@ -998,32 +994,32 @@ SELECT  e.*,a.date_absence,ag.DESCRIPTION,a.periode
      e.*,
     (SELECT COUNT(p.ID_PRESENCE) 
      FROM presences p 
-     WHERE p.STATUT = 1 ".$condition ." ".$criteres_date1." AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE() AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS presences, 
+     WHERE p.STATUT = 1 AND DATE(DATE_PRESENCE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()  ".$condition ." ".$criteres_date1." AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE() AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS presences, 
     (SELECT COUNT(p.ID_PRESENCE) 
      FROM presences p 
-     WHERE p.STATUT = 0 ".$condition ." ".$criteres_date1."  AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retards ,
+     WHERE p.STATUT = 0 AND DATE(DATE_PRESENCE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()   ".$condition ." ".$criteres_date1."  AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retards ,
       (SELECT COUNT(p.ID_PRESENCE) 
      FROM presences p 
-     WHERE p.STATUT =2 ".$condition ." ".$criteres_date1."  AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retardsJust ,
+     WHERE p.STATUT =2 AND DATE(DATE_PRESENCE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()  ".$condition ." ".$criteres_date1."  AND date_format( p.DATE_PRESENCE,'%Y-%m-%d') <= CURDATE()  AND p.ID_UTILISATEUR = e.ID_UTILISATEUR) AS retardsJust ,
      (SELECT COUNT(a.id_utilisateur) 
      FROM absences a
-     WHERE 1 ".$condition2." ".$criteres_date2." AND a.date_absence <= CURDATE() AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
+     WHERE 1 AND DATE(date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()  ".$condition2." ".$criteres_date2." AND a.date_absence <= CURDATE() AND a.id_utilisateur = e.ID_UTILISATEUR) AS absences ,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=1 ".$condition3." ".$criteres_date3." AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
+     WHERE c.ID_MOTIF=1 AND DATE(DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()   ".$condition3." ".$criteres_date3." AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS conges,
      
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=2  ".$condition3." ".$criteres_date3."  AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
+     WHERE c.ID_MOTIF=2 AND DATE(DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()    ".$condition3." ".$criteres_date3."  AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS malades,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=3  ".$condition3." ".$criteres_date3." AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
+     WHERE c.ID_MOTIF=3 AND DATE(DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()  ".$condition3." ".$criteres_date3." AND c.DATE_CONGE <= CURDATE() AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS surTerrains,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=4   ".$condition3." ".$criteres_date3."  AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
+     WHERE c.ID_MOTIF=4 AND DATE(DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()  ".$condition3." ".$criteres_date3."  AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enMissions,
      (SELECT COUNT(c.ID_UTILISATEUR) 
      FROM conges c
-     WHERE c.ID_MOTIF=5  ".$condition3." ".$criteres_date3."  AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
+     WHERE c.ID_MOTIF=5 AND DATE(DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()   ".$condition3." ".$criteres_date3."  AND c.DATE_CONGE <= CURDATE()  AND c.ID_UTILISATEUR = e.ID_UTILISATEUR) AS enFormations
 FROM 
     employes e  WHERE 1 ";
 		$var_search = !empty($_POST['search']['value']) ? $_POST['search']['value'] : null;

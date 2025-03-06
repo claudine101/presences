@@ -381,7 +381,7 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
           SUM(CASE WHEN (`STATUT`) =2 THEN 1 ELSE 0 END) AS  number_of_just
       FROM
           presences JOIN  employes ON employes.ID_UTILISATEUR=presences.ID_UTILISATEUR JOIN agences on agences.ID_AGENCE=employes.ID_AGENCE
-      WHERE 1 ".$criteres1."  ".$criteres3." AND
+      WHERE DATE(DATE_PRESENCE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()    ".$criteres1."  ".$criteres3." AND
           `DATE_PRESENCE` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
           AND `DATE_PRESENCE` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
       GROUP BY
@@ -433,7 +433,7 @@ $query_principal=" SELECT  e.PHOTO_EMPLOYE,a.DESCRIPTION,
 
 $absants=$this->Model->getRequete("SELECT DATE_FORMAT(a.date_absence, '%Y-%m-%d') as mois, DAYNAME(a.date_absence) AS day_of_week, COUNT(a.id_utilisateur) AS nombre_absents
 FROM absences a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.id_utilisateur
-WHERE 1  AND
+WHERE DATE(a.date_absence) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()    AND
   `date_absence` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
   AND `date_absence` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
 ".$criteres4."  ".$criteres5." 
@@ -596,7 +596,7 @@ series: [
           SUM(CASE WHEN (a.ID_MOTIF) =4 THEN 1 ELSE 0 END) AS  Mission, 
           SUM(CASE WHEN (a.ID_MOTIF) =5 THEN 1 ELSE 0 END) AS  Formation, DAYNAME(a.DATE_CONGE) AS day_of_week, COUNT(a.ID_UTILISATEUR) AS nombre_absents
    FROM conges a  LEFT JOIN employes e ON e.ID_UTILISATEUR=a.ID_UTILISATEUR
-   WHERE 1  AND
+   WHERE DATE(a.DATE_CONGE) BETWEEN CONCAT(YEAR(CURDATE()), '-01-01') AND CURDATE()   AND
      `DATE_CONGE` >= CURDATE() - INTERVAL (WEEKDAY(CURDATE()) + 1) DAY  -- début de la semaine en cours (lundi)
      AND `DATE_CONGE` < CURDATE() - INTERVAL WEEKDAY(CURDATE()) DAY + INTERVAL 1 WEEK -- fin de la semaine en cours (dimanche)
    ".$criteres4."  ".$criteres5." 
