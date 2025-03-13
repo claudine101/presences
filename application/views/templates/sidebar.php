@@ -339,6 +339,46 @@
             </ul>
           </li>
           <?php } ?>
+
+          <!-- ARCHIVE -->
+          <?php if ($this->session->userdata('ID_PROFIL') == 2 ||$this->session->userdata('ID_PROFIL') == 4 || $this->session->userdata('ID_PROFIL') == 5) { ?>
+          <li class="nav-item">
+            <a href="#" class="nav-link <?php if ($this->router->class == 'Service'  ||$this->router->class == 'Etagere' ||$this->router->class == 'Rayon'|| $this->router->class == 'Classeur') echo 'active'; ?>">
+              <i class="nav-icon fa fa-folder"></i>
+              <p>
+                Archive
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="<?= base_url('archive/Service/index') ?>" class="nav-link <?php if ($this->router->class == 'Service') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Services </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('archive/Etagere/index') ?>" class="nav-link <?php if ($this->router->class == 'Etagere') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Etagères </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('archive/Rayon/index') ?>" class="nav-link <?php if ($this->router->class == 'Rayon') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Rayon</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('archive/Classeur/index') ?>" class="nav-link <?php if ($this->router->class == 'Classeur') echo 'active'; ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Classeur</p>
+                </a>
+              </li>
+            </ul>
+
+          </li>
+          <?php } ?>
 </ul>
 
     </nav>
